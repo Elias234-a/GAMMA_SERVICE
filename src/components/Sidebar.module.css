@@ -1,0 +1,19 @@
+.sidebarScroll {
+  scrollbar-width: thin;
+  scrollbar-color: #4B5563 transparent;
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+}
+
+.sidebarScroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebarScroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebarScroll::-webkit-scrollbar-thumb {
+  background-color: #4B5563;
+  border-radius: 3px;
+}
