@@ -1,0 +1,34 @@
+{
+  "common": {
+    "welcome": "Bienvenido a la Aplicación",
+    "submit": "Enviar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "loading": "Cargando...",
+    "error": "Ha ocurrido un error",
+    "success": "Operación exitosa"
+  },
+  "auth": {
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿No tienes una cuenta?",
+    "register": "Regístrate"
+  },
+  "form": {
+    "required": "Este campo es requerido",
+    "invalidEmail": "Correo electrónico inválido",
+    "minLength": "Debe tener al menos {{count}} caracteres",
+    "maxLength": "No debe exceder los {{count}} caracteres"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "dashboard": "Tablero",
+    "profile": "Perfil",
+    "settings": "Configuración"
+  }
+}
