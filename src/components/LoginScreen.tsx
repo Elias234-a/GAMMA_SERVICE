@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, User, Lock, Mail, Phone, MapPin, } from 'lucide-react';
+import { Eye, EyeOff, User, Lock, Mail, Phone, MapPin } from 'lucide-react';
 import { AlertType } from '../App';
 import gammaLogo from '../assets/logo_claro.png';
 
@@ -24,6 +24,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
     recoveryEmail: '',
     role: ''
   });
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validateForm = () => {
@@ -34,8 +35,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Correo electrónico inválido';
     }
-    
-    if (isLogin && !formData.role) {
+
+    if ((isLogin || !isLogin) && !formData.role) {
       newErrors.role = 'Por favor seleccione un rol';
     }
 
@@ -54,7 +55,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
       } else if (formData.password.length < 6) {
         newErrors.password = 'La contraseña debe tener al menos 6 caracteres';
       }
-      if (formData.password !== formData.confirmPassword) {
+      if (!formData.confirmPassword) {
+        newErrors.confirmPassword = 'Por favor confirme su contraseña';
+      } else if (formData.password !== formData.confirmPassword) {
         newErrors.confirmPassword = 'Las contraseñas no coinciden';
       }
     } else if (!showForgotPassword) {
@@ -77,12 +80,12 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       showAlert('error', 'Datos inválidos', 'Por favor corrija los errores en el formulario');
       return;
     }
-    
+
     // Add role validation for login
     if (isLogin && !formData.role) {
       showAlert('error', 'Rol requerido', 'Por favor seleccione un rol');
@@ -93,8 +96,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
       // Simulate password recovery
       showAlert('success', 'Recuperación enviada', 'Se ha enviado un enlace de recuperación a su correo');
       setShowForgotPassword(false);
-      setFormData(prev => ({ 
-        ...prev, 
+      setFormData(prev => ({
+        ...prev,
         recoveryEmail: '',
         role: prev.role || ''
       }));
@@ -111,7 +114,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
       };
 
       const user = credentials[formData.email as keyof typeof credentials];
-      
+
       if (user && user.password === formData.password) {
         if (user.role === formData.role) {
           // Asegurarse de que el rol sea un UserRole válido
@@ -155,9 +158,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
         <div className="max-w-md w-full space-y-8">
           <div>
             <div className="mx-auto flex justify-center">
-              <img 
-                src={gammaLogo} 
-                alt="GAMMA Service" 
+              <img
+                src={gammaLogo}
+                alt="GAMMA Service"
                 className="h-16 w-auto object-contain"
               />
             </div>
@@ -168,7 +171,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
               Ingrese su correo electrónico para recibir las instrucciones
             </p>
           </div>
-          
+
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="recoveryEmail" className="block text-sm font-medium text-white mb-2">
@@ -215,14 +218,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
     );
   }
 
+  // FORMULARIO PRINCIPAL
   return (
     <div className="min-h-screen flex items-center justify-center grid-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
           <div className="mx-auto flex justify-center">
-            <img 
-              src={gammaLogo} 
-              alt="GAMMA Service" 
+            <img
+              src={gammaLogo}
+              alt="GAMMA Service"
               className="h-16 w-auto object-contain"
             />
           </div>
@@ -233,247 +237,236 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
             {isLogin ? 'Acceda a GAMMA Service' : 'Registrarse en GAMMA Service'}
           </p>
         </div>
-        
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4">
+
+        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+          <div className="space-y-3">
             {!isLogin && (
               <>
+                {/* Compacto: sólo campos esenciales */}
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-white mb-2">
-                    Nombre Completo *
+                  <label htmlFor="name" className="block text-sm font-medium text-white mb-1">
+                    Nombre *
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <User className="h-5 w-5 text-gray-400" />
-                    </div>
+                    <User className="absolute inset-y-0 left-0 pl-3 h-5 w-5 text-gray-400" />
                     <input
                       id="name"
                       type="text"
                       value={formData.name}
-                      onChange={(e) => handleInputChange('name', e.target.value)}
-                      className={`appearance-none relative block w-full pl-10 pr-3 py-3 border ${
+                      onChange={e => handleInputChange('name', e.target.value)}
+                      className={`appearance-none relative block w-full pl-10 pr-3 py-2 border ${
                         errors.name ? 'border-red-300' : 'border-gray-300'
-                      } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
+                      } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500`}
                       placeholder="Juan Pérez"
                     />
                   </div>
-                  {errors.name && (
-                    <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-                  )}
+                  {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
                 </div>
-
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-white mb-2">
+                  <label htmlFor="phone" className="block text-sm font-medium text-white mb-1">
                     Teléfono *
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Phone className="h-5 w-5 text-gray-400" />
-                    </div>
+                    <Phone className="absolute inset-y-0 left-0 pl-3 h-5 w-5 text-gray-400" />
                     <input
                       id="phone"
                       type="tel"
                       value={formData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
-                      className={`appearance-none relative block w-full pl-10 pr-3 py-3 border ${
+                      onChange={e => handleInputChange('phone', e.target.value)}
+                      className={`appearance-none relative block w-full pl-10 pr-3 py-2 border ${
                         errors.phone ? 'border-red-300' : 'border-gray-300'
-                      } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
+                      } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500`}
                       placeholder="+57 300 123 4567"
                     />
                   </div>
-                  {errors.phone && (
-                    <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
-                  )}
+                  {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
                 </div>
-
                 <div>
-                  <label htmlFor="address" className="block text-sm font-medium text-white mb-2">
+                  <label htmlFor="address" className="block text-sm font-medium text-white mb-1">
                     Dirección *
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <MapPin className="h-5 w-5 text-gray-400" />
-                    </div>
+                    <MapPin className="absolute inset-y-0 left-0 pl-3 h-5 w-5 text-gray-400" />
                     <input
                       id="address"
                       type="text"
                       value={formData.address}
-                      onChange={(e) => handleInputChange('address', e.target.value)}
-                      className={`appearance-none relative block w-full pl-10 pr-3 py-3 border ${
+                      onChange={e => handleInputChange('address', e.target.value)}
+                      className={`appearance-none relative block w-full pl-10 pr-3 py-2 border ${
                         errors.address ? 'border-red-300' : 'border-gray-300'
-                      } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
+                      } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500`}
                       placeholder="Calle 123 #45-67"
                     />
                   </div>
-                  {errors.address && (
-                    <p className="mt-1 text-sm text-red-600">{errors.address}</p>
-                  )}
+                  {errors.address && <p className="mt-1 text-sm text-red-600">{errors.address}</p>}
                 </div>
               </>
             )}
 
+            {/* Email, contraseña, confirmación, rol */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-white mb-1">
                 Correo Electrónico *
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
-                </div>
+                <Mail className="absolute inset-y-0 left-0 pl-3 h-5 w-5 text-gray-400" />
                 <input
                   id="email"
                   type="email"
                   value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  className={`appearance-none relative block w-full pl-10 pr-3 py-3 border ${
+                  onChange={e => handleInputChange('email', e.target.value)}
+                  className={`appearance-none relative block w-full pl-10 pr-3 py-2 border ${
                     errors.email ? 'border-red-300' : 'border-gray-300'
-                  } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
+                  } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500`}
                   placeholder="correo@ejemplo.com"
                 />
               </div>
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-              )}
+              {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
             </div>
-
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-white mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-white mb-1">
                 Contraseña *
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
+                <Lock className="absolute inset-y-0 left-0 pl-3 h-5 w-5 text-gray-400" />
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
-                  className={`appearance-none relative block w-full pl-10 pr-10 py-3 border ${
+                  onChange={e => handleInputChange('password', e.target.value)}
+                  className={`appearance-none relative block w-full pl-10 pr-10 py-2 border ${
                     errors.password ? 'border-red-300' : 'border-gray-300'
-                  } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
+                  } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500`}
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-gray-400" />
-                  )}
+                  {showPassword ? <EyeOff className="h-5 w-5 text-gray-400" /> : <Eye className="h-5 w-5 text-gray-400" />}
                 </button>
               </div>
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-              )}
+              {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
             </div>
-
-            {isLogin && (
-              <div>
-                <label htmlFor="role" className="block text-sm font-medium text-white mb-2">
-                  Rol de Usuario *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <select
-                    id="role"
-                    value={formData.role}
-                    onChange={(e) => handleInputChange('role', e.target.value)}
-                    className={`appearance-none relative block w-full pl-10 pr-10 py-3 border ${
-                      errors.role ? 'border-red-300' : 'border-gray-300'
-                    } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
-                  >
-                    <option value="">Seleccione un rol</option>
-                    <option value="Administrador">Administrador</option>
-                    <option value="Vendedor">Vendedor</option>
-                    <option value="Cliente">Cliente</option>
-                    <option value="Mecánico">Mecánico</option>
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                </div>
-                {errors.role && (
-                  <p className="mt-1 text-sm text-red-600">{errors.role}</p>
-                )}
-              </div>
-            )}
-
             {!isLogin && (
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-white mb-2">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-white mb-1">
                   Confirmar Contraseña *
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
-                  </div>
+                  <Lock className="absolute inset-y-0 left-0 pl-3 h-5 w-5 text-gray-400" />
                   <input
                     id="confirmPassword"
-                    type="password"
+                    type={showConfirmPassword ? 'text' : 'password'}
                     value={formData.confirmPassword}
-                    onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                    className={`appearance-none relative block w-full pl-10 pr-3 py-3 border ${
+                    onChange={e => handleInputChange('confirmPassword', e.target.value)}
+                    className={`appearance-none relative block w-full pl-10 pr-10 py-2 border ${
                       errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                    } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
+                    } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500`}
                     placeholder="••••••••"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    aria-label={showConfirmPassword ? 'Ocultar confirmación' : 'Mostrar confirmación'}
+                  >
+                    {showConfirmPassword ? <EyeOff className="h-5 w-5 text-gray-400" /> : <Eye className="h-5 w-5 text-gray-400" />}
+                  </button>
                 </div>
-                {errors.confirmPassword && (
-                  <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
-                )}
+                {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
               </div>
             )}
+            <div>
+              <label htmlFor="role" className="block text-sm font-medium text-white mb-1">
+                Rol de Usuario *
+              </label>
+              <div className="relative">
+                <select
+                  id="role"
+                  value={formData.role}
+                  onChange={e => handleInputChange('role', e.target.value)}
+                  className={`appearance-none relative block w-full pl-3 pr-10 py-2 text-sm border ${
+                    errors.role ? 'border-red-300' : 'border-gray-300'
+                  } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500`}
+                >
+                  <option value="">Seleccione un rol</option>
+                  <option value="Administrador">Administrador</option>
+                  <option value="Vendedor">Vendedor</option>
+                  <option value="Cliente">Cliente</option>
+                  <option value="Mecánico">Mecánico</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                </div>
+                {errors.role && <p className="mt-1 text-sm text-red-600">{errors.role}</p>}
+              </div>
+            </div>
           </div>
 
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors"
-            >
-              {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
-            </button>
-          </div>
+          <button
+            type="submit"
+            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors"
+          >
+            {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
+          </button>
 
           <div className="flex items-center justify-between">
-            <button
-              type="button"
-              onClick={() => setShowForgotPassword(true)}
-              className="text-sm text-orange-400 hover:text-orange-300"
-            >
-              ¿Olvidó su contraseña?
-            </button>
-            
-            <button
-              type="button"
-              onClick={() => {
-                setIsLogin(!isLogin);
-                setFormData({
-                  email: formData.email,
-                  password: '',
-                  name: '',
-                  phone: '',
-                  address: '',
-                  confirmPassword: '',
-                  recoveryEmail: '',
-                  role: ''
-                });
-                setErrors({});
-              }}
-              className="text-sm text-orange-400 hover:text-orange-300"
-            >
-              {isLogin ? 'Crear cuenta nueva' : 'Ya tengo cuenta'}
-            </button>
+            {isLogin ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-sm text-orange-400 hover:text-orange-300"
+                >
+                  ¿Olvidó su contraseña?
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsLogin(false);
+                    setFormData({
+                      email: formData.email,
+                      password: '',
+                      name: '',
+                      phone: '',
+                      address: '',
+                      confirmPassword: '',
+                      recoveryEmail: '',
+                      role: ''
+                    });
+                    setErrors({});
+                  }}
+                  className="text-sm text-orange-400 hover:text-orange-300"
+                >
+                  Crear cuenta nueva
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setIsLogin(true);
+                  setFormData({
+                    email: formData.email,
+                    password: '',
+                    name: '',
+                    phone: '',
+                    address: '',
+                    confirmPassword: '',
+                    recoveryEmail: '',
+                    role: ''
+                  });
+                  setErrors({});
+                }}
+                className="text-sm text-orange-400 hover:text-orange-300"
+              >
+                Ya tengo cuenta
+              </button>
+            )}
           </div>
-
-
         </form>
       </div>
     </div>
