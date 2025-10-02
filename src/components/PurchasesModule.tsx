@@ -92,7 +92,7 @@ export const PurchasesModule: React.FC<PurchasesModuleProps> = ({ showAlert }) =
 
   // Order Modal Component
   const OrderModal = () => (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 w-full h-full backdrop-blur-sm flex items-center justify-center z-50">
       <div className="glass-card-strong max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-5">
           <div className="flex justify-between items-center mb-4">
@@ -533,7 +533,7 @@ export const PurchasesModule: React.FC<PurchasesModuleProps> = ({ showAlert }) =
       
       {/* Supplier Modal */}
       {showSupplierModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 w-full h-full backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="glass-card-strong max-w-2xl w-full">
             <div className="p-5">
               <div className="flex justify-between items-center mb-4">
@@ -548,113 +548,203 @@ export const PurchasesModule: React.FC<PurchasesModuleProps> = ({ showAlert }) =
                 </button>
               </div>
               
-              <form onSubmit={handleAddSupplier} className="space-y-3">
-                <div className="grid grid-cols-1 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-300 mb-1">Nombre <span className="text-red-500">*</span></label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={newSupplier.name}
-                      onChange={handleSupplierInputChange}
-                      className="w-full px-3 py-1.5 text-sm bg-white/5 border border-white/10 rounded-md text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                      required
-                    />
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-medium text-gray-300 mb-1">Contacto <span className="text-red-500">*</span></label>
+              <form onSubmit={handleAddSupplier} className="space-y-4">
+                <div className="space-y-4">
+                  {/* Nombre del Proveedor */}
+                  <div className="relative">
+                    <label className="block text-sm font-medium text-gray-200 mb-1.5">
+                      <span className="flex items-center">
+                        <Building className="h-4 w-4 mr-2 text-gray-300" />
+                        Nombre <span className="text-red-500 ml-1">*</span>
+                      </span>
+                    </label>
                       <input
                         type="text"
-                        name="contactPerson"
-                        value={newSupplier.contactPerson}
+                        name="name"
+                        value={newSupplier.name}
                         onChange={handleSupplierInputChange}
-                        className="w-full px-3 py-1.5 text-sm bg-white/5 border border-white/10 rounded-md text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-3 py-2 text-sm bg-white/5 border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        placeholder="Nombre del proveedor"
                         required
                       />
+                  </div>
+                  
+                  {/* Contacto y Teléfono */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="relative">
+                      <label className="block text-sm font-medium text-gray-200 mb-1.5">
+                        <span className="flex items-center">
+                          <svg className="h-4 w-4 mr-2 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                          Contacto <span className="text-red-500 ml-1">*</span>
+                        </span>
+                      </label>
+                        <input
+                          type="text"
+                          name="contactPerson"
+                          value={newSupplier.contactPerson}
+                          onChange={handleSupplierInputChange}
+                          className="w-full px-3 py-2 text-sm bg-white/5 border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          placeholder="Nombre del contacto"
+                          required
+                        />
                     </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-300 mb-1">Teléfono</label>
+                    
+                    <div className="relative">
+                      <label className="block text-sm font-medium text-gray-200 mb-1.5">
+                        <span className="flex items-center">
+                          <svg className="h-4 w-4 mr-2 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                          </svg>
+                          Teléfono
+                        </span>
+                      </label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={newSupplier.phone}
+                          onChange={handleSupplierInputChange}
+                          className="w-full px-3 py-2 text-sm bg-white/5 border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          placeholder="+57 300 123 4567"
+                        />
+                    </div>
+                  </div>
+                  
+                  {/* Email */}
+                  <div className="relative">
+                    <label className="block text-sm font-medium text-gray-200 mb-1.5">
+                      <span className="flex items-center">
+                        <svg className="h-4 w-4 mr-2 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        Correo Electrónico
+                      </span>
+                    </label>
                       <input
-                        type="tel"
-                        name="phone"
-                        value={newSupplier.phone}
+                        type="email"
+                        name="email"
+                        value={newSupplier.email}
                         onChange={handleSupplierInputChange}
-                        className="w-full px-3 py-1.5 text-sm bg-white/5 border border-white/10 rounded-md text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-3 py-2 text-sm bg-white/5 border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        placeholder="correo@proveedor.com"
                       />
-                    </div>
                   </div>
                   
-                  <div>
-                    <label className="block text-xs font-medium text-gray-300 mb-1">Email</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={newSupplier.email}
-                      onChange={handleSupplierInputChange}
-                      className="w-full px-3 py-1.5 text-sm bg-white/5 border border-white/10 rounded-md text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    />
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-medium text-gray-300 mb-1">NIT/RUT <span className="text-red-500">*</span></label>
-                      <input
-                        type="text"
-                        name="taxId"
-                        value={newSupplier.taxId}
-                        onChange={handleSupplierInputChange}
-                        className="w-full px-3 py-1.5 text-sm bg-white/5 border border-white/10 rounded-md text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                        required
-                      />
+                  {/* NIT/RUT y Categoría */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="relative">
+                      <label className="block text-sm font-medium text-gray-200 mb-1.5">
+                        <span className="flex items-center">
+                          <svg className="h-4 w-4 mr-2 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          NIT/RUT <span className="text-red-500 ml-1">*</span>
+                        </span>
+                      </label>
+                        <input
+                          type="text"
+                          name="taxId"
+                          value={newSupplier.taxId}
+                          onChange={handleSupplierInputChange}
+                          className="w-full px-3 py-2 text-sm bg-white/5 border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          placeholder="Número de identificación tributaria"
+                          required
+                        />
                     </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-300 mb-1">Categoría</label>
-                      <select
-                        name="category"
-                        value={newSupplier.category}
-                        onChange={handleSupplierInputChange}
-                        className="w-full px-3 py-1.5 text-sm bg-white/5 border border-white/10 rounded-md text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                      >
-                        <option value="Vehículos">Vehículos</option>
-                        <option value="Repuestos">Repuestos</option>
-                        <option value="Accesorios">Accesorios</option>
-                        <option value="Servicios">Servicios</option>
-                      </select>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-xs font-medium text-gray-300 mb-1">Dirección</label>
-                    <textarea
-                      name="address"
-                      value={newSupplier.address}
-                      onChange={handleSupplierInputChange}
-                      rows={2}
-                      className="w-full px-3 py-1.5 text-sm bg-white/5 border border-white/10 rounded-md text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    />
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-medium text-gray-300 mb-1">Términos de Pago</label>
-                      <select
-                        name="paymentTerms"
-                        value={newSupplier.paymentTerms}
-                        onChange={handleSupplierInputChange}
-                        className="w-full px-3 py-1.5 text-sm bg-white/5 border border-white/10 rounded-md text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                      >
-                        <option value="Contado">Contado</option>
-                        <option value="15 días">15 días</option>
-                        <option value="30 días">30 días</option>
-                        <option value="60 días">60 días</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-300 mb-1">Límite Crédito</label>
+                    
+                    <div className="relative">
+                      <label className="block text-sm font-medium text-gray-200 mb-1.5">
+                        <span className="flex items-center">
+                          <svg className="h-4 w-4 mr-2 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                          </svg>
+                          Categoría
+                        </span>
+                      </label>
                       <div className="relative">
-                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">$</span>
+                        <select
+                          name="category"
+                          value={newSupplier.category}
+                          onChange={handleSupplierInputChange}
+                          className="w-full pl-10 pr-3 py-2 text-sm bg-white/5 border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent appearance-none"
+                        >
+                          <option value="Vehículos">Vehículos</option>
+                          <option value="Repuestos">Repuestos</option>
+                          <option value="Accesorios">Accesorios</option>
+                          <option value="Servicios">Servicios</option>
+                        </select>
+                        <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                          <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Dirección */}
+                  <div className="relative">
+                    <label className="block text-sm font-medium text-gray-200 mb-1.5">
+                      <span className="flex items-center">
+                        <svg className="h-4 w-4 mr-2 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Dirección
+                      </span>
+                    </label>
+                      <textarea
+                        name="address"
+                        value={newSupplier.address}
+                        onChange={handleSupplierInputChange}
+                        rows={2}
+                        className="w-full px-3 py-2 text-sm bg-white/5 border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        placeholder="Dirección completa del proveedor"
+                      />
+                  </div>
+                  
+                  {/* Términos de Pago y Límite de Crédito */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="relative">
+                      <label className="block text-sm font-medium text-gray-200 mb-1.5">
+                        <span className="flex items-center">
+                          <svg className="h-4 w-4 mr-2 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                          Términos de Pago
+                        </span>
+                      </label>
+                      <div className="relative">
+                        <select
+                          name="paymentTerms"
+                          value={newSupplier.paymentTerms}
+                          onChange={handleSupplierInputChange}
+                          className="w-full pl-10 pr-3 py-2 text-sm bg-white/5 border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent appearance-none"
+                        >
+                          <option value="Contado">Contado</option>
+                          <option value="15 días">15 días</option>
+                          <option value="30 días">30 días</option>
+                          <option value="60 días">60 días</option>
+                        </select>
+                        <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                          <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="relative">
+                      <label className="block text-sm font-medium text-gray-200 mb-1.5">
+                        <span className="flex items-center">
+                          <svg className="h-4 w-4 mr-2 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Límite de Crédito
+                        </span>
+                      </label>
+                      <div className="relative">
                         <input
                           type="number"
                           name="creditLimit"
@@ -662,16 +752,24 @@ export const PurchasesModule: React.FC<PurchasesModuleProps> = ({ showAlert }) =
                           onChange={handleSupplierInputChange}
                           min="0"
                           step="100000"
-                          className="w-full pl-8 pr-3 py-1.5 text-sm bg-white/5 border border-white/10 rounded-md text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent text-right"
+                          className="w-full px-3 py-2 text-sm bg-white/5 border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent text-right"
                           placeholder="0.00"
                         />
                       </div>
                     </div>
                   </div>
                   
+                  {/* Estado */}
                   <div className="pt-2">
-                    <label className="block text-xs font-medium text-gray-300 mb-2">Estado</label>
-                    <div className="flex items-center space-x-4">
+                    <label className="block text-sm font-medium text-gray-200 mb-2">
+                      <span className="flex items-center">
+                        <svg className="h-4 w-4 mr-2 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        Estado
+                      </span>
+                    </label>
+                    <div className="flex items-center space-x-6 pl-1">
                       <label className="inline-flex items-center">
                         <input
                           type="radio"
@@ -679,9 +777,9 @@ export const PurchasesModule: React.FC<PurchasesModuleProps> = ({ showAlert }) =
                           value="active"
                           checked={newSupplier.status === 'active'}
                           onChange={handleSupplierInputChange}
-                          className="h-3.5 w-3.5 text-orange-500 focus:ring-orange-500"
+                          className="h-4 w-4 text-orange-500 focus:ring-orange-500 border-white/20"
                         />
-                        <span className="ml-2 text-xs text-gray-300">Activo</span>
+                        <span className="ml-2 text-sm text-gray-200">Activo</span>
                       </label>
                       <label className="inline-flex items-center">
                         <input
@@ -690,27 +788,28 @@ export const PurchasesModule: React.FC<PurchasesModuleProps> = ({ showAlert }) =
                           value="inactive"
                           checked={newSupplier.status === 'inactive'}
                           onChange={handleSupplierInputChange}
-                          className="h-3.5 w-3.5 text-orange-500 focus:ring-orange-500"
+                          className="h-4 w-4 text-orange-500 focus:ring-orange-500 border-white/20"
                         />
-                        <span className="ml-2 text-xs text-gray-300">Inactivo</span>
+                        <span className="ml-2 text-sm text-gray-200">Inactivo</span>
                       </label>
                     </div>
                   </div>
                 </div>
                 
-                <div className="pt-4 flex justify-end space-x-2 border-t border-white/10 mt-4">
+                <div className="pt-6 flex justify-end space-x-3 border-t border-white/10 mt-6">
                   <button
                     type="button"
                     onClick={() => setShowSupplierModal(false)}
-                    className="px-4 py-1.5 text-xs font-medium text-gray-300 hover:text-white transition-colors"
+                    className="px-6 py-2 text-sm font-medium text-gray-300 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors duration-200"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-1.5 bg-orange-500 text-white text-xs font-medium rounded-md hover:bg-orange-600 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-orange-500 transition-colors"
+                    className="px-6 py-2 bg-orange-600 hover:bg-orange-500 text-white text-sm font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors duration-200 flex items-center"
                   >
-                    Guardar
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    Guardar Proveedor
                   </button>
                 </div>
               </form>

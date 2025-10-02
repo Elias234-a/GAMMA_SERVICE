@@ -409,9 +409,9 @@ export const VehiclesModule: React.FC<VehiclesModuleProps> = ({
                   <select
                     value={formData.brand}
                     onChange={(e) => handleInputChange('brand', e.target.value)}
-                    className={`vehicle-select w-full px-3 py-2 border ${
+                    className={`w-full px-3 py-2 border ${
                       errors.brand ? 'border-red-400' : 'border-white/20'
-                    } rounded-lg glass-content focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
+                    } rounded-lg glass-content text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
                   >
                     <option value="">Seleccionar marca</option>
                     {brands.map(brand => (
@@ -461,9 +461,9 @@ export const VehiclesModule: React.FC<VehiclesModuleProps> = ({
                   <select
                     value={formData.color}
                     onChange={(e) => handleInputChange('color', e.target.value)}
-                    className={`vehicle-select w-full px-3 py-2 border ${
+                    className={`w-full px-3 py-2 border ${
                       errors.color ? 'border-red-400' : 'border-white/20'
-                    } rounded-lg glass-content focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
+                    } rounded-lg glass-content text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
                   >
                     <option value="">Seleccionar color</option>
                     {colors.map(color => (
