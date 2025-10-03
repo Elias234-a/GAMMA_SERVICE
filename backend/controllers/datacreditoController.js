@@ -1,8 +1,8 @@
-const axios = require('axios');
-const { validationResult } = require('express-validator');
-const { v4: uuidv4 } = require('uuid');
-const Datacredito = require('../models/Datacredito');
-const { createNotification } = require('../utils/notifications');
+import axios from 'axios';
+import { validationResult } from 'express-validator';
+import { v4 as uuidv4 } from 'uuid';
+import Datacredito from '../models/Datacredito.js';
+import { createNotification } from '../utils/notifications.js';
 
 // Configuración de la API de Datacrédito
 const DATACREDITO_API_URL = process.env.DATACREDITO_API_URL || 'https://api.datacredito.com.co';
@@ -23,13 +23,12 @@ const datacreditoClient = axios.create({
     'x-request-id': uuidv4()
   }
 });
-
 /**
  * Consulta el historial crediticio de una persona
  * @route POST /api/datacredito/consult
  * @access private
  */
-exports.consultCreditReport = async (req, res, next) => {
+export const consultCreditReport = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -37,6 +36,8 @@ exports.consultCreditReport = async (req, res, next) => {
     }
 
     const { identification, identificationType, firstName, lastName, email, phone } = req.body;
+
+    // Verificar si ya existe una consulta reciente (evitar consultas duplicadas)
     
     // Verificar si ya existe una consulta reciente (evitar consultas duplicadas)
     const recentQuery = await Datacredito.findOne({
@@ -151,7 +152,7 @@ exports.consultCreditReport = async (req, res, next) => {
  * @route GET /api/datacredito/history
  * @access private
  */
-exports.getConsultationHistory = async (req, res, next) => {
+export const getConsultationHistory = async (req, res, next) => {
   try {
     const { startDate, endDate, identification, page = 1, limit = 10 } = req.query;
     
@@ -201,7 +202,7 @@ exports.getConsultationHistory = async (req, res, next) => {
  * @route GET /api/datacredito/reports/:id
  * @access private
  */
-exports.getReportDetails = async (req, res, next) => {
+export const getReportDetails = async (req, res, next) => {
   try {
     const report = await Datacredito.findOne({
       _id: req.params.id,
@@ -241,7 +242,7 @@ exports.getReportDetails = async (req, res, next) => {
  * @route POST /api/datacredito/alerts
  * @access private
  */
-exports.setupCreditAlerts = async (req, res, next) => {
+export const setupCreditAlerts = async (req, res, next) => {
   try {
     const { identification, identificationType, email, phone, alertTypes } = req.body;
     
@@ -287,7 +288,7 @@ exports.setupCreditAlerts = async (req, res, next) => {
  * @route POST /api/datacredito/validate-id
  * @access private
  */
-exports.validateIdentity = async (req, res, next) => {
+export const validateIdentity = async (req, res, next) => {
   try {
     const { identification, identificationType, firstName, lastName, birthDate } = req.body;
     

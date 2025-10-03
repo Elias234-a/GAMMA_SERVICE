@@ -1,9 +1,9 @@
-const axios = require('axios');
-const { v4: uuidv4 } = require('uuid');
-const Dian = require('../models/Dian');
-const Company = require('../models/Company');
-const { validationResult } = require('express-validator');
-const { createNotification } = require('../utils/notifications');
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import Dian from '../models/Dian.js';
+import Company from '../models/Company.js';
+import { validationResult } from 'express-validator';
+import { createNotification } from '../utils/notifications.js';
 
 // Configuración de la API de la DIAN
 const DIAN_API_URL = process.env.DIAN_API_URL || 'https://facturaelectronica.dian.gov.co/habilitacion';
@@ -30,7 +30,7 @@ const dianClient = axios.create({
  * @route POST /api/dian/invoices
  * @access private
  */
-exports.createInvoice = async (req, res, next) => {
+export const createInvoice = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -115,80 +115,78 @@ exports.createInvoice = async (req, res, next) => {
         price: item.price,
         tax: item.tax || 19, // IVA 19%
         discount: item.discount || 0,
-        total: (item.quantity * item.price) * (1 + (item.tax || 19) / 100)
+        sku: item.sku || '',
+        unit: item.unit || '94' // 94 = Unidad de servicio
       })),
       payment: {
-        method: paymentMethod || '1', // 1: Contado, 2: Crédito
-        terms: paymentMethod === '2' ? '30 días' : 'Contado'
+        method: paymentMethod || '1', // 1 = Contado, 2 = Crédito
+        dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        terms: 'Pago a 30 días'
       },
-      subtotal,
-      tax,
-      total,
-      notes: notes || `Factura generada para la orden ${orderId}`
+      notes: notes || '',
+      subtotal: subtotal,
+      tax: tax,
+      total: total,
+      status: 'draft', // draft, generated, sent, accepted, rejected, cancelled
+      order: orderId,
+      createdBy: req.user._id
     };
 
-    // Enviar a la DIAN (modo pruebas o producción)
-    let dianResponse;
-    if (process.env.NODE_ENV === 'production' && company.dianEnabled) {
-      const response = await dianClient.post('/invoices', invoiceData);
-      dianResponse = response.data;
+    // En producción, enviar a la DIAN
+    let dianResponse = {};
+    if (process.env.NODE_ENV === 'production' && DIAN_API_KEY) {
+      try {
+        const response = await dianClient.post('/invoices', invoiceData);
+        dianResponse = response.data;
+        invoiceData.status = 'generated';
+        invoiceData.cufe = dianResponse.cufe;
+        invoiceData.qrCode = dianResponse.qrCode;
+        invoiceData.pdfUrl = dianResponse.pdfUrl;
+        invoiceData.xmlUrl = dianResponse.xmlUrl;
+        invoiceData.dianResponse = dianResponse;
+      } catch (error) {
+        console.error('Error al enviar factura a la DIAN:', error.response?.data || error.message);
+        invoiceData.status = 'error';
+        invoiceData.error = error.response?.data || error.message;
+      }
     } else {
-      // En modo desarrollo o pruebas, simular respuesta
-      dianResponse = {
-        status: 'accepted',
-        message: 'Factura recibida en modo de pruebas',
-        uuid: invoiceData.id,
-        cufe: `TEST-${invoiceData.id}`,
-        qrCode: 'data:image/png;base64,...',
-        pdfUrl: 'https://example.com/invoices/test.pdf',
-        xmlUrl: 'https://example.com/invoices/test.xml'
-      };
+      // En desarrollo, simular respuesta exitosa
+      invoiceData.status = 'generated';
+      invoiceData.cufe = `TEST-${uuidv4()}`;
+      invoiceData.qrCode = 'https://example.com/qr-code.png';
+      invoiceData.pdfUrl = 'https://example.com/invoice.pdf';
+      invoiceData.xmlUrl = 'https://example.com/invoice.xml';
+      invoiceData.dianResponse = { success: true, message: 'Modo de prueba' };
     }
 
-    // Guardar factura en la base de datos
-    const invoice = new Dian({
-      ...invoiceData,
-      order: orderId,
-      company: company._id,
-      dianResponse,
-      status: dianResponse.status === 'accepted' ? 'accepted' : 'rejected',
-      cufe: dianResponse.cufe,
-      qrCode: dianResponse.qrCode,
-      pdfUrl: dianResponse.pdfUrl,
-      xmlUrl: dianResponse.xmlUrl
-    });
-
+    // Guardar la factura en la base de datos
+    const invoice = new Dian(invoiceData);
     await invoice.save();
 
-    // Actualizar orden con referencia a la factura
+    // Actualizar la orden con la referencia a la factura
     order.invoice = invoice._id;
-    order.invoiceStatus = invoice.status;
+    order.status = 'completed';
     await order.save();
 
     // Notificar al cliente
-    await createNotification(
-      order.client._id,
-      'success',
-      'Factura Generada',
-      `Se ha generado la factura #${invoice.number} para su orden #${orderId}`,
-      { invoiceId: invoice._id, orderId: order._id }
-    );
+    if (customer.email) {
+      await createNotification(
+        customer.email,
+        'info',
+        'Factura Generada',
+        `Se ha generado la factura #${invoice.number} por un valor de $${total.toLocaleString('es-CO')}`,
+        { invoiceId: invoice._id, orderId }
+      );
+    }
 
     res.status(201).json({
-      message: 'Factura generada exitosamente',
+      success: true,
+      message: 'Factura generada correctamente',
       invoice: {
-        id: invoice._id,
-        number: invoice.number,
-        date: invoice.issueDate,
-        total: invoice.total,
-        status: invoice.status,
-        cufe: invoice.cufe,
-        pdfUrl: invoice.pdfUrl,
-        xmlUrl: invoice.xmlUrl,
-        qrCode: invoice.qrCode
+        ...invoice.toObject(),
+        dianResponse: process.env.NODE_ENV === 'production' ? 'Oculto en producción' : invoice.dianResponse
       }
     });
-
   } catch (error) {
     console.error('Error al generar factura:', error);
     next(error);
@@ -200,50 +198,52 @@ exports.createInvoice = async (req, res, next) => {
  * @route GET /api/dian/invoices/:id/status
  * @access private
  */
-exports.getInvoiceStatus = async (req, res, next) => {
+export const getInvoiceStatus = async (req, res, next) => {
   try {
     const invoice = await Dian.findById(req.params.id)
       .populate('order', 'number status')
-      .populate('company', 'name taxId');
+      .populate('createdBy', 'name email');
 
     if (!invoice) {
       return res.status(404).json({ message: 'Factura no encontrada' });
     }
 
     // Verificar permisos
-    if (invoice.company._id.toString() !== req.user.company?.toString() && 
-        req.user.role !== 'admin') {
+    if (invoice.createdBy._id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'No autorizado para ver esta factura' });
     }
 
-    // En producción, consultar estado real en la DIAN
-    if (process.env.NODE_ENV === 'production') {
+    // En producción, verificar estado en la DIAN
+    if (process.env.NODE_ENV === 'production' && DIAN_API_KEY) {
       try {
-        const response = await dianClient.get(`/invoices/${invoice.uuid}/status`);
+        const response = await dianClient.get(`/invoices/${invoice.id}/status`);
         invoice.status = response.data.status;
         invoice.dianResponse = response.data;
         await invoice.save();
       } catch (error) {
-        console.error('Error al consultar estado en DIAN:', error);
+        console.error('Error al consultar estado en la DIAN:', error.response?.data || error.message);
       }
     }
 
     res.json({
-      id: invoice._id,
-      number: invoice.number,
-      status: invoice.status,
-      cufe: invoice.cufe,
-      issueDate: invoice.issueDate,
-      total: invoice.total,
-      order: invoice.order,
-      company: invoice.company,
-      pdfUrl: invoice.pdfUrl,
-      xmlUrl: invoice.xmlUrl,
-      qrCode: invoice.qrCode,
-      lastUpdated: invoice.updatedAt
+      success: true,
+      invoice: {
+        id: invoice._id,
+        number: invoice.number,
+        status: invoice.status,
+        total: invoice.total,
+        issueDate: invoice.issueDate,
+        order: invoice.order,
+        createdBy: invoice.createdBy,
+        cufe: invoice.cufe,
+        qrCode: invoice.qrCode,
+        pdfUrl: invoice.pdfUrl,
+        xmlUrl: invoice.xmlUrl,
+        dianResponse: process.env.NODE_ENV === 'production' ? 'Oculto en producción' : invoice.dianResponse
+      }
     });
-
   } catch (error) {
+    console.error('Error al consultar estado de factura:', error);
     next(error);
   }
 };
@@ -253,7 +253,7 @@ exports.getInvoiceStatus = async (req, res, next) => {
  * @route GET /api/dian/invoices/:id/pdf
  * @access private
  */
-exports.downloadPdf = async (req, res, next) => {
+export const downloadPdf = async (req, res, next) => {
   try {
     const invoice = await Dian.findById(req.params.id);
     
@@ -262,24 +262,23 @@ exports.downloadPdf = async (req, res, next) => {
     }
 
     // Verificar permisos
-    if (invoice.company.toString() !== req.user.company?.toString() && 
-        req.user.role !== 'admin') {
+    if (invoice.createdBy.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'No autorizado para descargar esta factura' });
     }
 
-    // En producción, descargar de la URL de la DIAN
-    if (invoice.pdfUrl && invoice.pdfUrl.startsWith('http')) {
-      return res.redirect(invoice.pdfUrl);
+    if (!invoice.pdfUrl) {
+      return res.status(404).json({ message: 'PDF no disponible para esta factura' });
     }
-    
-    // Si no hay URL, generar un PDF temporal (en un entorno real, usar una biblioteca como pdfkit)
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=factura-${invoice.number}.pdf`);
-    
-    // Aquí iría la generación del PDF
-    res.send('PDF generado para factura ' + invoice.number);
-    
+
+    // Redirigir a la URL del PDF o enviar el archivo directamente
+    if (process.env.NODE_ENV === 'production') {
+      res.redirect(invoice.pdfUrl);
+    } else {
+      // En desarrollo, simular la descarga
+      res.download(invoice.pdfUrl, `factura-${invoice.number}.pdf`);
+    }
   } catch (error) {
+    console.error('Error al descargar PDF de factura:', error);
     next(error);
   }
 };
@@ -289,25 +288,13 @@ exports.downloadPdf = async (req, res, next) => {
  * @route GET /api/dian/invoices
  * @access private
  */
-exports.getInvoices = async (req, res, next) => {
+export const getInvoices = async (req, res, next) => {
   try {
     const { startDate, endDate, status, page = 1, limit = 10 } = req.query;
     
     const query = {};
     
-    // Filtrar por empresa del usuario (si no es admin)
-    if (req.user.role !== 'admin') {
-      const company = await Company.findOne({ user: req.user._id });
-      if (company) {
-        query.company = company._id;
-      } else {
-        // Si el usuario no tiene compañía, solo puede ver sus propias facturas
-        query['customer.email'] = req.user.email;
-      }
-    }
-    
-    // Filtros adicionales
-    if (status) query.status = status;
+    // Filtrar por fechas
     if (startDate || endDate) {
       query.issueDate = {};
       if (startDate) query.issueDate.$gte = new Date(startDate);
@@ -318,27 +305,40 @@ exports.getInvoices = async (req, res, next) => {
       }
     }
     
-    const [invoices, total] = await Promise.all([
-      Dian.find(query)
-        .sort({ issueDate: -1 })
-        .skip((page - 1) * limit)
-        .limit(parseInt(limit))
-        .populate('order', 'number status')
-        .populate('company', 'name taxId'),
-      Dian.countDocuments(query)
-    ]);
+    // Filtrar por estado
+    if (status) {
+      query.status = status;
+    }
+    
+    // Filtrar por empresa del usuario (si no es admin)
+    if (req.user.role !== 'admin') {
+      const company = await Company.findOne({ user: req.user._id });
+      if (company) {
+        query.company = company._id;
+      } else {
+        // Si el usuario no tiene empresa, solo mostrar sus facturas
+        query.createdBy = req.user._id;
+      }
+    }
+    
+    const options = {
+      page: parseInt(page, 10),
+      limit: parseInt(limit, 10),
+      sort: { createdAt: -1 },
+      populate: [
+        { path: 'order', select: 'number client' },
+        { path: 'createdBy', select: 'name email' }
+      ]
+    };
+    
+    const invoices = await Dian.paginate(query, options);
     
     res.json({
-      invoices,
-      pagination: {
-        total,
-        page: parseInt(page),
-        pages: Math.ceil(total / limit),
-        limit: parseInt(limit)
-      }
+      success: true,
+      ...invoices
     });
-    
   } catch (error) {
+    console.error('Error al obtener historial de facturas:', error);
     next(error);
   }
 };
@@ -348,7 +348,7 @@ exports.getInvoices = async (req, res, next) => {
  * @route POST /api/dian/invoices/:id/void
  * @access private/admin
  */
-exports.voidInvoice = async (req, res, next) => {
+export const voidInvoice = async (req, res, next) => {
   try {
     const { reason } = req.body;
     
@@ -356,78 +356,78 @@ exports.voidInvoice = async (req, res, next) => {
       return res.status(400).json({ message: 'Debe proporcionar una razón para la anulación' });
     }
     
-    const invoice = await Dian.findById(req.params.id);
-    
+    const invoice = await Dian.findById(req.params.id)
+      .populate('createdBy', 'name email')
+      .populate('order', 'number status');
+      
     if (!invoice) {
       return res.status(404).json({ message: 'Factura no encontrada' });
     }
     
     // Verificar que la factura no esté ya anulada
-    if (invoice.status === 'void') {
+    if (invoice.status === 'cancelled') {
       return res.status(400).json({ message: 'La factura ya está anulada' });
     }
     
-    // En producción, notificar a la DIAN
-    if (process.env.NODE_ENV === 'production') {
+    // En producción, enviar solicitud de anulación a la DIAN
+    if (process.env.NODE_ENV === 'production' && DIAN_API_KEY) {
       try {
-        await dianClient.post(`/invoices/${invoice.uuid}/void`, { reason });
+        await dianClient.post(`/invoices/${invoice.id}/void`, { reason });
       } catch (error) {
-        console.error('Error al anular factura en DIAN:', error);
-        return res.status(500).json({ 
+        console.error('Error al anular factura en la DIAN:', error.response?.data || error.message);
+        return res.status(500).json({
           message: 'Error al anular la factura en la DIAN',
-          error: error.message 
+          error: error.response?.data || error.message
         });
       }
     }
     
-    // Actualizar estado en la base de datos
-    invoice.status = 'void';
-    invoice.voidReason = reason;
-    invoice.voidDate = new Date();
-    await invoice.save();
+    // Actualizar estado de la factura
+    invoice.status = 'cancelled';
+    invoice.cancellation = {
+      date: new Date(),
+      reason,
+      cancelledBy: req.user._id
+    };
     
-    // Actualizar estado de la orden relacionada
+    const updatedInvoice = await invoice.save();
+    
+    // Actualizar estado de la orden
     if (invoice.order) {
-      await Order.findByIdAndUpdate(invoice.order, { 
-        invoiceStatus: 'void',
-        $push: {
-          notes: {
-            content: `Factura #${invoice.number} anulada: ${reason}`,
-            createdBy: req.user._id
-          }
-        }
-      });
+      await Order.findByIdAndUpdate(invoice.order._id, { status: 'cancelled' });
     }
     
-    // Notificar a los usuarios interesados
-    const notificationPromises = [];
-    
-    if (invoice.customer && invoice.customer.email) {
-      notificationPromises.push(
-        createNotification(
-          null, // Se enviará por correo
-          'warning',
-          'Factura Anulada',
-          `La factura #${invoice.number} ha sido anulada. Razón: ${reason}`,
-          { invoiceId: invoice._id, orderId: invoice.order }
-        )
+    // Registrar la anulación
+    await createNotification(
+      invoice.createdBy._id,
+      'warning',
+      'Factura Anulada',
+      `La factura #${invoice.number} ha sido anulada. Razón: ${reason}`,
+      { invoiceId: invoice._id, status: 'void' }
+    );
+
+    // Notificar al cliente si es diferente del creador
+    if (invoice.customer && invoice.customer.email && invoice.customer.email !== req.user.email) {
+      await createNotification(
+        null, // Se enviará por correo
+        'warning',
+        'Factura Anulada',
+        `La factura #${invoice.number} ha sido anulada. Razón: ${reason}`,
+        { 
+          invoiceId: invoice._id, 
+          orderId: invoice.order,
+          email: invoice.customer.email
+        }
       );
     }
-    
-    await Promise.all(notificationPromises);
-    
-    res.json({ 
-      message: 'Factura anulada exitosamente',
-      invoice: {
-        id: invoice._id,
-        number: invoice.number,
-        status: invoice.status,
-        voidReason: invoice.voidReason,
-        voidDate: invoice.voidDate
-      }
+
+    res.json({
+      success: true,
+      message: 'Factura anulada correctamente',
+      invoice: updatedInvoice
     });
-    
   } catch (error) {
+    console.error('Error al anular factura:', error);
     next(error);
   }
 };

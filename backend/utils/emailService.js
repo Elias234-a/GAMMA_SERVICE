@@ -1,7 +1,12 @@
-const nodemailer = require('nodemailer');
-const ejs = require('ejs');
-const path = require('path');
-const fs = require('fs').promises;
+import nodemailer from 'nodemailer';
+import ejs from 'ejs';
+import path from 'path';
+import { promises as fs } from 'fs';
+import { fileURLToPath } from 'url';
+
+// Get directory name in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Create a transporter object using the default SMTP transport
 const transporter = nodemailer.createTransport({
@@ -138,10 +143,43 @@ const sendOrderConfirmationEmail = async (email, name, order) => {
   );
 };
 
-module.exports = {
+/**
+ * Send a new order notification to admin/technicians
+ * @param {string} email - Recipient email address
+ * @param {string} technicianName - Technician's name
+ * @param {object} order - Order details
+ * @param {string} adminName - Admin's name (optional)
+ * @returns {Promise<object>} - Result of the sendEmail operation
+ */
+const sendNewOrderNotification = async (email, technicianName, order, adminName = null) => {
+  const subject = adminName 
+    ? `Nueva Orden Asignada - ${order.orderNumber}`
+    : `Nuevo Trabajo Asignado - Orden #${order.orderNumber}`;
+
+  return sendEmail(
+    email,
+    subject,
+    'new-order-notification',
+    {
+      name: adminName || technicianName,
+      orderNumber: order.orderNumber,
+      clientName: order.clientName,
+      serviceType: order.serviceType,
+      description: order.description,
+      status: order.status,
+      createdAt: order.createdAt,
+      isAdmin: !!adminName,
+      adminName,
+      technicianName
+    }
+  );
+};
+
+export {
   sendEmail,
   sendWelcomeEmail,
   sendPasswordResetEmail,
   sendOrderConfirmationEmail,
-  transporter
+  sendStatusUpdateEmail,
+  sendNewOrderNotification
 };

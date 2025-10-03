@@ -1,6 +1,6 @@
-const rateLimit = require('express-rate-limit');
-const { RateLimiterMongo } = require('rate-limiter-flexible');
-const mongoose = require('mongoose');
+import rateLimit from 'express-rate-limit';
+import { RateLimiterMongo } from 'rate-limiter-flexible';
+import mongoose from 'mongoose';
 
 // Create a MongoDB connection for the rate limiter
 const mongoConn = mongoose.connection;
@@ -75,14 +75,14 @@ const passwordResetRateLimiter = async (req, res, next) => {
     res.set('Retry-After', String(retryAfter));
     return res.status(429).json({
       success: false,
-      message: `Demasiadas solicitudes de restablecimiento de contraseña. Intente nuevamente en ${retryAfter} segundos.`,
+      message: 'Demasiadas solicitudes de restablecimiento de contraseña. Por favor, intente de nuevo más tarde.',
       retryAfter
     });
   }
 };
 
-module.exports = {
+export {
   apiLimiter,
   loginRateLimiter,
-  passwordResetRateLimiter,
+  passwordResetRateLimiter
 };

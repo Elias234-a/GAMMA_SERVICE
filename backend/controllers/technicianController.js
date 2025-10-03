@@ -1,14 +1,14 @@
-const Technician = require('../models/Technician');
-const User = require('../models/User');
-const { validationResult } = require('express-validator');
-const { createNotification } = require('../utils/notifications');
+import Technician from '../models/Technician.js';
+import User from '../models/User.js';
+import { validationResult } from 'express-validator';
+import { createNotification } from '../utils/notifications.js';
 
 /**
  * Crea un nuevo técnico
  * @route POST /api/technicians
  * @access private/admin
  */
-exports.createTechnician = async (req, res, next) => {
+export const createTechnician = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -61,7 +61,7 @@ exports.createTechnician = async (req, res, next) => {
  * @route GET /api/technicians
  * @access private
  */
-exports.getTechnicians = async (req, res, next) => {
+export const getTechnicians = async (req, res, next) => {
   try {
     const { status, specialty, available, page = 1, limit = 10 } = req.query;
     
@@ -98,7 +98,7 @@ exports.getTechnicians = async (req, res, next) => {
  * @route GET /api/technicians/:id
  * @access private
  */
-exports.getTechnicianById = async (req, res, next) => {
+export const getTechnicianById = async (req, res, next) => {
   try {
     const technician = await Technician.findById(req.params.id)
       .populate('user', 'name email phone')
@@ -120,7 +120,7 @@ exports.getTechnicianById = async (req, res, next) => {
  * @route PUT /api/technicians/:id
  * @access private/admin
  */
-exports.updateTechnician = async (req, res, next) => {
+export const updateTechnician = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -164,7 +164,7 @@ exports.updateTechnician = async (req, res, next) => {
  * @route PUT /api/technicians/:id/location
  * @access private/technician
  */
-exports.updateLocation = async (req, res, next) => {
+export const updateLocation = async (req, res, next) => {
   try {
     const { coordinates } = req.body;
     
@@ -203,7 +203,7 @@ exports.updateLocation = async (req, res, next) => {
  * @route GET /api/technicians/nearby
  * @access private
  */
-exports.findNearbyTechnicians = async (req, res, next) => {
+export const findNearbyTechnicians = async (req, res, next) => {
   try {
     const { longitude, latitude, maxDistance = 10000, specialty } = req.query; // maxDistance en metros
     
@@ -245,7 +245,7 @@ exports.findNearbyTechnicians = async (req, res, next) => {
  * @route GET /api/technicians/:id/stats
  * @access private
  */
-exports.getTechnicianStats = async (req, res, next) => {
+export const getTechnicianStats = async (req, res, next) => {
   try {
     const technician = await Technician.findById(req.params.id);
     

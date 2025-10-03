@@ -1,5 +1,5 @@
-const { validationResult } = require('express-validator');
-const logger = require('../utils/logger');
+import { validationResult } from 'express-validator';
+import logger from '../utils/logger.js';
 
 /**
  * Middleware to handle validation errors from express-validator
@@ -130,10 +130,11 @@ const validateContentType = (type) => {
   };
 };
 
-module.exports = {
+// Export all validation utilities
+export {
   validate,
   validateObjectId,
   hasRole,
-  validateContentType,
-  isValidObjectId
+  isValidObjectId,
+  validateContentType
 };

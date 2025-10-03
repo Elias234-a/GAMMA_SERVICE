@@ -1,14 +1,14 @@
-const Order = require('../models/Order');
-const Technician = require('../models/Technician');
-const User = require('../models/User');
-const { createNotification } = require('../utils/notifications');
-const { validationResult } = require('express-validator');
-const logger = require('../utils/logger');
-const { sendOrderConfirmationEmail } = require('../utils/emailService');
-const { success, error: apiError, validationError } = require('../utils/apiResponse');
-const { upload, handleUploadErrors } = require('../utils/fileUpload');
-const path = require('path');
-const fs = require('fs').promises;
+import Order from '../models/Order.js';
+import Technician from '../models/Technician.js';
+import User from '../models/User.js';
+import { createNotification } from '../utils/notifications.js';
+import { validationResult } from 'express-validator';
+import logger from '../utils/logger.js';
+import { sendOrderConfirmationEmail } from '../utils/emailService.js';
+import { success, error as apiError, validationError } from '../utils/apiResponse.js';
+import { upload, handleUploadErrors } from '../utils/fileUpload.js';
+import path from 'path';
+import { promises as fs } from 'fs';
 
 // Status transition mapping with allowed next statuses
 const STATUS_TRANSITIONS = {
@@ -24,7 +24,7 @@ const STATUS_TRANSITIONS = {
  * @route POST /api/orders
  * @access private
  */
-exports.createOrder = async (req, res, next) => {
+export const createOrder = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -87,7 +87,7 @@ exports.createOrder = async (req, res, next) => {
  * @route GET /api/orders
  * @access private
  */
-exports.getOrders = async (req, res, next) => {
+export const getOrders = async (req, res, next) => {
   try {
     const { 
       status, 
@@ -203,7 +203,7 @@ exports.getOrders = async (req, res, next) => {
  * @route GET /api/orders/:id
  * @access private
  */
-exports.getOrderById = async (req, res, next) => {
+export const getOrderById = async (req, res, next) => {
   try {
     const order = await Order.findById(req.params.id)
       .populate('client', 'name email phone address')
@@ -276,7 +276,7 @@ exports.getOrderById = async (req, res, next) => {
  * @route PUT /api/orders/:id
  * @access private
  */
-exports.updateOrder = async (req, res, next) => {
+export const updateOrder = async (req, res, next) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   
@@ -522,7 +522,7 @@ async function notifyOrderUpdate(order, updatedBy, changes) {
  * @route DELETE /api/orders/:id
  * @access private/admin
  */
-exports.deleteOrder = async (req, res, next) => {
+export const deleteOrder = async (req, res, next) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   
@@ -611,7 +611,7 @@ exports.deleteOrder = async (req, res, next) => {
  * @route POST /api/orders/:id/notes
  * @access private
  */
-exports.addNote = [
+export const addNote = [
   // Validate input
   body('content')
     .trim()
@@ -695,7 +695,7 @@ exports.addNote = [
  * @route POST /api/orders/:id/attachments
  * @access private
  */
-exports.uploadAttachments = [
+export const uploadAttachments = [
   // Handle file uploads
   upload.array('files', 5), // Max 5 files at once
   handleUploadErrors,
@@ -820,7 +820,7 @@ exports.uploadAttachments = [
  * @route GET /api/orders/:orderId/attachments/:attachmentId/download
  * @access private
  */
-exports.downloadAttachment = async (req, res, next) => {
+export const downloadAttachment = async (req, res, next) => {
   try {
     const { orderId, attachmentId } = req.params;
     const user = req.user;
@@ -895,7 +895,7 @@ exports.downloadAttachment = async (req, res, next) => {
  * @route GET /api/orders/statistics
  * @access private/admin
  */
-exports.getOrderStatistics = async (req, res, next) => {
+export const getOrderStatistics = async (req, res, next) => {
   try {
     const { startDate, endDate, groupBy = 'day' } = req.query;
     

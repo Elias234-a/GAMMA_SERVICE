@@ -1,12 +1,12 @@
-const winston = require('winston');
+import winston from 'winston';
 const { combine, timestamp, printf, colorize, json } = winston.format;
-const path = require('path');
-const fs = require('fs');
+import path from 'path';
+import { existsSync, mkdirSync } from 'fs';
 
 // Create logs directory if it doesn't exist
 const logDir = 'logs';
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir);
+if (!existsSync(logDir)) {
+  mkdirSync(logDir);
 }
 
 // Custom format for console output
@@ -89,4 +89,4 @@ logger.stream = {
   }
 };
 
-module.exports = logger;
+export default logger;

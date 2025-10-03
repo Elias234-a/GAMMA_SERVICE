@@ -145,7 +145,7 @@ const paginated = (res, data, total, page, limit, message = 'Datos obtenidos cor
   });
 };
 
-module.exports = {
+export {
   success,
   error,
   notFound,
