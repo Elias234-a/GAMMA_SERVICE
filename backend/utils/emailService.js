@@ -39,29 +39,29 @@ const TEMPLATES_DIR = path.join(__dirname, '../templates/emails');
  * @param {object} data - Data to be passed to the template
  * @returns {Promise<object>} - Result of the sendMail operation
  */
-const sendEmail = async (to, subject, template, data = {}) => {
+export const sendEmail = async (to, subject, template, data = {}) => {
   try {
     // Read the email template
     const templatePath = path.join(TEMPLATES_DIR, `${template}.ejs`);
     const templateContent = await fs.readFile(templatePath, 'utf-8');
     
     // Render the email template with the provided data
-    const html = ejs.render(templateContent, { 
+    const html = ejs.render(templateContent, {
       ...data,
       year: new Date().getFullYear(),
-      appName: process.env.APP_NAME || 'Gamma Service'
+      appName: process.env.APP_NAME || 'Tu Aplicación'
     });
 
-    // Send mail with defined transport object
+    // Send the email
     const info = await transporter.sendMail({
-      from: `"${process.env.SMTP_FROM_NAME || 'Gamma Service'}" <${process.env.SMTP_FROM || 'no-reply@gamma-service.com'}>`,
+      from: `"${process.env.EMAIL_FROM_NAME || 'Equipo'}" <${process.env.EMAIL_FROM}>`,
       to,
       subject,
       html,
+      text: html.replace(/<[^>]*>/g, '') // Convert HTML to plain text
     });
 
-    console.log('Message sent: %s', info.messageId);
-    return { success: true, messageId: info.messageId };
+    return info;
   } catch (error) {
     console.error('Error sending email:', error);
     throw new Error('Error al enviar el correo electrónico');
@@ -75,18 +75,14 @@ const sendEmail = async (to, subject, template, data = {}) => {
  * @param {string} token - Verification token
  * @returns {Promise<object>} - Result of the sendEmail operation
  */
-const sendWelcomeEmail = async (email, name, token) => {
+export const sendWelcomeEmail = async (email, name, token) => {
   const verificationUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${token}`;
   
   return sendEmail(
     email,
     '¡Bienvenido a Gamma Service!',
     'welcome',
-    { 
-      name,
-      verificationUrl,
-      supportEmail: process.env.SUPPORT_EMAIL || 'soporte@gamma-service.com'
-    }
+    { name, verificationUrl }
   );
 };
 
@@ -97,17 +93,18 @@ const sendWelcomeEmail = async (email, name, token) => {
  * @param {string} token - Reset token
  * @returns {Promise<object>} - Result of the sendEmail operation
  */
-const sendPasswordResetEmail = async (email, name, token) => {
+export const sendPasswordResetEmail = async (email, name, token) => {
   const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${token}`;
   
   return sendEmail(
     email,
     'Restablecer contraseña - Gamma Service',
     'password-reset',
-    { 
+    {
       name,
       resetUrl,
-      expiresIn: '24 horas'
+      supportEmail: process.env.SUPPORT_EMAIL || 'soporte@gammaservice.com',
+      companyName: 'Gamma Service'
     }
   );
 };
@@ -119,25 +116,20 @@ const sendPasswordResetEmail = async (email, name, token) => {
  * @param {object} order - Order details
  * @returns {Promise<object>} - Result of the sendEmail operation
  */
-const sendOrderConfirmationEmail = async (email, name, order) => {
+export const sendOrderConfirmationEmail = async (email, name, order) => {
   const orderUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/orders/${order._id}`;
   
   return sendEmail(
     email,
     `Confirmación de orden #${order.orderNumber || order._id}`,
     'order-confirmation',
-    { 
+    {
       name,
       order: {
-        ...order.toObject(),
+        ...order,
+        orderNumber: order.orderNumber || order._id,
         orderUrl,
-        formattedDate: new Date(order.createdAt).toLocaleDateString('es-ES', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        })
+        orderDate: new Date(order.createdAt || Date.now()).toLocaleDateString()
       }
     }
   );
@@ -151,35 +143,68 @@ const sendOrderConfirmationEmail = async (email, name, order) => {
  * @param {string} adminName - Admin's name (optional)
  * @returns {Promise<object>} - Result of the sendEmail operation
  */
-const sendNewOrderNotification = async (email, technicianName, order, adminName = null) => {
+export const sendNewOrderNotification = async (email, technicianName, order, adminName = null) => {
   const subject = adminName 
     ? `Nueva Orden Asignada - ${order.orderNumber}`
     : `Nuevo Trabajo Asignado - Orden #${order.orderNumber}`;
 
+  const template = adminName ? 'admin-new-order' : 'tech-new-order';
+  
   return sendEmail(
     email,
     subject,
-    'new-order-notification',
+    template,
     {
       name: adminName || technicianName,
-      orderNumber: order.orderNumber,
-      clientName: order.clientName,
-      serviceType: order.serviceType,
-      description: order.description,
-      status: order.status,
-      createdAt: order.createdAt,
-      isAdmin: !!adminName,
+      order,
       adminName,
       technicianName
     }
   );
 };
 
-export {
-  sendEmail,
-  sendWelcomeEmail,
-  sendPasswordResetEmail,
-  sendOrderConfirmationEmail,
-  sendStatusUpdateEmail,
-  sendNewOrderNotification
-};
+/**
+ * Send an order status update email
+ * @param {string} email - Recipient email address
+ * @param {string} customerName - Customer's name
+ * @param {object} order - Order details
+ * @param {string} oldStatus - Previous order status
+ * @param {string} newStatus - New order status
+ * @param {string} [notes] - Additional notes about the status update
+ */
+export const sendStatusUpdateEmail = async (email, customerName, order, oldStatus, newStatus, notes = '') => {
+  const statusMap = {
+    'pending': 'Pendiente',
+    'in_progress': 'En Progreso',
+    'completed': 'Completado',
+    'cancelled': 'Cancelado',
+  };
+
+  const subject = `Actualización de Estado - Orden #${order.orderNumber || order._id.toString().substring(18, 24)}`;
+  
+  return sendEmail(
+    email,
+    subject,
+    'status-update',
+    {
+      name: customerName,
+      orderNumber: order.orderNumber || order._id.toString().substring(18, 24),
+      oldStatus: statusMap[oldStatus] || oldStatus,
+      newStatus: statusMap[newStatus] || newStatus,
+      notes,
+      orderDetails: {
+        serviceType: order.serviceType,
+        description: order.description,
+        createdAt: order.createdAt?.toLocaleDateString('es-ES', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      },
+      contactEmail: process.env.SUPPORT_EMAIL || 'soporte@ejemplo.com',
+      contactPhone: process.env.SUPPORT_PHONE || '+57 123 456 7890'
+    }
+  );
+}

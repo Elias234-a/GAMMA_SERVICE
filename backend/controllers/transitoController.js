@@ -28,7 +28,7 @@ const transitoClient = axios.create({
  * @route POST /api/transito/vehiculo
  * @access private
  */
-exports.consultarVehiculo = async (req, res, next) => {
+export const consultarVehiculo = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -151,7 +151,7 @@ exports.consultarVehiculo = async (req, res, next) => {
  * @route POST /api/transito/infracciones
  * @access private
  */
-exports.consultarInfracciones = async (req, res, next) => {
+export const consultarInfracciones = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -251,7 +251,7 @@ exports.consultarInfracciones = async (req, res, next) => {
  * @route GET /api/transito/historial-propiedad/:placa
  * @access private
  */
-exports.consultarHistorialPropiedad = async (req, res, next) => {
+export const consultarHistorialPropiedad = async (req, res, next) => {
   try {
     const { placa } = req.params;
     
@@ -343,7 +343,7 @@ exports.consultarHistorialPropiedad = async (req, res, next) => {
  * @route GET /api/transito/comparendos/:numero
  * @access private
  */
-exports.consultarComparendo = async (req, res, next) => {
+export const consultarComparendo = async (req, res, next) => {
   try {
     const { numero } = req.params;
     
@@ -463,6 +463,7 @@ export const consultarHistorialConsultas = async (req, res, next) => {
   }
 };
 
+// Exportación de todas las funciones
 export default {
   consultarVehiculo,
   consultarInfracciones,

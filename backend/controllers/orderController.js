@@ -1,10 +1,11 @@
+import mongoose from 'mongoose';
 import Order from '../models/Order.js';
 import Technician from '../models/Technician.js';
 import User from '../models/User.js';
 import { createNotification } from '../utils/notifications.js';
-import { validationResult } from 'express-validator';
+import { body, validationResult } from 'express-validator';
 import logger from '../utils/logger.js';
-import { sendOrderConfirmationEmail } from '../utils/emailService.js';
+import { sendOrderConfirmationEmail, sendStatusUpdateEmail } from '../utils/emailService.js';
 import { success, error as apiError, validationError } from '../utils/apiResponse.js';
 import { upload, handleUploadErrors } from '../utils/fileUpload.js';
 import path from 'path';
@@ -1188,3 +1189,4 @@ async function notifyNewAttachments(order, attachments, uploadedBy) {
     )
   );
 }
+

@@ -1,0 +1,27 @@
+2025-10-02 23:30:15:3015 [32minfo[39m: [32m🚀 Servidor corriendo en http://localhost:5000[39m
+2025-10-02 23:30:15:3015 [32minfo[39m: [32m📚 Documentación de la API disponible en http://localhost:5000/api-docs[39m
+2025-10-02 23:30:15:3015 [32minfo[39m: [32m✅ MongoDB conectado: localhost[39m
+2025-10-02 23:31:48:3148 [32minfo[39m: [32m🚀 Servidor corriendo en http://localhost:5001[39m
+2025-10-02 23:31:48:3148 [32minfo[39m: [32m📚 Documentación de la API disponible en http://localhost:5001/api-docs[39m
+2025-10-02 23:31:48:3148 [32minfo[39m: [32m✅ MongoDB conectado: localhost[39m
+2025-10-02 23:32:32:3232 [32minfo[39m: [32mGET /api-docs - ::1[39m
+2025-10-02 23:32:32:3232 [32minfo[39m: [32mGET /api-docs/ - ::1[39m
+2025-10-02 23:32:32:3232 [32minfo[39m: [32mGET /api-docs/swagger-ui.css - ::1[39m
+2025-10-02 23:32:32:3232 [32minfo[39m: [32mGET /api-docs/swagger-ui-bundle.js - ::1[39m
+2025-10-02 23:32:32:3232 [32minfo[39m: [32mGET /api-docs/swagger-ui-standalone-preset.js - ::1[39m
+2025-10-02 23:32:32:3232 [32minfo[39m: [32mGET /api-docs/swagger-ui-init.js - ::1[39m
+2025-10-02 23:32:32:3232 [32minfo[39m: [32mGET /api-docs/favicon-32x32.png - ::1[39m
+2025-10-02 23:32:43:3243 [32minfo[39m: [32mGET / - ::1[39m
+2025-10-02 23:32:43:3243 [32minfo[39m: [32mGET /favicon.ico - ::1[39m
+2025-10-02 23:39:26:3926 [32minfo[39m: [32mGET / - ::1[39m
+2025-10-02 23:39:26:3926 [32minfo[39m: [32mGET /favicon.ico - ::1[39m
+2025-10-02 23:39:43:3943 [32minfo[39m: [32mGET /api-docs/ - ::1[39m
+2025-10-02 23:39:43:3943 [32minfo[39m: [32mGET /api-docs/swagger-ui.css - ::1[39m
+2025-10-02 23:39:43:3943 [32minfo[39m: [32mGET /api-docs/swagger-ui-bundle.js - ::1[39m
+2025-10-02 23:39:43:3943 [32minfo[39m: [32mGET /api-docs/swagger-ui-standalone-preset.js - ::1[39m
+2025-10-02 23:39:43:3943 [32minfo[39m: [32mGET /api-docs/swagger-ui-init.js - ::1[39m
+2025-10-02 23:40:29:4029 [32minfo[39m: [32mGET /api-docs/ - ::1[39m
+2025-10-02 23:40:29:4029 [32minfo[39m: [32mGET /api-docs/swagger-ui.css - ::1[39m
+2025-10-02 23:40:29:4029 [32minfo[39m: [32mGET /api-docs/swagger-ui-bundle.js - ::1[39m
+2025-10-02 23:40:29:4029 [32minfo[39m: [32mGET /api-docs/swagger-ui-standalone-preset.js - ::1[39m
+2025-10-02 23:40:29:4029 [32minfo[39m: [32mGET /api-docs/swagger-ui-init.js - ::1[39m

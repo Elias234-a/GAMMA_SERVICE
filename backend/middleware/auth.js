@@ -31,4 +31,7 @@ const admin = (req, res, next) => {
   }
 };
 
+// Agregar isAdmin al objeto auth
+auth.isAdmin = admin;
+
 export { auth, admin };

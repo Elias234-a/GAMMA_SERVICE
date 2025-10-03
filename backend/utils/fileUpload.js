@@ -35,12 +35,22 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+// Parse file size function (supports KB, MB, GB)
+function parseFileSize(sizeStr) {
+  const units = { KB: 1024, MB: 1024 * 1024, GB: 1024 * 1024 * 1024 };
+  const match = /^(\d+)(KB|MB|GB)?$/i.exec(sizeStr);
+  if (!match) return 5 * 1024 * 1024; // default 5MB if invalid format
+  const value = parseInt(match[1], 10);
+  const unit = match[2]?.toUpperCase() || 'MB';
+  return value * units[unit];
+}
+
 // Initialize upload
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: parseInt(process.env.MAX_FILE_SIZE || '5MB').replace('MB', '') * 1024 * 1024
+    fileSize: parseFileSize(process.env.MAX_FILE_SIZE || '5MB')
   }
 });
 
