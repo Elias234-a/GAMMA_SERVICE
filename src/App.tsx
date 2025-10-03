@@ -31,6 +31,7 @@ export interface Alert {
   id: string;
   type: AlertType;
   title: string;
+  read?: boolean;
   message: string;
 }
 
