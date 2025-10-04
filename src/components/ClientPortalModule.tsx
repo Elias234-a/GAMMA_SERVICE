@@ -11,7 +11,7 @@ import {
   MapPin,
   Shield,
 } from 'lucide-react';
-import { AlertType } from '../App';
+import { AlertType } from '@/types/common';
 
 interface ClientAccount {
   id: string;

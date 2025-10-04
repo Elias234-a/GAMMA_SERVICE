@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, Search, Eye, Edit, Trash2, FileText, DollarSign, Calendar, User } from 'lucide-react';
-import { AlertType, Sale, Client, Vehicle } from '../App';
+import { AlertType, Sale, Client, Vehicle } from '@/types/common';
 
 interface SalesModuleProps {
   showAlert: (type: AlertType, title: string, message: string) => void;
@@ -231,10 +231,10 @@ export const SalesModule: React.FC<SalesModuleProps> = ({
   };
 
   const getStatusBadge = (status: Sale['status']) => {
-    const statusConfig = {
-      pending: { label: 'Pendiente', class: 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' },
-      completed: { label: 'Completada', class: 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' },
-      cancelled: { label: 'Cancelada', class: 'bg-red-500/20 text-red-300 border border-red-500/30' }
+    const statusConfig: Record<string, { label: string; class: string }> = {
+      'Pendiente': { label: 'Pendiente', class: 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' },
+      'Completada': { label: 'Completada', class: 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' },
+      'Cancelada': { label: 'Cancelada', class: 'bg-red-500/20 text-red-300 border border-red-500/30' }
     };
     
     const config = statusConfig[status];

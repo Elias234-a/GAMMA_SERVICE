@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, User, Lock, Mail, Phone, MapPin, } from 'lucide-react';
-import { AlertType } from '../App';
+import { AlertType } from '@/types/common';
 import gammaLogo from '../assets/logo_claro.png';
 
 import { UserRole } from '../types/auth.types';

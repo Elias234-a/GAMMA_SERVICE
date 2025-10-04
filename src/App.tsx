@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { CssBaseline, ThemeProvider, createTheme, AlertColor } from '@mui/material';
 import { useAuth } from '@/context/AuthContext';
 import { NotificationSystem } from '@/components/NotificationSystem';
 import { LoginScreen } from '@/components/LoginScreen';
@@ -12,21 +11,9 @@ import About from '@/pages/About';
 import { UserRole } from '@/types/auth.types';
 
 
-// Custom theme
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#1976d2',
-    },
-    secondary: {
-      main: '#dc004e',
-    },
-  },
-});
-
 interface AlertItem {
   id: string;
-  type: AlertColor;
+  type: 'success' | 'error' | 'warning' | 'info';
   title: string;
   message: string;
 }
@@ -57,7 +44,7 @@ const App: React.FC = () => {
   const userRole = user?.role || defaultUserRole;
 
   // Alert handling
-  const displayAlert = useCallback((type: AlertColor, title: string, message: string) => {
+  const displayAlert = useCallback((type: 'success' | 'error' | 'warning' | 'info', title: string, message: string) => {
     const id = Date.now().toString();
     setAlerts((prev) => [...prev, { id, type, title, message }]);
     setTimeout(() => {
@@ -120,9 +107,7 @@ const App: React.FC = () => {
   // Main app layout
   return (
     <Router>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <div className="h-screen flex grid-background">
+      <div className="h-screen flex grid-background">
           {isSidebarOpen && (
             <div 
               className="lg:hidden fixed inset-0 bg-black/50 z-20"
@@ -174,7 +159,6 @@ const App: React.FC = () => {
             />
           </div>
         </div>
-      </ThemeProvider>
     </Router>
   );
 };
