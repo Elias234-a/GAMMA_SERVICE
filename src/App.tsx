@@ -52,7 +52,7 @@ const App: React.FC = () => {
   });
 
   // Authentication and user data
-  const { isAuthenticated, logout, user } = useAuth();
+  const { isAuthenticated, logout, user, login } = useAuth();
   const defaultUserRole: UserRole = 'Cliente';
   const userRole = user?.role || defaultUserRole;
 
@@ -95,11 +95,14 @@ const App: React.FC = () => {
   }, []);
 
   // Handle login
-  const handleLogin = useCallback((success: boolean) => {
+  const handleLogin = useCallback((success: boolean, role?: UserRole, email?: string) => {
     if (success) {
+      if (role) {
+        login({ role, email });
+      }
       displayAlert('success', 'Inicio de sesión exitoso', '¡Bienvenido de nuevo!');
     }
-  }, [displayAlert]);
+  }, [displayAlert, login]);
 
   // Handle logout
   const handleLogout = useCallback(() => {
