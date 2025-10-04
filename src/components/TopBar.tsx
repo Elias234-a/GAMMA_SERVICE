@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, Search, Bell, User, LogOut, Settings } from 'lucide-react';
-import { AlertType } from '../App';
+import { AlertType } from '@/types/common';
 
 import { UserRole } from '../types/auth.types';
 

@@ -14,7 +14,7 @@ import {
   Trash2,
   Plus
 } from 'lucide-react';
-import { AlertType } from '../App';
+import { AlertType } from '@/types/common';
 
 interface PlateProcessingProps {
   showAlert: (type: AlertType, title: string, message: string) => void;

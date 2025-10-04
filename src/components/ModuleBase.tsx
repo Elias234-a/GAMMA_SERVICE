@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { AlertType } from '../App';
+import { AlertType } from '@/types/common';
 
 interface ModuleBaseProps {
   title: string;

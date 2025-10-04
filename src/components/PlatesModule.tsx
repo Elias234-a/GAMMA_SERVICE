@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, Search, Eye, Edit, FileText, Clock, CheckCircle, AlertTriangle } from 'lucide-react';
-import { AlertType, Client, Vehicle } from '../App';
+import { AlertType, Client, Vehicle } from '@/types/common';
 
 interface PlateRequest {
   id: string;

@@ -13,7 +13,7 @@ import {
   X,
   Save
 } from 'lucide-react';
-import { AlertType } from '../App';
+import { AlertType } from '@/types/common';
 
 interface Employee {
   id: string;

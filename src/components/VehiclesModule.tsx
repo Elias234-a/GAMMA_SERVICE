@@ -191,10 +191,10 @@ export const VehiclesModule: React.FC<VehiclesModuleProps> = ({
   };
 
   const getStatusBadge = (status: Vehicle['status']) => {
-    const statusConfig = {
-      available: { label: 'Disponible', class: 'bg-green-500/20 text-green-300 backdrop-blur-sm' },
-      sold: { label: 'Vendido', class: 'bg-blue-500/20 text-blue-300 backdrop-blur-sm' },
-      reserved: { label: 'Reservado', class: 'bg-yellow-500/20 text-yellow-300 backdrop-blur-sm' }
+    const statusConfig: Record<string, { label: string; class: string }> = {
+      'Disponible': { label: 'Disponible', class: 'bg-green-500/20 text-green-300 backdrop-blur-sm' },
+      'Vendido': { label: 'Vendido', class: 'bg-blue-500/20 text-blue-300 backdrop-blur-sm' },
+      'Reservado': { label: 'Reservado', class: 'bg-yellow-500/20 text-yellow-300 backdrop-blur-sm' }
     };
     
     const config = statusConfig[status];

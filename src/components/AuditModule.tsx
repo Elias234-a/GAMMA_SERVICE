@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Shield, Eye, Calendar, User, Filter, Download, Search, AlertCircle } from 'lucide-react';
-import { AlertType } from '../App';
+import { AlertType } from '@/types/common';
 
 interface AuditModuleProps {
   showAlert: (type: AlertType, title: string, message: string) => void;

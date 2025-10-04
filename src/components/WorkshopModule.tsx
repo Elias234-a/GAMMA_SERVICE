@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Wrench, Calendar, Clock, User, CheckCircle, Settings, Car, FileText, DollarSign, Phone, MapPin } from 'lucide-react';
-import { AlertType } from '../App';
+import { AlertType } from '@/types/common';
 
 interface WorkshopModuleProps {
   showAlert: (type: AlertType, title: string, message: string) => void;

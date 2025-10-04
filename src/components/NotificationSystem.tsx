@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from 'lucide-react';
-import { Alert } from '../App';
+import { Alert } from '@/types/common';
 
 interface NotificationSystemProps {
   alerts: Alert[];

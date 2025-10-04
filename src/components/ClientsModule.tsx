@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, Search, Edit, Trash2, Eye, User, Mail, Phone, MapPin } from 'lucide-react';
-import { AlertType, Client } from '../App';
+import { AlertType, Client } from '@/types/common';
 
 interface ClientsModuleProps {
   showAlert: (type: AlertType, title: string, message: string) => void;

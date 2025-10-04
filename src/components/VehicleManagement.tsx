@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, Search, Edit, Trash2, Car, FileDown, X, Calendar } from 'lucide-react';
-import { AlertType } from '../App';
+import { AlertType } from '@/types/common';
 
 interface Vehicle {
   id: number;
