@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CreditCard, Search, CheckCircle, XCircle, Clock, AlertTriangle, DollarSign, Calculator } from 'lucide-react';
-import { AlertType, Client, Vehicle } from '../App';
+import { AlertType, Client, Vehicle } from '@/types';
 
 interface CreditEvaluation {
   id: string;

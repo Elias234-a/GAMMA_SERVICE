@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { CssBaseline, ThemeProvider, createTheme, AlertColor } from '@mui/material';
 import { useAuth } from '@/context/AuthContext';
 import { NotificationSystem } from '@/components/NotificationSystem';
 import { LoginScreen } from '@/components/LoginScreen';
@@ -10,25 +9,14 @@ import { TopBar } from '@/components/TopBar';
 import Home from '@/pages/Home';
 import About from '@/pages/About';
 import { UserRole } from '@/types/auth.types';
-
-
-// Custom theme
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#1976d2',
-    },
-    secondary: {
-      main: '#dc004e',
-    },
-  },
-});
+import { AlertType } from '@/types';
 
 interface AlertItem {
   id: string;
-  type: AlertColor;
+  type: AlertType;
   title: string;
   message: string;
+  timestamp: Date;
 }
 
 interface ConfirmDialogState {
@@ -57,9 +45,10 @@ const App: React.FC = () => {
   const userRole = user?.role || defaultUserRole;
 
   // Alert handling
-  const displayAlert = useCallback((type: AlertColor, title: string, message: string) => {
+  const displayAlert = useCallback((type: AlertType, title: string, message: string) => {
     const id = Date.now().toString();
-    setAlerts((prev) => [...prev, { id, type, title, message }]);
+    const timestamp = new Date();
+    setAlerts((prev) => [...prev, { id, type, title, message, timestamp }]);
     setTimeout(() => {
       setAlerts((prev) => prev.filter((alert) => alert.id !== id));
     }, 5000);
@@ -120,61 +109,58 @@ const App: React.FC = () => {
   // Main app layout
   return (
     <Router>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <div className="h-screen flex grid-background">
-          {isSidebarOpen && (
-            <div 
-              className="lg:hidden fixed inset-0 bg-black/50 z-20"
-              onClick={() => setIsSidebarOpen(false)}
-            />
-          )}
-          <Sidebar 
-            currentModule={currentModule} 
-            onModuleChange={(module: string) => {
-              setCurrentModule(module);
-              // Close on mobile (less than 640px)
-              if (window.innerWidth < 640) {
-                setIsSidebarOpen(false);
-              }
-            }}
-            isOpen={isSidebarOpen}
-            userRole={userRole}
+      <div className="h-screen flex grid-background">
+        {isSidebarOpen && (
+          <div 
+            className="lg:hidden fixed inset-0 bg-black/50 z-20"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+        <Sidebar 
+          currentModule={currentModule} 
+          onModuleChange={(module: string) => {
+            setCurrentModule(module);
+            // Close on mobile (less than 640px)
+            if (window.innerWidth < 640) {
+              setIsSidebarOpen(false);
+            }
+          }}
+          isOpen={isSidebarOpen}
+          userRole={userRole}
+        />
+        
+        <div className="flex-1 flex flex-col min-w-0">
+          <TopBar 
+            title={currentModule} 
+            onLogout={() => showConfirmDialog(
+              'Cerrar sesión', 
+              '¿Estás seguro de que quieres cerrar sesión?',
+              handleLogout
+            )}
+            onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+            isSidebarOpen={isSidebarOpen}
+            showAlert={displayAlert}
           />
           
-          <div className="flex-1 flex flex-col min-w-0">
-            <TopBar 
-              title={currentModule} 
-              onLogout={() => showConfirmDialog(
-                'Cerrar sesión', 
-                '¿Estás seguro de que quieres cerrar sesión?',
-                handleLogout
-              )}
-              onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-              isSidebarOpen={isSidebarOpen}
-              showAlert={displayAlert}
-            />
-            
-            <main className="flex-1 overflow-auto p-3 sm:p-4 lg:p-6 grid-background-lg pt-0 custom-scroll">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </main>
+          <main className="flex-1 overflow-auto p-3 sm:p-4 lg:p-6 grid-background-lg pt-0 custom-scroll">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </main>
 
-            <NotificationSystem alerts={alerts} onRemoveAlert={removeAlert} />
-            
-            <ConfirmDialog
-              isOpen={confirmDialog.isOpen}
-              title={confirmDialog.title}
-              message={confirmDialog.message}
-              onConfirm={confirmDialog.onConfirm}
-              onCancel={confirmDialog.onCancel || (() => setConfirmDialog(prev => ({ ...prev, isOpen: false })))}
-            />
-          </div>
+          <NotificationSystem alerts={alerts} onRemoveAlert={removeAlert} />
+          
+          <ConfirmDialog
+            isOpen={confirmDialog.isOpen}
+            title={confirmDialog.title}
+            message={confirmDialog.message}
+            onConfirm={confirmDialog.onConfirm}
+            onCancel={confirmDialog.onCancel || (() => setConfirmDialog(prev => ({ ...prev, isOpen: false })))}
+          />
         </div>
-      </ThemeProvider>
+      </div>
     </Router>
   );
 };

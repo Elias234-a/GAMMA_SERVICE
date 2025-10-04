@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Package, Plus, Search, Truck, FileText, DollarSign, CheckCircle, Clock, Building, Trash2 } from 'lucide-react';
-import { AlertType } from '../App';
+import { AlertType } from '@/types';
 
 interface PurchasesModuleProps {
   showAlert: (type: AlertType, title: string, message: string) => void;

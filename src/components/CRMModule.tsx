@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Users, Phone, Mail, Calendar, TrendingUp, MessageSquare, Target, Star, UserPlus, Clock, CheckCircle } from 'lucide-react';
-import { AlertType } from '../App';
+import { AlertType } from '@/types';
 
 interface CRMModuleProps {
   showAlert: (type: AlertType, title: string, message: string) => void;

@@ -13,7 +13,7 @@ import {
   Printer,
   ChevronDown
 } from 'lucide-react';
-import { AlertType } from '../App';
+import { AlertType } from '@/types';
 
 interface DIANInvoice {
   id: string;

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, User, Lock, Mail, Phone, MapPin, } from 'lucide-react';
-import { AlertType } from '../App';
+import { AlertType } from '@/types';
 import gammaLogo from '../assets/logo_claro.png';
+import { useAuth } from '@/context/AuthContext';
 
 import { UserRole } from '../types/auth.types';
 
@@ -11,6 +12,7 @@ interface LoginScreenProps {
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) => {
+  const { login } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -75,17 +77,11 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) {
       showAlert('error', 'Datos inválidos', 'Por favor corrija los errores en el formulario');
-      return;
-    }
-    
-    // Add role validation for login
-    if (isLogin && !formData.role) {
-      showAlert('error', 'Rol requerido', 'Por favor seleccione un rol');
       return;
     }
 
@@ -102,31 +98,18 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
     }
 
     if (isLogin) {
-      // Credenciales por rol
-      const credentials = {
-        'admin@gammaservice.com': { password: 'admin123', role: 'Administrador' },
-        'vendedor@gammaservice.com': { password: 'vendedor123', role: 'Vendedor' },
-        'cliente@gammaservice.com': { password: 'cliente123', role: 'Cliente' },
-        'mecanico@gammaservice.com': { password: 'mecanico123', role: 'Mecánico' }
-      };
-
-      const user = credentials[formData.email as keyof typeof credentials];
-      
-      if (user && user.password === formData.password) {
-        if (user.role === formData.role) {
-          // Asegurarse de que el rol sea un UserRole válido
-          const validRole = user.role as UserRole;
-          onLogin(true, validRole);
-        } else {
-          showAlert('error', 'Error de autenticación', 'El rol seleccionado no coincide con las credenciales');
-          onLogin(false);
+      try {
+        const success = await login(formData.email, formData.password);
+        onLogin(success);
+        if (!success) {
+          showAlert('error', 'Error de autenticación', 'Credenciales incorrectas');
         }
-      } else {
-        showAlert('error', 'Error de autenticación', 'Correo o contraseña incorrectos');
+      } catch (error) {
+        showAlert('error', 'Error de autenticación', 'Ha ocurrido un error durante el inicio de sesión');
         onLogin(false);
       }
     } else {
-      // Registration
+      // Registration - simulate registration process
       showAlert('success', 'Registro exitoso', 'Usuario registrado correctamente. Puede iniciar sesión');
       setIsLogin(true);
       setFormData({

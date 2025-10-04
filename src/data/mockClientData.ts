@@ -1,4 +1,4 @@
-import { Client, Vehicle, ServiceAppointment, Reminder, Activity } from '../types/client.types';
+import { Client, Vehicle, ServiceAppointment, Reminder, Activity } from '@/types/client.types';
 
 export const mockClientData = {
   client: {

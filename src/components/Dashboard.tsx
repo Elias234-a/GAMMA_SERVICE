@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Users, Car, ShoppingCart, FileText, DollarSign, TrendingUp, Bell, Calendar, Plus, Clock } from 'lucide-react';
-import { AlertType, Client, Vehicle, Sale } from '../App';
+import { AlertType, Client, Vehicle, Sale } from '@/types';
 import { ModernCalendar } from './ui/modern-calendar';
 
 interface DashboardProps {
@@ -16,10 +16,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
   
   const totalRevenue = sales
     .filter(sale => sale.status === 'completed')
-    .reduce((sum, sale) => sum + sale.totalPrice, 0);
+    .reduce((sum, sale) => sum + sale.total, 0);
 
   const pendingSales = sales.filter(sale => sale.status === 'pending').length;
-  const availableVehicles = vehicles.filter(vehicle => vehicle.status === 'available').length;
+  const availableVehicles = vehicles.filter(vehicle => vehicle.status === 'active').length;
   const activeClients = clients.filter(client => client.status === 'active').length;
 
   // Sample calendar events

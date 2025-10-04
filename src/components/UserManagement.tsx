@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, Search, Edit, Trash2, Mail, Phone, User, X } from 'lucide-react';
-import { AlertType } from '../App';
+import { AlertType } from '@/types';
 
 interface User {
   id: number;
