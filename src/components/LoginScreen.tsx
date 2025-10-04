@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, User, Lock, Mail, Phone, MapPin, } from 'lucide-react';
-import { AlertType } from '../App';
+// Removed AlertType import as it's not defined in App.tsx
 import gammaLogo from '../assets/logo_claro.png';
 
 import { UserRole } from '../types/auth.types';
 
 interface LoginScreenProps {
-  onLogin: (success: boolean, role?: UserRole) => void;
-  showAlert: (type: AlertType, title: string, message: string) => void;
+  onLogin: (success: boolean) => void;
+  showAlert: (type: 'success' | 'error' | 'warning' | 'info', title: string, message: string) => void;
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) => {
@@ -114,9 +114,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
       
       if (user && user.password === formData.password) {
         if (user.role === formData.role) {
-          // Asegurarse de que el rol sea un UserRole válido
-          const validRole = user.role as UserRole;
-          onLogin(true, validRole);
+          onLogin(true);
         } else {
           showAlert('error', 'Error de autenticación', 'El rol seleccionado no coincide con las credenciales');
           onLogin(false);
