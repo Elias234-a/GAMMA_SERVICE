@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Plus, Search, Eye, Download, Mail, FileText, DollarSign, Calendar } from 'lucide-react';
-import { AlertType, Sale, Client, Vehicle } from '../App';
+import type { AlertColor } from '@mui/material';
+import type { Sale } from '@/types/app.types';
+import type { Client } from '@/types/client';
+import type { Vehicle } from '@/types/app.types';
 
 interface Invoice {
   id: string;
@@ -19,7 +22,7 @@ interface Invoice {
 }
 
 interface BillingModuleProps {
-  showAlert: (type: AlertType, title: string, message: string) => void;
+  showAlert: (type: AlertColor, title: string, message: string) => void;
   showConfirmDialog: (title: string, message: string, onConfirm: () => void) => void;
   sales: Sale[];
   clients: Client[];

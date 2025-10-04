@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Settings, User, Shield, Bell, Database, Globe, Save, RefreshCw, Key, Mail, Phone, MapPin } from 'lucide-react';
-import { AlertType } from '../App';
+import type { AlertColor } from '@mui/material';
 
 interface SettingsModuleProps {
-  showAlert: (type: AlertType, title: string, message: string) => void;
+  showAlert: (type: AlertColor, title: string, message: string) => void;
 }
 
 export const SettingsModule: React.FC<SettingsModuleProps> = ({ showAlert }) => {

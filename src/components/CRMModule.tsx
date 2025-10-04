@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Users, Phone, Mail, Calendar, TrendingUp, MessageSquare, Target, Star, UserPlus, Clock, CheckCircle } from 'lucide-react';
-import { AlertType } from '../App';
+import type { AlertColor } from '@mui/material';
 
 interface CRMModuleProps {
-  showAlert: (type: AlertType, title: string, message: string) => void;
+  showAlert: (type: AlertColor, title: string, message: string) => void;
   showConfirmDialog: (title: string, message: string, onConfirm: () => void) => void;
 }
 

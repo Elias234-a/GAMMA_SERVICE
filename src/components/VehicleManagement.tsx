@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, Search, Edit, Trash2, Car, FileDown, X, Calendar } from 'lucide-react';
-import { AlertType } from '../App';
+import type { AlertColor } from '@mui/material';
 
 interface Vehicle {
   id: number;
@@ -16,7 +16,7 @@ interface Vehicle {
 }
 
 interface VehicleManagementProps {
-  showAlert: (type: AlertType, title: string, message: string) => void;
+  showAlert: (type: AlertColor, title: string, message: string) => void;
   showConfirmDialog: (title: string, message: string, onConfirm: () => void) => void;
 }
 

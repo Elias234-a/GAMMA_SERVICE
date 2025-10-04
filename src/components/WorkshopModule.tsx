@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Wrench, Calendar, Clock, User, CheckCircle, Settings, Car, FileText, DollarSign, Phone, MapPin } from 'lucide-react';
-import { AlertType } from '../App';
+import type { AlertColor } from '@mui/material';
 
 interface WorkshopModuleProps {
-  showAlert: (type: AlertType, title: string, message: string) => void;
+  showAlert: (type: AlertColor, title: string, message: string) => void;
   showConfirmDialog: (title: string, message: string, onConfirm: () => void) => void;
 }
 

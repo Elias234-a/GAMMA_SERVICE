@@ -1,11 +1,11 @@
 import React, { ReactNode } from 'react';
-import { AlertType } from '../App';
+import type { AlertColor } from '@mui/material';
 
 interface ModuleBaseProps {
   title: string;
   description?: string;
   children: ReactNode;
-  showAlert?: (type: AlertType, title: string, message: string) => void;
+  showAlert?: (type: AlertColor, title: string, message: string) => void;
   actions?: ReactNode;
   filters?: ReactNode;
 }

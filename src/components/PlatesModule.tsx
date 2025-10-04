@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Plus, Search, Eye, Edit, FileText, Clock, CheckCircle, AlertTriangle } from 'lucide-react';
-import { AlertType, Client, Vehicle } from '../App';
+import type { AlertColor } from '@mui/material';
+import type { Client } from '@/types/client';
+import type { Vehicle } from '@/types/app.types';
 
 interface PlateRequest {
   id: string;
@@ -22,7 +24,7 @@ interface PlateRequest {
 }
 
 interface PlatesModuleProps {
-  showAlert: (type: AlertType, title: string, message: string) => void;
+  showAlert: (type: AlertColor, title: string, message: string) => void;
   showConfirmDialog: (title: string, message: string, onConfirm: () => void) => void;
   clients: Client[];
   vehicles: Vehicle[];

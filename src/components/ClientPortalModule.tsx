@@ -11,7 +11,7 @@ import {
   MapPin,
   Shield,
 } from 'lucide-react';
-import { AlertType } from '../App';
+import type { AlertColor } from '@mui/material';
 
 interface ClientAccount {
   id: string;
@@ -71,7 +71,7 @@ interface Notification {
 }
 
 interface ClientPortalModuleProps {
-  showAlert: (type: AlertType, title: string, message: string) => void;
+  showAlert: (type: AlertColor, title: string, message: string) => void;
   showConfirmDialog: (title: string, message: string, onConfirm: () => void) => void;
 }
 

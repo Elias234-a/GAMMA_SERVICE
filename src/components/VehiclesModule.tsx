@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Plus, Search, Filter, Edit, Trash2, Eye, Car, DollarSign } from 'lucide-react';
-import { AlertType, Vehicle, Client } from '../App';
+import type { AlertColor } from '@mui/material';
+import type { Vehicle } from '@/types/app.types';
+import type { Client } from '@/types/client';
 
 interface VehiclesModuleProps {
-  showAlert: (type: AlertType, title: string, message: string) => void;
+  showAlert: (type: AlertColor, title: string, message: string) => void;
   showConfirmDialog: (title: string, message: string, onConfirm: () => void) => void;
   vehicles: Vehicle[];
   setVehicles: React.Dispatch<React.SetStateAction<Vehicle[]>>;

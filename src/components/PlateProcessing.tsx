@@ -14,10 +14,10 @@ import {
   Trash2,
   Plus
 } from 'lucide-react';
-import { AlertType } from '../App';
+import type { AlertColor } from '@mui/material';
 
 interface PlateProcessingProps {
-  showAlert: (type: AlertType, title: string, message: string) => void;
+  showAlert: (type: AlertColor, title: string, message: string) => void;
 }
 
 interface PlateRequest {

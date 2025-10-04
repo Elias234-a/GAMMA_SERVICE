@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { Plus, Search, Eye, Edit, Trash2, FileText, DollarSign, Calendar, User } from 'lucide-react';
-import { AlertType, Sale, Client, Vehicle } from '../App';
+import type { AlertColor } from '@mui/material';
+import type { Sale } from '@/types/app.types';
+import type { Client } from '@/types/client';
+import type { Vehicle } from '@/types/app.types';
 
 interface SalesModuleProps {
-  showAlert: (type: AlertType, title: string, message: string) => void;
+  showAlert: (type: AlertColor, title: string, message: string) => void;
   showConfirmDialog: (title: string, message: string, onConfirm: () => void) => void;
   sales: Sale[];
   setSales: React.Dispatch<React.SetStateAction<Sale[]>>;

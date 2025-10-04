@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Plus, Search, Edit, Trash2, Eye, User, Mail, Phone, MapPin } from 'lucide-react';
-import { AlertType, Client } from '../App';
+import type { AlertColor } from '@mui/material';
+import type { Client } from '@/types/client';
 
 interface ClientsModuleProps {
-  showAlert: (type: AlertType, title: string, message: string) => void;
+  showAlert: (type: AlertColor, title: string, message: string) => void;
   showConfirmDialog: (title: string, message: string, onConfirm: () => void) => void;
   clients: Client[];
   setClients: React.Dispatch<React.SetStateAction<Client[]>>;
