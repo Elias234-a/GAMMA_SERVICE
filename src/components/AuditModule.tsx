@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Shield, Eye, Calendar, User, Filter, Download, Search, AlertCircle } from 'lucide-react';
-import { AlertType } from '../App';
+import type { AlertColor } from '@mui/material';
 
 interface AuditModuleProps {
-  showAlert: (type: AlertType, title: string, message: string) => void;
+  showAlert: (type: AlertColor, title: string, message: string) => void;
 }
 
 interface AuditLog {

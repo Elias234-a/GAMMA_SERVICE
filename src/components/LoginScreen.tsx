@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, User, Lock, Mail, Phone, MapPin, } from 'lucide-react';
-import { AlertType } from '../App';
+import type { AlertColor } from '@mui/material';
 import gammaLogo from '../assets/logo_claro.png';
 
 import { UserRole } from '../types/auth.types';
 
 interface LoginScreenProps {
   onLogin: (success: boolean, role?: UserRole) => void;
-  showAlert: (type: AlertType, title: string, message: string) => void;
+  showAlert: (type: AlertColor, title: string, message: string) => void;
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) => {

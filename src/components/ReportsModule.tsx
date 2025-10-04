@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { Download, Calendar, BarChart, FileText, TrendingUp, DollarSign } from 'lucide-react';
-import { AlertType, Sale, Client, Vehicle } from '../App';
+import type { AlertColor } from '@mui/material';
+import type { Sale } from '@/types/app.types';
+import type { Client } from '@/types/client';
+import type { Vehicle } from '@/types/app.types';
 
 interface ReportsModuleProps {
-  showAlert: (type: AlertType, title: string, message: string) => void;
+  showAlert: (type: AlertColor, title: string, message: string) => void;
   sales: Sale[];
   clients: Client[];
   vehicles: Vehicle[];

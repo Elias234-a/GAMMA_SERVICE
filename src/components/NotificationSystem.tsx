@@ -1,14 +1,21 @@
 import React from 'react';
 import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from 'lucide-react';
-import { Alert } from '../App';
+import type { AlertColor } from '@mui/material';
+
+interface AppAlert {
+  id: string;
+  type: AlertColor;
+  title: string;
+  message: string;
+}
 
 interface NotificationSystemProps {
-  alerts: Alert[];
+  alerts: AppAlert[];
   onRemoveAlert: (id: string) => void;
 }
 
 export const NotificationSystem: React.FC<NotificationSystemProps> = ({ alerts, onRemoveAlert }) => {
-  const getAlertIcon = (type: string) => {
+  const getAlertIcon = (type: AlertColor) => {
     switch (type) {
       case 'success':
         return <CheckCircle className="h-5 w-5 text-green-600" />;
@@ -23,7 +30,7 @@ export const NotificationSystem: React.FC<NotificationSystemProps> = ({ alerts, 
     }
   };
 
-  const getAlertStyles = (type: string) => {
+  const getAlertStyles = (type: AlertColor) => {
     switch (type) {
       case 'success':
         return 'bg-white border-l-4 border-green-500 shadow-lg';

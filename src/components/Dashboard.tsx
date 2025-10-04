@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Users, Car, ShoppingCart, FileText, DollarSign, TrendingUp, Bell, Calendar, Plus, Clock } from 'lucide-react';
-import { AlertType, Client, Vehicle, Sale } from '../App';
+import type { AlertColor } from '@mui/material';
+import type { Vehicle, Sale } from '@/types/app.types';
+import type { Client } from '@/types/client';
 import { ModernCalendar } from './ui/modern-calendar';
 
 interface DashboardProps {
-  showAlert: (type: AlertType, title: string, message: string) => void;
+  showAlert: (type: AlertColor, title: string, message: string) => void;
   clients: Client[];
   vehicles: Vehicle[];
   sales: Sale[];

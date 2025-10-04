@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, Search, Bell, User, LogOut, Settings } from 'lucide-react';
-import { AlertType } from '../App';
+import type { AlertColor } from '@mui/material';
 
 import { UserRole } from '../types/auth.types';
 
 interface TopBarProps {
   title: string;
   onLogout: () => void;
-  showAlert: (type: AlertType, title: string, message: string) => void;
+  showAlert: (type: AlertColor, title: string, message: string) => void;
   onToggleSidebar: () => void;
   isSidebarOpen: boolean;
   userRole?: UserRole;

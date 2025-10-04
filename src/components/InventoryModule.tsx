@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Package, Plus, Search, Filter, Edit, Trash2, AlertTriangle, TrendingUp, TrendingDown, Eye, Download, Truck, Settings, BarChart3, Car, Wrench, Sparkles, X } from 'lucide-react';
-import { AlertType } from '../App';
+import type { AlertColor } from '@mui/material';
 
 interface InventoryModuleProps {
-  showAlert: (type: AlertType, title: string, message: string) => void;
+  showAlert: (type: AlertColor, title: string, message: string) => void;
   showConfirmDialog: (title: string, message: string, onConfirm: () => void) => void;
 }
 

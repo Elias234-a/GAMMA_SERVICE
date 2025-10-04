@@ -24,7 +24,7 @@ const theme = createTheme({
   },
 });
 
-interface AlertItem {
+export interface AlertItem {
   id: string;
   type: AlertColor;
   title: string;

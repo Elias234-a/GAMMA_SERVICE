@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { CreditCard, Search, CheckCircle, XCircle, Clock, AlertTriangle, DollarSign, Calculator } from 'lucide-react';
-import { AlertType, Client, Vehicle } from '../App';
+import type { AlertColor } from '@mui/material';
+import type { Client } from '@/types/client';
+import type { Vehicle } from '@/types/app.types';
 
 interface CreditEvaluation {
   id: string;
@@ -26,7 +28,7 @@ interface CreditEvaluation {
 }
 
 interface FinancingModuleProps {
-  showAlert: (type: AlertType, title: string, message: string) => void;
+  showAlert: (type: AlertColor, title: string, message: string) => void;
   showConfirmDialog: (title: string, message: string, onConfirm: () => void) => void;
   clients: Client[];
   vehicles: Vehicle[];

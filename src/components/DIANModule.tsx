@@ -13,7 +13,7 @@ import {
   Printer,
   ChevronDown
 } from 'lucide-react';
-import { AlertType } from '../App';
+import type { AlertColor } from '@mui/material';
 
 interface DIANInvoice {
   id: string;
@@ -47,7 +47,7 @@ interface InvoiceItem {
 }
 
 interface DIANModuleProps {
-  showAlert: (type: AlertType, title: string, message: string) => void;
+  showAlert: (type: AlertColor, title: string, message: string) => void;
   showConfirmDialog: (title: string, message: string, onConfirm: () => void) => void;
 }
 
