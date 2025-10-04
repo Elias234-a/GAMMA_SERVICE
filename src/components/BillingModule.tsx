@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, Search, Eye, Download, Mail, FileText, DollarSign, Calendar } from 'lucide-react';
-import { AlertType, Sale, Client, Vehicle } from '../App';
+import { AlertType, Sale, Client, Vehicle } from '@/types';
 
 interface Invoice {
   id: string;
