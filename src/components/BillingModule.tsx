@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Search, Eye, Download, Mail, FileText, DollarSign, Calendar } from 'lucide-react';
 import { AlertType, Sale, Client, Vehicle } from '../App';
+import { FormSelect, FormTextarea } from './ui/FormInput';
 
 interface Invoice {
   id: string;
@@ -405,73 +406,57 @@ export const BillingModule: React.FC<BillingModuleProps> = ({
 
       {/* Create Invoice Modal */}
       {showCreateModal && (
-        <div className="modal-backdrop fixed inset-0 flex items-center justify-center p-4 z-50">
-          <div className="modal-content max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="glass-card-strong max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">
+              <h3 className="text-white mb-4">
                 Nueva Factura
               </h3>
               
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-white/90 mb-2">
-                    Venta a Facturar *
-                  </label>
-                  <select
-                    value={formData.saleId}
-                    onChange={(e) => handleInputChange('saleId', e.target.value)}
-                    className={`form-input w-full px-4 py-3 rounded-lg text-white cursor-pointer ${
-                      errors.saleId ? 'border-red-400 focus:ring-red-400' : ''
-                    }`}
-                  >
-                    <option value="" className="dropdown-option bg-gray-800 text-white">Seleccionar venta</option>
-                    {unBilledSales.map(sale => {
-                      const client = clients.find(c => c.id === sale.clientId);
-                      const vehicle = vehicles.find(v => v.id === sale.vehicleId);
-                      return (
-                        <option key={sale.id} value={sale.id} className="dropdown-option bg-gray-800 text-white">
-                          {sale.saleNumber} - {client?.name} - {vehicle?.brand} {vehicle?.model}
-                        </option>
-                      );
-                    })}
-                  </select>
-                  {errors.saleId && <p className="mt-1 text-sm text-red-600">{errors.saleId}</p>}
-                </div>
+                <FormSelect
+                  label="Venta a Facturar"
+                  name="saleId"
+                  value={formData.saleId}
+                  onChange={(value) => handleInputChange('saleId', value)}
+                  options={unBilledSales.map(sale => {
+                    const client = clients.find(c => c.id === sale.clientId);
+                    const vehicle = vehicles.find(v => v.id === sale.vehicleId);
+                    return {
+                      value: sale.id,
+                      label: `${sale.saleNumber} - ${client?.name} - ${vehicle?.brand} ${vehicle?.model}`
+                    };
+                  })}
+                  placeholder="Seleccionar venta"
+                  error={errors.saleId}
+                  required
+                />
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Método de Pago *
-                  </label>
-                  <select
-                    value={formData.paymentMethod}
-                    onChange={(e) => handleInputChange('paymentMethod', e.target.value)}
-                    className={`form-input w-full px-4 py-3 rounded-lg text-white cursor-pointer ${
-                      errors.paymentMethod ? 'border-red-400 focus:ring-red-400' : ''
-                    }`}
-                  >
-                    {paymentMethods.map(method => (
-                      <option key={method.value} value={method.value} className="dropdown-option bg-gray-800 text-white">{method.label}</option>
-                    ))}
-                  </select>
-                  {errors.paymentMethod && <p className="mt-1 text-sm text-red-600">{errors.paymentMethod}</p>}
-                </div>
+                <FormSelect
+                  label="Método de Pago"
+                  name="paymentMethod"
+                  value={formData.paymentMethod}
+                  onChange={(value) => handleInputChange('paymentMethod', value)}
+                  options={paymentMethods}
+                  error={errors.paymentMethod}
+                  required
+                />
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Notas Adicionales
-                  </label>
-                  <textarea
-                    value={formData.notes}
-                    onChange={(e) => handleInputChange('notes', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
-                    rows={3}
-                    placeholder="Observaciones o condiciones especiales..."
-                  />
-                </div>
+                <FormTextarea
+                  label="Notas Adicionales"
+                  name="notes"
+                  value={formData.notes}
+                  onChange={(value) => handleInputChange('notes', value)}
+                  placeholder="Observaciones o condiciones especiales..."
+                  rows={3}
+                />
 
                 {formData.saleId && (
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h4 className="font-medium text-gray-900 mb-2">Resumen de Facturación</h4>
+                  <div className="glass-content p-4 rounded-lg border border-orange-500/30">
+                    <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-orange-400" />
+                      Resumen de Facturación
+                    </h4>
                     {(() => {
                       const sale = sales.find(s => s.id === formData.saleId);
                       if (sale) {
@@ -479,18 +464,19 @@ export const BillingModule: React.FC<BillingModuleProps> = ({
                         const tax = subtotal * 0.19;
                         const total = subtotal + tax;
                         return (
-                          <div className="space-y-1 text-sm">
-                            <div className="flex justify-between">
+                          <div className="space-y-2">
+                            <div className="flex justify-between text-gray-200">
                               <span>Subtotal:</span>
-                              <span>${subtotal.toLocaleString('es-CO')}</span>
+                              <span className="font-medium">${subtotal.toLocaleString('es-CO')}</span>
                             </div>
-                            <div className="flex justify-between">
+                            <div className="flex justify-between text-gray-200">
                               <span>IVA (19%):</span>
-                              <span>${tax.toLocaleString('es-CO')}</span>
+                              <span className="font-medium">${tax.toLocaleString('es-CO')}</span>
                             </div>
-                            <div className="flex justify-between font-bold">
+                            <div className="h-px bg-gradient-to-r from-transparent via-orange-500/50 to-transparent my-2"></div>
+                            <div className="flex justify-between text-white text-lg font-bold">
                               <span>Total:</span>
-                              <span>${total.toLocaleString('es-CO')}</span>
+                              <span className="text-orange-400">${total.toLocaleString('es-CO')}</span>
                             </div>
                           </div>
                         );
@@ -501,7 +487,7 @@ export const BillingModule: React.FC<BillingModuleProps> = ({
                 )}
               </div>
               
-              <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 mt-6">
+              <div className="flex flex-col sm:flex-row justify-between space-y-2 sm:space-y-0 sm:space-x-3 mt-6">
                 <button
                   onClick={() => {
                     setShowCreateModal(false);
@@ -512,13 +498,13 @@ export const BillingModule: React.FC<BillingModuleProps> = ({
                     });
                     setErrors({});
                   }}
-                  className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                  className="px-6 py-3 text-gray-200 bg-white/10 hover:bg-white/20 rounded-lg transition-all glass-hover border border-white/20"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleSaveInvoice}
-                  className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                  className="px-6 py-3 btn-emerald text-white rounded-lg transition-all glass-hover"
                 >
                   Crear Factura
                 </button>

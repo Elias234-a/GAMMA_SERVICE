@@ -564,9 +564,10 @@ export const CRMModule: React.FC<CRMModuleProps> = ({ showAlert, showConfirmDial
 
       {/* Modal de Nueva Actividad */}
       {showActivityModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="glass-card-strong p-6 w-full max-w-md border border-white/20 rounded-xl backdrop-blur-lg">
-            <h3 className="text-xl font-bold text-white mb-6">Nueva Actividad</h3>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="glass-card-strong max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <h3 className="text-white mb-4">Nueva Actividad</h3>
             
             <div className="space-y-4">
               <div>
@@ -676,15 +677,17 @@ export const CRMModule: React.FC<CRMModuleProps> = ({ showAlert, showConfirmDial
                 Guardar Actividad
               </button>
             </div>
+            </div>
           </div>
         </div>
       )}
 
       {/* Modal de Nuevo Lead */}
       {showLeadModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="glass-card-strong p-6 w-full max-w-2xl border border-white/20 rounded-xl backdrop-blur-lg">
-            <h3 className="text-xl font-bold text-white mb-6">Nuevo Lead</h3>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="glass-card-strong max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <h3 className="text-white mb-4">Nuevo Lead</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -810,6 +813,7 @@ export const CRMModule: React.FC<CRMModuleProps> = ({ showAlert, showConfirmDial
               >
                 Guardar Lead
               </button>
+            </div>
             </div>
           </div>
         </div>

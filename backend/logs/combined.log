@@ -25,3 +25,6 @@
 2025-10-02 23:40:29:4029 [32minfo[39m: [32mGET /api-docs/swagger-ui-bundle.js - ::1[39m
 2025-10-02 23:40:29:4029 [32minfo[39m: [32mGET /api-docs/swagger-ui-standalone-preset.js - ::1[39m
 2025-10-02 23:40:29:4029 [32minfo[39m: [32mGET /api-docs/swagger-ui-init.js - ::1[39m
+2025-10-03 21:13:17:1317 [32minfo[39m: [32m🚀 Servidor corriendo en http://localhost:5001[39m
+2025-10-03 21:13:17:1317 [32minfo[39m: [32m📚 Documentación de la API disponible en http://localhost:5001/api-docs[39m
+2025-10-03 21:13:17:1317 [32minfo[39m: [32m✅ MongoDB conectado: localhost[39m

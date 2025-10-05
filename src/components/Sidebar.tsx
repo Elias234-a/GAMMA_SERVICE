@@ -1,5 +1,4 @@
 import React from 'react';
-import styles from './Sidebar.module.css';
 import { 
   Home, 
   Users, 
@@ -14,7 +13,7 @@ import {
   Wrench,
   DollarSign,
   UserCheck,
-  Globe
+  Globe,
 } from 'lucide-react';
 import { UserRole, rolePermissions } from '../types/auth.types';
 import gammaLogo from '../assets/logo_claro.png';
@@ -22,7 +21,7 @@ import gammaLogo from '../assets/logo_claro.png';
 interface MenuItem {
   id: string;
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: any;
 }
 
 interface MenuArea {
@@ -168,20 +167,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentModule, onModuleChange,
       rounded-xl overflow-hidden
     `}>
       {/* Logo Section */}
-      <div className="pt-4 pb-3 px-4 border-b border-white/10 mt-1 flex justify-center">
-        <div className="w-24">
-          <div className="flex justify-center">
-            <img 
-              src={gammaLogo} 
-              alt="GAMMA Service" 
-              className="h-10 w-auto object-contain"
-            />
-          </div>
+      <div className="pt-4 pb-3 px-4 border-b border-white/10 mt-1">
+        <div className="flex flex-col items-center">
+          <img 
+            src={gammaLogo} 
+            alt="GAMMA Service" 
+            className="h-12 w-auto object-contain mb-2"
+          />
+          <p className="text-[10px] text-gray-300 text-center">Sistema ERP/DMS</p>
         </div>
       </div>
       
       {/* Navigation */}
-      <nav className={`flex-1 py-2 px-2 mx-2 ${styles.sidebarScroll} ${!isOpen ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
+      <nav className={`flex-1 py-2 px-2 mx-2 overflow-y-auto custom-scroll ${!isOpen ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
         <div className="space-y-2 pr-1">
           {filteredMenuAreas.map((area, areaIndex) => (
             <div key={areaIndex} className="relative">
@@ -212,26 +210,27 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentModule, onModuleChange,
                       
                       {/* Icon with improved spacing and effects */}
                       <div className={`
-                        flex items-center justify-center w-8 h-8 rounded-lg mr-4 transition-all duration-300
+                        flex items-center justify-center w-6 h-6 rounded-lg mr-3 transition-all duration-300 flex-shrink-0
                         ${isActive 
-                          ? 'bg-orange-600 shadow-glow' 
+                          ? 'bg-orange-500/30 shadow-glow' 
                           : 'bg-white/5 group-hover:bg-white/10 group-hover:scale-105'
                         }
                       `}>
-                        <Icon className={`h-4 w-4 icon-enhanced transition-colors duration-300 ${
+                        <Icon className={`h-3 w-3 icon-enhanced transition-colors duration-300 ${
                           isActive ? 'text-orange-300' : 'text-gray-300 group-hover:text-white'
                         }`} />
                       </div>
                       
+
                       {/* Label with better typography */}
-                      <span className={`ml-3 text-xs font-medium transition-colors duration-300 ${
+                      <span className={`text-xs font-medium transition-colors duration-300 ${
                         isActive ? 'text-white' : 'text-gray-200 group-hover:text-white'
                       }`}>
                         {item.label}
                       </span>
                       
+
                       {/* Hover effect */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-orange-500/0 to-emerald-500/0 group-hover:from-orange-500/5 group-hover:to-emerald-500/5 transition-all duration-300 rounded-xl"></div>
                     </button>
                   );
                 })}

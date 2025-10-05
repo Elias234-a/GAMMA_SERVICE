@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Plus, Search, Edit, Trash2, Eye, User, Mail, Phone, MapPin } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, User } from 'lucide-react';
 import { AlertType, Client } from '../App';
+import { FormInput, FormTextarea } from './ui/FormInput';
 
 interface ClientsModuleProps {
   showAlert: (type: AlertType, title: string, message: string) => void;
@@ -156,6 +157,19 @@ export const ClientsModule: React.FC<ClientsModuleProps> = ({
   };
 
   const handleInputChange = (field: string, value: string) => {
+    // Validación especial para nombre: solo letras y espacios
+    if (field === 'name') {
+      value = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+    }
+    // Validación para identificación: solo números
+    if (field === 'identification') {
+      value = value.replace(/[^0-9]/g, '');
+    }
+    // Validación para teléfono: solo números, espacios, + y -
+    if (field === 'phone') {
+      value = value.replace(/[^0-9\s+\-]/g, '');
+    }
+    
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
@@ -350,108 +364,72 @@ export const ClientsModule: React.FC<ClientsModuleProps> = ({
 
       {/* Add/Edit Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="glass-card-strong max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="glass-card-strong max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">
+              <h3 className="text-white mb-4">
                 {editingClient ? 'Editar Cliente' : 'Nuevo Cliente'}
               </h3>
               
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">
-                    Nombre Completo *
-                  </label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-300 icon-enhanced" />
-                    <input
-                      type="text"
-                      value={formData.name}
-                      onChange={(e) => handleInputChange('name', e.target.value)}
-                      className={`w-full pl-10 pr-3 py-2 border ${
-                        errors.name ? 'border-red-400' : 'border-white/20'
-                      } rounded-lg glass-content placeholder-gray-300 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
-                      placeholder="Juan Pérez García"
-                    />
-                  </div>
-                  {errors.name && <p className="mt-1 text-sm text-red-400">{errors.name}</p>}
-                </div>
+                <FormInput
+                  label="Nombre Completo"
+                  name="name"
+                  value={formData.name}
+                  onChange={(value) => handleInputChange('name', value)}
+                  placeholder="Juan Pérez García"
+                  error={errors.name}
+                  required
+                  textOnly
+                />
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">
-                    Identificación *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.identification}
-                    onChange={(e) => handleInputChange('identification', e.target.value)}
-                    className={`w-full px-3 py-2 border ${
-                      errors.identification ? 'border-red-400' : 'border-white/20'
-                    } rounded-lg glass-content placeholder-gray-300 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
-                    placeholder="12345678901"
-                  />
-                  {errors.identification && <p className="mt-1 text-sm text-red-400">{errors.identification}</p>}
-                </div>
+                <FormInput
+                  label="Identificación"
+                  name="identification"
+                  type="text"
+                  value={formData.identification}
+                  onChange={(value) => handleInputChange('identification', value)}
+                  placeholder="12345678901"
+                  error={errors.identification}
+                  required
+                  maxLength={11}
+                />
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">
-                    Teléfono *
-                  </label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-300 icon-enhanced" />
-                    <input
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
-                      className={`w-full pl-10 pr-3 py-2 border ${
-                        errors.phone ? 'border-red-400' : 'border-white/20'
-                      } rounded-lg glass-content placeholder-gray-300 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
-                      placeholder="+57 300 123 4567"
-                    />
-                  </div>
-                  {errors.phone && <p className="mt-1 text-sm text-red-400">{errors.phone}</p>}
-                </div>
+                <FormInput
+                  label="Teléfono"
+                  name="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(value) => handleInputChange('phone', value)}
+                  placeholder="+57 300 123 4567"
+                  error={errors.phone}
+                  required
+                />
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">
-                    Correo Electrónico *
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-300 icon-enhanced" />
-                    <input
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
-                      className={`w-full pl-10 pr-3 py-2 border ${
-                        errors.email ? 'border-red-400' : 'border-white/20'
-                      } rounded-lg glass-content placeholder-gray-300 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
-                      placeholder="correo@ejemplo.com"
-                    />
-                  </div>
-                  {errors.email && <p className="mt-1 text-sm text-red-400">{errors.email}</p>}
-                </div>
+                <FormInput
+                  label="Correo Electrónico"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(value) => handleInputChange('email', value)}
+                  placeholder="correo@ejemplo.com"
+                  error={errors.email}
+                  required
+                />
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">
-                    Dirección *
-                  </label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-300 icon-enhanced" />
-                    <textarea
-                      value={formData.address}
-                      onChange={(e) => handleInputChange('address', e.target.value)}
-                      className={`w-full pl-10 pr-3 py-2 border ${
-                        errors.address ? 'border-red-400' : 'border-white/20'
-                      } rounded-lg glass-content placeholder-gray-300 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none`}
-                      rows={3}
-                      placeholder="Calle 123 #45-67, Ciudad"
-                    />
-                  </div>
-                  {errors.address && <p className="mt-1 text-sm text-red-400">{errors.address}</p>}
-                </div>
+                <FormTextarea
+                  label="Dirección"
+                  name="address"
+                  value={formData.address}
+                  onChange={(value) => handleInputChange('address', value)}
+                  placeholder="Calle 123 #45-67, Ciudad"
+                  error={errors.address}
+                  required
+                  rows={3}
+                />
               </div>
               
-              <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 mt-6">
+              <div className="flex flex-col sm:flex-row justify-between space-y-2 sm:space-y-0 sm:space-x-3 mt-6">
                 <button
                   onClick={() => {
                     setShowAddModal(false);
@@ -465,13 +443,13 @@ export const ClientsModule: React.FC<ClientsModuleProps> = ({
                     });
                     setErrors({});
                   }}
-                  className="px-4 py-2 text-white glass-content border border-white/20 hover:bg-white/10 rounded-lg transition-colors"
+                  className="px-6 py-3 text-gray-200 bg-white/10 hover:bg-white/20 rounded-lg transition-all glass-hover border border-white/20"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleSaveClient}
-                  className="px-4 py-2 btn-primary text-white rounded-lg"
+                  className="px-6 py-3 btn-emerald text-white rounded-lg transition-all glass-hover"
                 >
                   {editingClient ? 'Actualizar' : 'Registrar'}
                 </button>

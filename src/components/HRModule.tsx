@@ -9,11 +9,10 @@ import {
   DollarSign,
   Award,
   UserCheck,
-  Briefcase,
-  X,
-  Save
+  Briefcase
 } from 'lucide-react';
 import { AlertType } from '../App';
+import { FormInput, FormSelect } from './ui/FormInput';
 
 interface Employee {
   id: string;
@@ -450,202 +449,129 @@ export const HRModule: React.FC<HRModuleProps> = ({ showAlert, showConfirmDialog
 
       {/* Add/Edit Employee Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
-          <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transform transition-all duration-300 p-8">
-            <div className="flex items-start justify-between mb-6">
-              <div>
-                <h3 className="text-2xl font-bold text-white">
-                  {editingEmployee ? 'Editar Empleado' : 'Nuevo Empleado'}
-                </h3>
-                <p className="text-gray-300 mt-1">
-                  {editingEmployee ? 'Actualiza la información del empleado' : 'Completa el formulario para agregar un nuevo empleado'}
-                </p>
-              </div>
-              <button
-                onClick={() => {
-                  setShowAddModal(false);
-                  setEditingEmployee(null);
-                  setNewEmployee({
-                    name: '', identification: '', position: '', department: 'ventas',
-                    phone: '', email: '', address: '', salary: 0, commissionRate: 0,
-                    status: 'active', permissions: []
-                  });
-                }}
-                className="text-gray-300 hover:text-white p-1 -m-2 transition-colors rounded-full hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-gray-900"
-                aria-label="Cerrar"
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="glass-card-strong w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <h3 className="text-white mb-4">
+                {editingEmployee ? 'Editar Empleado' : 'Nuevo Empleado'}
+              </h3>
             
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-200">
-                    Nombre Completo *
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={newEmployee.name || ''}
-                      onChange={(e) => setNewEmployee({...newEmployee, name: e.target.value})}
-                      className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20 transition-all duration-200"
-                      placeholder="Juan Pérez"
-                    />
-                  </div>
-                </div>
+                <FormInput
+                  label="Nombre Completo"
+                  name="name"
+                  value={newEmployee.name || ''}
+                  onChange={(value) => setNewEmployee({...newEmployee, name: value})}
+                  placeholder="Juan Pérez"
+                  required
+                  textOnly
+                />
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-200">
-                    Identificación *
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={newEmployee.identification || ''}
-                      onChange={(e) => setNewEmployee({...newEmployee, identification: e.target.value})}
-                      className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20 transition-all duration-200"
-                      placeholder="12345678901"
-                    />
-                  </div>
-                </div>
+                <FormInput
+                  label="Identificación"
+                  name="identification"
+                  value={newEmployee.identification || ''}
+                  onChange={(value) => setNewEmployee({...newEmployee, identification: value.replace(/[^0-9]/g, '')})}
+                  placeholder="12345678901"
+                  required
+                  maxLength={11}
+                />
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-200">
-                    Cargo *
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={newEmployee.position || ''}
-                      onChange={(e) => setNewEmployee({...newEmployee, position: e.target.value})}
-                      className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20 transition-all duration-200"
-                      placeholder="Asesor Comercial"
-                    />
-                  </div>
-                </div>
+                <FormInput
+                  label="Cargo"
+                  name="position"
+                  value={newEmployee.position || ''}
+                  onChange={(value) => setNewEmployee({...newEmployee, position: value})}
+                  placeholder="Asesor Comercial"
+                  required
+                />
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-200">
-                    Departamento *
-                  </label>
-                  <div className="relative">
-                    <select
-                      value={newEmployee.department || 'ventas'}
-                      onChange={(e) => setNewEmployee({...newEmployee, department: e.target.value as Employee['department']})}
-                      className="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20 appearance-none cursor-pointer"
-                    >
-                      {Object.entries(departmentNames).map(([key, name]) => (
-                        <option key={key} value={key} className="bg-gray-800 text-white hover:bg-orange-500">
-                          {name}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                      <svg className="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
+                <FormSelect
+                  label="Departamento"
+                  name="department"
+                  value={newEmployee.department || 'ventas'}
+                  onChange={(value) => setNewEmployee({...newEmployee, department: value as Employee['department']})}
+                  options={Object.entries(departmentNames).map(([key, name]) => ({ value: key, label: name }))}
+                  required
+                />
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-200">
-                    Teléfono *
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="tel"
-                      value={newEmployee.phone || ''}
-                      onChange={(e) => setNewEmployee({...newEmployee, phone: e.target.value})}
-                      className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20 transition-all duration-200"
-                      placeholder="+57 300 123 4567"
-                    />
-                  </div>
-                </div>
+                <FormInput
+                  label="Teléfono"
+                  name="phone"
+                  type="tel"
+                  value={newEmployee.phone || ''}
+                  onChange={(value) => setNewEmployee({...newEmployee, phone: value})}
+                  placeholder="+57 300 123 4567"
+                  required
+                />
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-200">
-                    Email Corporativo *
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="email"
-                      value={newEmployee.email || ''}
-                      onChange={(e) => setNewEmployee({...newEmployee, email: e.target.value})}
-                      className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20 transition-all duration-200"
-                      placeholder="juan.perez@empresa.com"
-                      pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-                    />
-                  </div>
-                </div>
+                <FormInput
+                  label="Email Corporativo"
+                  name="email"
+                  type="email"
+                  value={newEmployee.email || ''}
+                  onChange={(value) => setNewEmployee({...newEmployee, email: value})}
+                  placeholder="juan.perez@empresa.com"
+                  required
+                />
 
-                <div>
-                  <label className="block text-sm font-medium text-white mb-2">
-                    Salario Base (COP) *
-                    <input
-                      type="number"
-                      value={newEmployee.salary || ''}
-                      onChange={(e) => setNewEmployee({...newEmployee, salary: Number(e.target.value)})}
-                      className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
-                      placeholder="2500000"
-                    />
-                  </label>
-                </div>
+                <FormInput
+                  label="Salario Base (COP)"
+                  name="salary"
+                  type="number"
+                  value={newEmployee.salary || 0}
+                  onChange={(value) => setNewEmployee({...newEmployee, salary: Number(value)})}
+                  placeholder="2500000"
+                  min={0}
+                  required
+                />
 
-                <div>
-                  <label className="block text-sm font-medium text-white mb-2">
-                    Comisión (%) *
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    max="1"
-                    value={newEmployee.commissionRate || ''}
-                    onChange={(e) => setNewEmployee({...newEmployee, commissionRate: Number(e.target.value)})}
-                    className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
-                    placeholder="0.05"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-white mb-2">
-                  Dirección *
-                </label>
-                <input
-                  type="text"
-                  value={newEmployee.address || ''}
-                  onChange={(e) => setNewEmployee({...newEmployee, address: e.target.value})}
-                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
-                  placeholder="Calle 123 #45-67, Ciudad"
+                <FormInput
+                  label="Comisión (%)"
+                  name="commissionRate"
+                  type="number"
+                  value={newEmployee.commissionRate || 0}
+                  onChange={(value) => setNewEmployee({...newEmployee, commissionRate: Number(value)})}
+                  placeholder="0.05"
+                  min={0}
+                  max={1}
+                  required
                 />
               </div>
+
+              <FormInput
+                label="Dirección"
+                name="address"
+                value={newEmployee.address || ''}
+                onChange={(value) => setNewEmployee({...newEmployee, address: value})}
+                placeholder="Calle 123 #45-67, Ciudad"
+                required
+              />
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 w-full pt-6 mt-8 border-t border-white/10">
-              <button
-                onClick={() => {
-                  setShowAddModal(false);
-                  setEditingEmployee(null);
-                  setNewEmployee({
-                    name: '', identification: '', position: '', department: 'ventas',
-                    phone: '', email: '', address: '', salary: 0, commissionRate: 0,
-                    status: 'active', permissions: []
-                  });
-                }}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-600/30 text-gray-200 rounded-lg hover:bg-gray-600/40 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900"
-              >
-                <span>Cancelar</span>
-              </button>
-              <button
-                onClick={editingEmployee ? handleUpdateEmployee : handleAddEmployee}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 focus:ring-offset-gray-900 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform"
-              >
-                <Save className="h-5 w-5" />
-                <span>{editingEmployee ? 'Actualizar' : 'Guardar'} Empleado</span>
-              </button>
+              <div className="flex flex-col sm:flex-row justify-between space-y-2 sm:space-y-0 sm:space-x-3 mt-6">
+                <button
+                  onClick={() => {
+                    setShowAddModal(false);
+                    setEditingEmployee(null);
+                    setNewEmployee({
+                      name: '', identification: '', position: '', department: 'ventas',
+                      phone: '', email: '', address: '', salary: 0, commissionRate: 0,
+                      status: 'active', permissions: []
+                    });
+                  }}
+                  className="px-6 py-3 text-gray-200 bg-white/10 hover:bg-white/20 rounded-lg transition-all glass-hover border border-white/20"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={editingEmployee ? handleUpdateEmployee : handleAddEmployee}
+                  className="px-6 py-3 btn-emerald text-white rounded-lg transition-all glass-hover"
+                >
+                  {editingEmployee ? 'Actualizar' : 'Guardar'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

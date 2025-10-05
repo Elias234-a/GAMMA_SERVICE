@@ -10,6 +10,7 @@ interface SalesModuleProps {
   clients: Client[];
   vehicles: Vehicle[];
   setVehicles: React.Dispatch<React.SetStateAction<Vehicle[]>>;
+  onModalStateChange?: (isOpen: boolean) => void;
 }
 
 export const SalesModule: React.FC<SalesModuleProps> = ({ 
@@ -19,7 +20,8 @@ export const SalesModule: React.FC<SalesModuleProps> = ({
   setSales,
   clients,
   vehicles,
-  setVehicles
+  setVehicles,
+  onModalStateChange
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -108,12 +110,12 @@ export const SalesModule: React.FC<SalesModuleProps> = ({
     });
     setErrors({});
     setShowAddModal(true);
+    onModalStateChange?.(true);
   };
 
   const handleEditSale = (sale: Sale) => {
     setEditingSale(sale);
     setCurrentStep(1);
-    const vehicle = vehicles.find(v => v.id === sale.vehicleId);
     setFormData({
       clientId: sale.clientId,
       vehicleId: sale.vehicleId,
@@ -126,6 +128,7 @@ export const SalesModule: React.FC<SalesModuleProps> = ({
     });
     setErrors({});
     setShowAddModal(true);
+    onModalStateChange?.(true);
   };
 
   const handleDeleteSale = (sale: Sale) => {
@@ -198,6 +201,7 @@ export const SalesModule: React.FC<SalesModuleProps> = ({
     }
 
     setShowAddModal(false);
+    onModalStateChange?.(false);
     setEditingSale(null);
     setCurrentStep(1);
     setFormData({
@@ -665,6 +669,7 @@ export const SalesModule: React.FC<SalesModuleProps> = ({
                   <button
                     onClick={() => {
                       setShowAddModal(false);
+                      onModalStateChange?.(false);
                       setEditingSale(null);
                       setCurrentStep(1);
                       setFormData({

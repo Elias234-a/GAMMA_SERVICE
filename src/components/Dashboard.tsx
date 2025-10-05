@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Users, Car, ShoppingCart, FileText, DollarSign, TrendingUp, Bell, Calendar, Plus, Clock } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Users, Car, ShoppingCart, FileText, DollarSign, TrendingUp, Bell, Calendar, Plus, Clock, BarChart3, PieChart, Activity, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { AlertType, Client, Vehicle, Sale } from '../App';
 import { ModernCalendar } from './ui/modern-calendar';
+import { LineChart, Line, BarChart, Bar, PieChart as RePieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 
 interface DashboardProps {
   showAlert: (type: AlertType, title: string, message: string) => void;
@@ -14,13 +15,87 @@ interface DashboardProps {
 export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicles, sales, onNavigateToModule }) => {
   const [showCalendar, setShowCalendar] = useState(false);
   
-  const totalRevenue = sales
-    .filter(sale => sale.status === 'completed')
-    .reduce((sum, sale) => sum + sale.totalPrice, 0);
-
-  const pendingSales = sales.filter(sale => sale.status === 'pending').length;
-  const availableVehicles = vehicles.filter(vehicle => vehicle.status === 'available').length;
-  const activeClients = clients.filter(client => client.status === 'active').length;
+  // Calculate metrics
+  const metrics = useMemo(() => {
+    const completedSales = sales.filter(sale => sale.status === 'completed');
+    const totalRevenue = completedSales.reduce((sum, sale) => sum + sale.totalPrice, 0);
+    const pendingSales = sales.filter(sale => sale.status === 'pending').length;
+    const availableVehicles = vehicles.filter(vehicle => vehicle.status === 'available').length;
+    const activeClients = clients.filter(client => client.status === 'active').length;
+    
+    // Calculate growth percentages (simulated for demo)
+    const revenueGrowth = 18.5;
+    const clientsGrowth = 12.3;
+    const vehiclesGrowth = 5.7;
+    const salesGrowth = -3.2;
+    
+    return {
+      totalRevenue,
+      pendingSales,
+      availableVehicles,
+      activeClients,
+      completedSales: completedSales.length,
+      totalSales: sales.length,
+      revenueGrowth,
+      clientsGrowth,
+      vehiclesGrowth,
+      salesGrowth,
+      averageSaleValue: completedSales.length > 0 ? totalRevenue / completedSales.length : 0,
+      conversionRate: sales.length > 0 ? (completedSales.length / sales.length) * 100 : 0
+    };
+  }, [sales, clients, vehicles]);
+  
+  // Sales by month data
+  const salesByMonth = useMemo(() => {
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    const currentMonth = new Date().getMonth();
+    
+    return months.slice(Math.max(0, currentMonth - 5), currentMonth + 1).map((month, index) => ({
+      name: month,
+      ventas: Math.floor(Math.random() * 15) + 5,
+      ingresos: Math.floor(Math.random() * 50000000) + 20000000
+    }));
+  }, []);
+  
+  // Sales by status
+  const salesByStatus = useMemo(() => [
+    { name: 'Completadas', value: sales.filter(s => s.status === 'completed').length, color: '#10b981' },
+    { name: 'Pendientes', value: sales.filter(s => s.status === 'pending').length, color: '#f59e0b' },
+    { name: 'Canceladas', value: sales.filter(s => s.status === 'cancelled').length, color: '#ef4444' }
+  ], [sales]);
+  
+  // Sales by payment method
+  const salesByPayment = useMemo(() => {
+    const methods = sales.reduce((acc, sale) => {
+      acc[sale.paymentMethod] = (acc[sale.paymentMethod] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    const colors: Record<string, string> = {
+      cash: '#10b981',
+      credit: '#3b82f6',
+      financing: '#f59e0b',
+      mixed: '#8b5cf6'
+    };
+    
+    const labels: Record<string, string> = {
+      cash: 'Efectivo',
+      credit: 'Crédito',
+      financing: 'Financiamiento',
+      mixed: 'Mixto'
+    };
+    
+    return Object.entries(methods).map(([key, value]) => ({
+      name: labels[key] || key,
+      value,
+      color: colors[key] || '#6b7280'
+    }));
+  }, [sales]);
+  
+  const totalRevenue = metrics.totalRevenue;
+  const pendingSales = metrics.pendingSales;
+  const availableVehicles = metrics.availableVehicles;
+  const activeClients = metrics.activeClients;
 
   // Sample calendar events
   const calendarEvents = [
@@ -132,14 +207,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
 
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="glass-card p-6">
+        <div className="glass-card p-6 hover:shadow-xl transition-shadow">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-200">Clientes Activos</p>
               <p className="text-3xl font-bold text-white">{activeClients}</p>
-              <p className="text-sm text-green-400 flex items-center mt-1">
-                <TrendingUp className="h-4 w-4 mr-1" />
-                +12% vs mes anterior
+              <p className={`text-sm flex items-center mt-1 ${metrics.clientsGrowth >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {metrics.clientsGrowth >= 0 ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingUp className="h-4 w-4 mr-1 rotate-180" />}
+                {metrics.clientsGrowth >= 0 ? '+' : ''}{metrics.clientsGrowth.toFixed(1)}% vs mes anterior
               </p>
             </div>
             <div className="bg-blue-500/20 p-3 rounded-full backdrop-blur-sm">
@@ -148,14 +223,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
           </div>
         </div>
 
-        <div className="glass-card p-6">
+        <div className="glass-card p-6 hover:shadow-xl transition-shadow">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-200">Vehículos Disponibles</p>
               <p className="text-3xl font-bold text-white">{availableVehicles}</p>
-              <p className="text-sm text-blue-400 flex items-center mt-1">
-                <TrendingUp className="h-4 w-4 mr-1" />
-                +5% vs mes anterior
+              <p className={`text-sm flex items-center mt-1 ${metrics.vehiclesGrowth >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {metrics.vehiclesGrowth >= 0 ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingUp className="h-4 w-4 mr-1 rotate-180" />}
+                {metrics.vehiclesGrowth >= 0 ? '+' : ''}{metrics.vehiclesGrowth.toFixed(1)}% vs mes anterior
               </p>
             </div>
             <div className="bg-green-500/20 p-3 rounded-full backdrop-blur-sm">
@@ -164,14 +239,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
           </div>
         </div>
 
-        <div className="glass-card p-6">
+        <div className="glass-card p-6 hover:shadow-xl transition-shadow">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-200">Ventas Pendientes</p>
               <p className="text-3xl font-bold text-white">{pendingSales}</p>
               <p className="text-sm text-orange-400 flex items-center mt-1">
                 <Calendar className="h-4 w-4 mr-1" />
-                Requieren atención
+                {pendingSales > 0 ? 'Requieren atención' : 'Todo al día'}
               </p>
             </div>
             <div className="bg-orange-500/20 p-3 rounded-full backdrop-blur-sm">
@@ -180,16 +255,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
           </div>
         </div>
 
-        <div className="glass-card p-6">
+        <div className="glass-card p-6 hover:shadow-xl transition-shadow">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-200">Ingresos Totales</p>
-              <p className="text-3xl font-bold text-white">
-                ${totalRevenue.toLocaleString('es-CO')}
+              <p className="text-2xl font-bold text-white">
+                ${(totalRevenue / 1000000).toFixed(1)}M
               </p>
-              <p className="text-sm text-green-400 flex items-center mt-1">
-                <TrendingUp className="h-4 w-4 mr-1" />
-                +18% vs mes anterior
+              <p className="text-xs text-gray-400">${totalRevenue.toLocaleString('es-CO')} COP</p>
+              <p className={`text-sm flex items-center mt-1 ${metrics.revenueGrowth >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {metrics.revenueGrowth >= 0 ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingUp className="h-4 w-4 mr-1 rotate-180" />}
+                {metrics.revenueGrowth >= 0 ? '+' : ''}{metrics.revenueGrowth.toFixed(1)}% vs mes anterior
               </p>
             </div>
             <div className="bg-green-500/20 p-3 rounded-full backdrop-blur-sm">
@@ -224,6 +300,156 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
               </button>
             );
           })}
+        </div>
+      </div>
+
+      {/* Analytics Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Sales Trend Chart */}
+        <div className="glass-card p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-white">Tendencia de Ventas</h2>
+            <div className="flex items-center space-x-2">
+              <button className="px-3 py-1 text-xs rounded-lg bg-orange-500/20 text-orange-300 border border-orange-400/30">
+                6 Meses
+              </button>
+            </div>
+          </div>
+          <ResponsiveContainer width="100%" height={250}>
+            <AreaChart data={salesByMonth}>
+              <defs>
+                <linearGradient id="colorVentas" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#ea580c" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#ea580c" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis dataKey="name" stroke="#9ca3af" style={{ fontSize: '12px' }} />
+              <YAxis stroke="#9ca3af" style={{ fontSize: '12px' }} />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#1f2937', 
+                  border: '1px solid #374151',
+                  borderRadius: '8px',
+                  color: '#fff'
+                }}
+              />
+              <Area type="monotone" dataKey="ventas" stroke="#ea580c" fillOpacity={1} fill="url(#colorVentas)" />
+            </AreaChart>
+          </ResponsiveContainer>
+          <div className="mt-4 grid grid-cols-2 gap-4">
+            <div className="text-center">
+              <p className="text-sm text-gray-400">Total Ventas</p>
+              <p className="text-xl font-bold text-white">{metrics.totalSales}</p>
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-gray-400">Tasa Conversión</p>
+              <p className="text-xl font-bold text-green-400">{metrics.conversionRate.toFixed(1)}%</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Sales by Status Pie Chart */}
+        <div className="glass-card p-6">
+          <h2 className="text-lg font-semibold text-white mb-4">Distribución de Ventas</h2>
+          <ResponsiveContainer width="100%" height={250}>
+            <RePieChart>
+              <Pie
+                data={salesByStatus}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {salesByStatus.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#1f2937', 
+                  border: '1px solid #374151',
+                  borderRadius: '8px',
+                  color: '#fff'
+                }}
+              />
+            </RePieChart>
+          </ResponsiveContainer>
+          <div className="mt-4 space-y-2">
+            {salesByStatus.map((item, index) => (
+              <div key={index} className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
+                  <span className="text-sm text-gray-300">{item.name}</span>
+                </div>
+                <span className="text-sm font-semibold text-white">{item.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Revenue and Payment Methods */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Revenue Bar Chart */}
+        <div className="lg:col-span-2 glass-card p-6">
+          <h2 className="text-lg font-semibold text-white mb-4">Ingresos Mensuales</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={salesByMonth}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis dataKey="name" stroke="#9ca3af" style={{ fontSize: '12px' }} />
+              <YAxis stroke="#9ca3af" style={{ fontSize: '12px' }} tickFormatter={(value) => `$${(value / 1000000).toFixed(0)}M`} />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#1f2937', 
+                  border: '1px solid #374151',
+                  borderRadius: '8px',
+                  color: '#fff'
+                }}
+                formatter={(value: number) => [`$${value.toLocaleString('es-CO')} COP`, 'Ingresos']}
+              />
+              <Bar dataKey="ingresos" fill="#10b981" radius={[8, 8, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Payment Methods */}
+        <div className="glass-card p-6">
+          <h2 className="text-lg font-semibold text-white mb-4">Métodos de Pago</h2>
+          <div className="space-y-4">
+            {salesByPayment.map((method, index) => {
+              const total = salesByPayment.reduce((sum, m) => sum + m.value, 0);
+              const percentage = total > 0 ? (method.value / total) * 100 : 0;
+              return (
+                <div key={index}>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm text-gray-300">{method.name}</span>
+                    <span className="text-sm font-semibold text-white">{method.value}</span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      className="h-2 rounded-full transition-all duration-500"
+                      style={{ 
+                        width: `${percentage}%`,
+                        backgroundColor: method.color
+                      }}
+                    ></div>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">{percentage.toFixed(1)}%</p>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-6 p-4 bg-gradient-to-r from-orange-500/10 to-emerald-500/10 rounded-lg border border-orange-400/20">
+            <p className="text-xs text-gray-300 mb-1">Valor Promedio por Venta</p>
+            <p className="text-2xl font-bold text-white">
+              ${(metrics.averageSaleValue / 1000000).toFixed(1)}M
+            </p>
+            <p className="text-xs text-gray-400">${metrics.averageSaleValue.toLocaleString('es-CO')} COP</p>
+          </div>
         </div>
       </div>
 
@@ -350,7 +576,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
               Gestiona tus citas, reuniones y eventos importantes en un solo lugar
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              {calendarEvents.map((event, index) => (
+              {calendarEvents.map((event) => (
                 <div key={event.id} className="glass-content p-4 rounded-lg">
                   <div className="flex items-center space-x-3">
                     <div className={`w-3 h-3 rounded-full ${event.color}`}></div>

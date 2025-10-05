@@ -637,7 +637,7 @@ export const UserRolesModule: React.FC<UserRolesModuleProps> = ({ showAlert, sho
 
       {/* Create/Edit Role Modal */}
       {showCreateRole && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8">
             <div className="flex items-start justify-between mb-6">
               <div>
@@ -774,7 +774,7 @@ export const UserRolesModule: React.FC<UserRolesModuleProps> = ({ showAlert, sho
 
       {/* Create/Edit User Modal */}
       {showCreateUser && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="glass-card-strong p-6 w-full max-w-md backdrop-blur-md bg-white/5 border border-white/10 rounded-xl shadow-2xl">
             <h3 className="text-xl font-bold text-white mb-6">
               {editingUser ? 'Editar Usuario' : 'Crear Nuevo Usuario'}

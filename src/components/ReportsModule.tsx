@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Download, Calendar, BarChart, FileText, TrendingUp, DollarSign } from 'lucide-react';
+import { Download, Calendar, BarChart, FileText, TrendingUp, DollarSign, Loader2 } from 'lucide-react';
 import { AlertType, Sale, Client, Vehicle } from '../App';
+import reportService from '../services/reportService';
 
 interface ReportsModuleProps {
   showAlert: (type: AlertType, title: string, message: string) => void;
@@ -21,6 +22,7 @@ export const ReportsModule: React.FC<ReportsModuleProps> = ({
   const [format, setFormat] = useState('pdf');
   const [selectedClient, setSelectedClient] = useState('all');
   const [selectedVehicle, setSelectedVehicle] = useState('all');
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const reportTypes = [
     { value: 'sales', label: 'Reporte de Ventas', icon: BarChart },
@@ -72,7 +74,7 @@ export const ReportsModule: React.FC<ReportsModuleProps> = ({
     totalInventoryValue: vehicles.filter(v => v.status === 'available').reduce((sum, v) => sum + v.price, 0)
   };
 
-  const handleGenerateReport = () => {
+  const handleGenerateReport = async () => {
     // Validate inputs
     if (!dateFrom || !dateTo) {
       showAlert('error', 'Fechas requeridas', 'Por favor seleccione el rango de fechas para el reporte');
@@ -84,11 +86,54 @@ export const ReportsModule: React.FC<ReportsModuleProps> = ({
       return;
     }
 
-    // Simulate report generation
-    const reportTypeLabel = reportTypes.find(t => t.value === reportType)?.label || 'Reporte';
-    const formatLabel = formats.find(f => f.value === format)?.label || 'PDF';
-    
-    showAlert('success', 'Reporte generado', `${reportTypeLabel} en formato ${formatLabel} ha sido generado exitosamente`);
+    setIsGenerating(true);
+
+    try {
+      // Generate report based on type and format
+      switch (reportType) {
+        case 'sales':
+          if (format === 'pdf') {
+            reportService.generateSalesPDF(filteredSales, clients, vehicles, dateFrom, dateTo);
+          } else if (format === 'excel') {
+            reportService.generateSalesExcel(filteredSales, clients, vehicles, dateFrom, dateTo);
+          } else if (format === 'csv') {
+            reportService.generateSalesCSV(filteredSales, clients, vehicles, dateFrom, dateTo);
+          }
+          break;
+
+        case 'clients':
+          if (format === 'pdf') {
+            reportService.generateClientsPDF(clients, sales, dateFrom, dateTo);
+          } else if (format === 'excel') {
+            reportService.generateClientsExcel(clients, sales, dateFrom, dateTo);
+          }
+          break;
+
+        case 'vehicles':
+          if (format === 'pdf') {
+            reportService.generateVehiclesPDF(vehicles, clients, dateFrom, dateTo);
+          } else if (format === 'excel') {
+            reportService.generateVehiclesExcel(vehicles, clients);
+          }
+          break;
+
+        case 'financial':
+          if (format === 'pdf') {
+            reportService.generateFinancialPDF(filteredSales, dateFrom, dateTo);
+          }
+          break;
+      }
+
+      const reportTypeLabel = reportTypes.find(t => t.value === reportType)?.label || 'Reporte';
+      const formatLabel = formats.find(f => f.value === format)?.label || 'PDF';
+      
+      showAlert('success', 'Reporte generado', `${reportTypeLabel} en formato ${formatLabel} ha sido descargado exitosamente`);
+    } catch (error) {
+      console.error('Error generating report:', error);
+      showAlert('error', 'Error', 'Hubo un error al generar el reporte. Por favor intente nuevamente.');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const renderReportPreview = () => {
@@ -359,14 +404,11 @@ export const ReportsModule: React.FC<ReportsModuleProps> = ({
                   onChange={(e) => setReportType(e.target.value)}
                   className="dropdown-menu w-full px-4 py-3 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 cursor-pointer"
                 >
-                  {reportTypes.map(type => {
-                    const Icon = type.icon;
-                    return (
-                      <option key={type.value} value={type.value} className="dropdown-option bg-gray-800 text-white">
-                        {type.label}
-                      </option>
-                    );
-                  })}
+                  {reportTypes.map(type => (
+                    <option key={type.value} value={type.value} className="dropdown-option bg-gray-800 text-white">
+                      {type.label}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -455,10 +497,20 @@ export const ReportsModule: React.FC<ReportsModuleProps> = ({
 
               <button
                 onClick={handleGenerateReport}
-                className="w-full btn-primary text-white py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2"
+                disabled={isGenerating}
+                className="w-full btn-primary text-white py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Download className="h-4 w-4" />
-                <span>Generar Reporte</span>
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Generando...</span>
+                  </>
+                ) : (
+                  <>
+                    <Download className="h-4 w-4" />
+                    <span>Generar Reporte</span>
+                  </>
+                )}
               </button>
             </div>
           </div>

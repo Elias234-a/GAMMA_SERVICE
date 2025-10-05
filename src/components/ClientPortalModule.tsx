@@ -558,96 +558,119 @@ export const ClientPortalModule: React.FC<ClientPortalModuleProps> = ({ showAler
 
       {/* New Appointment Modal */}
       {showNewAppointment && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="glass-card-strong p-6 w-full max-w-md border border-white/20 rounded-xl backdrop-blur-lg">
-            <h3 className="text-xl font-bold text-white mb-6">Agendar Nueva Cita</h3>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="glass-card-strong max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-white mb-6">Agendar Nueva Cita</h3>
             
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-white mb-2">Fecha *</label>
-                <input
-                  type="date"
-                  value={newAppointment.date}
-                  onChange={(e) => setNewAppointment({...newAppointment, date: e.target.value})}
-                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
-                />
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Fecha *</label>
+                  <input
+                    type="date"
+                    value={newAppointment.date}
+                    onChange={(e) => setNewAppointment({...newAppointment, date: e.target.value})}
+                    className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20 backdrop-blur-sm transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Hora *</label>
+                  <div className="relative">
+                    <select
+                      value={newAppointment.time}
+                      onChange={(e) => setNewAppointment({...newAppointment, time: e.target.value})}
+                      className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20 backdrop-blur-sm appearance-none transition-all"
+                    >
+                      <option value="" className="bg-white/80 backdrop-blur-md text-gray-900">Seleccionar hora</option>
+                      <option value="08:00" className="bg-white/80 backdrop-blur-md text-gray-900">08:00</option>
+                      <option value="09:00" className="bg-white/80 backdrop-blur-md text-gray-900">09:00</option>
+                      <option value="10:00" className="bg-white/80 backdrop-blur-md text-gray-900">10:00</option>
+                      <option value="11:00" className="bg-white/80 backdrop-blur-md text-gray-900">11:00</option>
+                      <option value="14:00" className="bg-white/80 backdrop-blur-md text-gray-900">14:00</option>
+                      <option value="15:00" className="bg-white/80 backdrop-blur-md text-gray-900">15:00</option>
+                      <option value="16:00" className="bg-white/80 backdrop-blur-md text-gray-900">16:00</option>
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
+                      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Servicio *</label>
+                  <div className="relative">
+                    <select
+                      value={newAppointment.service}
+                      onChange={(e) => setNewAppointment({...newAppointment, service: e.target.value})}
+                      className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20 backdrop-blur-sm appearance-none transition-all"
+                    >
+                      <option value="" className="bg-white/80 backdrop-blur-md text-gray-900">Seleccionar servicio</option>
+                      <option value="Mantenimiento preventivo" className="bg-white/80 backdrop-blur-md text-gray-900">Mantenimiento preventivo</option>
+                      <option value="Cambio de aceite" className="bg-white/80 backdrop-blur-md text-gray-900">Cambio de aceite</option>
+                      <option value="Revisión general" className="bg-white/80 backdrop-blur-md text-gray-900">Revisión general</option>
+                      <option value="Reparación" className="bg-white/80 backdrop-blur-md text-gray-900">Reparación</option>
+                      <option value="Diagnóstico" className="bg-white/80 backdrop-blur-md text-gray-900">Diagnóstico</option>
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
+                      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Vehículo</label>
+                  <div className="relative">
+                    <select
+                      value={newAppointment.vehicle}
+                      onChange={(e) => setNewAppointment({...newAppointment, vehicle: e.target.value})}
+                      className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20 backdrop-blur-sm appearance-none transition-all"
+                    >
+                      <option value="" className="bg-white/80 backdrop-blur-md text-gray-900">Seleccionar vehículo</option>
+                      {selectedClient.purchases.map((purchase) => (
+                        <option key={purchase.id} value={purchase.vehicle} className="bg-white/80 backdrop-blur-md text-gray-900">
+                          {purchase.vehicle}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
+                      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Notas adicionales</label>
+                  <textarea
+                    value={newAppointment.notes}
+                    onChange={(e) => setNewAppointment({...newAppointment, notes: e.target.value})}
+                    rows={3}
+                    className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20 backdrop-blur-sm resize-none transition-all"
+                    placeholder="Describe el problema o servicio requerido..."
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-white mb-2">Hora *</label>
-                <select
-                  value={newAppointment.time}
-                  onChange={(e) => setNewAppointment({...newAppointment, time: e.target.value})}
-                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
+              <div className="flex space-x-4 mt-6">
+                <button
+                  onClick={() => setShowNewAppointment(false)}
+                  className="flex-1 px-6 py-3 text-gray-200 bg-white/10 hover:bg-white/20 rounded-lg transition-all glass-hover border border-white/20"
                 >
-                  <option value="" className="bg-gray-800">Seleccionar hora</option>
-                  <option value="08:00" className="bg-gray-800">08:00</option>
-                  <option value="09:00" className="bg-gray-800">09:00</option>
-                  <option value="10:00" className="bg-gray-800">10:00</option>
-                  <option value="11:00" className="bg-gray-800">11:00</option>
-                  <option value="14:00" className="bg-gray-800">14:00</option>
-                  <option value="15:00" className="bg-gray-800">15:00</option>
-                  <option value="16:00" className="bg-gray-800">16:00</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-white mb-2">Servicio *</label>
-                <select
-                  value={newAppointment.service}
-                  onChange={(e) => setNewAppointment({...newAppointment, service: e.target.value})}
-                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleScheduleAppointment}
+                  className="flex-1 btn-primary text-white px-6 py-3 rounded-lg transition-all"
                 >
-                  <option value="" className="bg-gray-800">Seleccionar servicio</option>
-                  <option value="Mantenimiento preventivo" className="bg-gray-800">Mantenimiento preventivo</option>
-                  <option value="Cambio de aceite" className="bg-gray-800">Cambio de aceite</option>
-                  <option value="Revisión general" className="bg-gray-800">Revisión general</option>
-                  <option value="Reparación" className="bg-gray-800">Reparación</option>
-                  <option value="Diagnóstico" className="bg-gray-800">Diagnóstico</option>
-                </select>
+                  Agendar Cita
+                </button>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-white mb-2">Vehículo</label>
-                <select
-                  value={newAppointment.vehicle}
-                  onChange={(e) => setNewAppointment({...newAppointment, vehicle: e.target.value})}
-                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
-                >
-                  <option value="" className="bg-gray-800">Seleccionar vehículo</option>
-                  {selectedClient.purchases.map((purchase) => (
-                    <option key={purchase.id} value={purchase.vehicle} className="bg-gray-800">
-                      {purchase.vehicle}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-white mb-2">Notas adicionales</label>
-                <textarea
-                  value={newAppointment.notes}
-                  onChange={(e) => setNewAppointment({...newAppointment, notes: e.target.value})}
-                  rows={3}
-                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
-                  placeholder="Describe el problema o servicio requerido..."
-                />
-              </div>
-            </div>
-
-            <div className="flex space-x-4 mt-6">
-              <button
-                onClick={() => setShowNewAppointment(false)}
-                className="flex-1 px-4 py-2 bg-gray-500/20 text-gray-300 rounded-lg hover:bg-gray-500/30 transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleScheduleAppointment}
-                className="flex-1 btn-primary px-4 py-2 rounded-lg"
-              >
-                Agendar Cita
-              </button>
             </div>
           </div>
         </div>

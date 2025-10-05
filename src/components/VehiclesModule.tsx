@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Plus, Search, Filter, Edit, Trash2, Eye, Car, DollarSign } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, Car, DollarSign } from 'lucide-react';
 import { AlertType, Vehicle, Client } from '../App';
+import { FormInput, FormSelect } from './ui/FormInput';
 
 interface VehiclesModuleProps {
   showAlert: (type: AlertType, title: string, message: string) => void;
@@ -179,6 +180,19 @@ export const VehiclesModule: React.FC<VehiclesModuleProps> = ({
   };
 
   const handleInputChange = (field: string, value: string | number) => {
+    // Validación para modelo: solo letras, números y espacios
+    if (field === 'model' && typeof value === 'string') {
+      value = value.replace(/[^a-zA-Z0-9\s\-]/g, '');
+    }
+    // Validación para VIN: solo alfanumérico, convertir a mayúsculas
+    if (field === 'vin' && typeof value === 'string') {
+      value = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    }
+    // Validación para placa: solo alfanumérico, convertir a mayúsculas
+    if (field === 'plate' && typeof value === 'string') {
+      value = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    }
+    
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
@@ -394,153 +408,104 @@ export const VehiclesModule: React.FC<VehiclesModuleProps> = ({
 
       {/* Add/Edit Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="glass-card-strong max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">
+              <h3 className="text-white mb-4">
                 {editingVehicle ? 'Editar Vehículo' : 'Nuevo Vehículo'}
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">
-                    Marca *
-                  </label>
-                  <select
-                    value={formData.brand}
-                    onChange={(e) => handleInputChange('brand', e.target.value)}
-                    className={`w-full px-3 py-2 border ${
-                      errors.brand ? 'border-red-400' : 'border-white/20'
-                    } rounded-lg glass-content text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
-                  >
-                    <option value="">Seleccionar marca</option>
-                    {brands.map(brand => (
-                      <option key={brand} value={brand}>{brand}</option>
-                    ))}
-                  </select>
-                  {errors.brand && <p className="mt-1 text-sm text-red-400">{errors.brand}</p>}
-                </div>
+                <FormSelect
+                  label="Marca"
+                  name="brand"
+                  value={formData.brand}
+                  onChange={(value) => handleInputChange('brand', value)}
+                  options={brands.map(b => ({ value: b, label: b }))}
+                  placeholder="Seleccionar marca"
+                  error={errors.brand}
+                  required
+                />
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">
-                    Modelo *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.model}
-                    onChange={(e) => handleInputChange('model', e.target.value)}
-                    className={`w-full px-3 py-2 border ${
-                      errors.model ? 'border-red-400' : 'border-white/20'
-                    } rounded-lg glass-content placeholder-gray-300 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
-                    placeholder="Corolla"
-                  />
-                  {errors.model && <p className="mt-1 text-sm text-red-400">{errors.model}</p>}
-                </div>
+                <FormInput
+                  label="Modelo"
+                  name="model"
+                  value={formData.model}
+                  onChange={(value) => handleInputChange('model', value)}
+                  placeholder="Corolla"
+                  error={errors.model}
+                  required
+                  alphanumeric
+                />
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">
-                    Año *
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.year}
-                    onChange={(e) => handleInputChange('year', parseInt(e.target.value))}
-                    className={`w-full px-3 py-2 border ${
-                      errors.year ? 'border-red-400' : 'border-white/20'
-                    } rounded-lg glass-content placeholder-gray-300 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
-                    min="1990"
-                    max={new Date().getFullYear() + 1}
-                  />
-                  {errors.year && <p className="mt-1 text-sm text-red-400">{errors.year}</p>}
-                </div>
+                <FormInput
+                  label="Año"
+                  name="year"
+                  type="number"
+                  value={formData.year}
+                  onChange={(value) => handleInputChange('year', parseInt(value) || new Date().getFullYear())}
+                  min={1990}
+                  max={new Date().getFullYear() + 1}
+                  error={errors.year}
+                  required
+                />
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">
-                    Color *
-                  </label>
-                  <select
-                    value={formData.color}
-                    onChange={(e) => handleInputChange('color', e.target.value)}
-                    className={`w-full px-3 py-2 border ${
-                      errors.color ? 'border-red-400' : 'border-white/20'
-                    } rounded-lg glass-content text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
-                  >
-                    <option value="">Seleccionar color</option>
-                    {colors.map(color => (
-                      <option key={color} value={color}>{color}</option>
-                    ))}
-                  </select>
-                  {errors.color && <p className="mt-1 text-sm text-red-400">{errors.color}</p>}
-                </div>
+                <FormSelect
+                  label="Color"
+                  name="color"
+                  value={formData.color}
+                  onChange={(value) => handleInputChange('color', value)}
+                  options={colors.map(c => ({ value: c, label: c }))}
+                  placeholder="Seleccionar color"
+                  error={errors.color}
+                  required
+                />
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">
-                    VIN *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.vin}
-                    onChange={(e) => handleInputChange('vin', e.target.value.toUpperCase())}
-                    className={`w-full px-3 py-2 border ${
-                      errors.vin ? 'border-red-400' : 'border-white/20'
-                    } rounded-lg glass-content placeholder-gray-300 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 font-mono`}
-                    placeholder="JT2BF28K123456789"
-                    maxLength={17}
-                  />
-                  {errors.vin && <p className="mt-1 text-sm text-red-400">{errors.vin}</p>}
-                </div>
+                <FormInput
+                  label="VIN"
+                  name="vin"
+                  value={formData.vin}
+                  onChange={(value) => handleInputChange('vin', value)}
+                  placeholder="JT2BF28K123456789"
+                  maxLength={17}
+                  error={errors.vin}
+                  required
+                  uppercase
+                />
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">
-                    Placa
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.plate}
-                    onChange={(e) => handleInputChange('plate', e.target.value.toUpperCase())}
-                    className={`w-full px-3 py-2 border ${
-                      errors.plate ? 'border-red-400' : 'border-white/20'
-                    } rounded-lg glass-content placeholder-gray-300 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
-                    placeholder="ABC123 (opcional)"
-                  />
-                  {errors.plate && <p className="mt-1 text-sm text-red-400">{errors.plate}</p>}
-                </div>
+                <FormInput
+                  label="Placa"
+                  name="plate"
+                  value={formData.plate}
+                  onChange={(value) => handleInputChange('plate', value)}
+                  placeholder="ABC123 (opcional)"
+                  error={errors.plate}
+                  uppercase
+                />
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">
-                    Precio *
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.price}
-                    onChange={(e) => handleInputChange('price', parseFloat(e.target.value) || 0)}
-                    className={`w-full px-3 py-2 border ${
-                      errors.price ? 'border-red-400' : 'border-white/20'
-                    } rounded-lg glass-content placeholder-gray-300 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
-                    placeholder="85000000"
-                    min="0"
-                  />
-                  {errors.price && <p className="mt-1 text-sm text-red-400">{errors.price}</p>}
-                </div>
+                <FormInput
+                  label="Precio"
+                  name="price"
+                  type="number"
+                  value={formData.price}
+                  onChange={(value) => handleInputChange('price', parseFloat(value) || 0)}
+                  placeholder="85000000"
+                  min={0}
+                  error={errors.price}
+                  required
+                />
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">
-                    Propietario
-                  </label>
-                  <select
-                    value={formData.clientId}
-                    onChange={(e) => handleInputChange('clientId', e.target.value)}
-                    className="w-full px-3 py-2 border border-white/20 rounded-lg glass-content text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  >
-                    <option value="">Sin asignar</option>
-                    {clients.filter(c => c.status === 'active').map(client => (
-                      <option key={client.id} value={client.id}>{client.name}</option>
-                    ))}
-                  </select>
-                </div>
+                <FormSelect
+                  label="Propietario"
+                  name="clientId"
+                  value={formData.clientId}
+                  onChange={(value) => handleInputChange('clientId', value)}
+                  options={clients.filter(c => c.status === 'active').map(c => ({ value: c.id, label: c.name }))}
+                  placeholder="Sin asignar"
+                />
               </div>
               
-              <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 mt-6">
+              <div className="flex flex-col sm:flex-row justify-between space-y-2 sm:space-y-0 sm:space-x-3 mt-6">
                 <button
                   onClick={() => {
                     setShowAddModal(false);
@@ -557,13 +522,13 @@ export const VehiclesModule: React.FC<VehiclesModuleProps> = ({
                     });
                     setErrors({});
                   }}
-                  className="px-4 py-2 text-white glass-content border border-white/20 hover:bg-white/10 rounded-lg transition-colors"
+                  className="px-6 py-3 text-gray-200 bg-white/10 hover:bg-white/20 rounded-lg transition-all glass-hover border border-white/20"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleSaveVehicle}
-                  className="px-4 py-2 btn-primary text-white rounded-lg"
+                  className="px-6 py-3 btn-emerald text-white rounded-lg transition-all glass-hover"
                 >
                   {editingVehicle ? 'Actualizar' : 'Registrar'}
                 </button>

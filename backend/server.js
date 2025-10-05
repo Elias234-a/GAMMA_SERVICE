@@ -23,6 +23,7 @@ import technicianRoutes from './routes/technicians.js';
 import dianRoutes from './routes/dian.js';
 import datacreditoRoutes from './routes/datacredito.js';
 import transitoRoutes from './routes/transito.js';
+import notificationRoutes from './routes/notifications.js';
 
 // Inicializar la aplicación Express
 const app = express();
@@ -40,8 +41,8 @@ const limiter = rateLimit({
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
     ? ['https://tudominio.com', 'https://www.tudominio.com'] 
-    : 'http://localhost:3000',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5174'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
   optionsSuccessStatus: 200
@@ -65,6 +66,7 @@ app.use((req, res, next) => {
 
 // Configuración de rutas
 app.use('/api/users', userRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Documentación de la API
 app.use('/api-docs', 

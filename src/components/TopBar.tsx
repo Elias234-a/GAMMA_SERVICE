@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, Search, Bell, User, LogOut, Settings } from 'lucide-react';
+import { Menu, X, Search, User, LogOut, Settings } from 'lucide-react';
 import { AlertType } from '../App';
-
+import { NotificationCenter } from './NotificationCenter';
+import { useNotifications } from '../hooks/useNotifications';
 import { UserRole } from '../types/auth.types';
 
 interface TopBarProps {
@@ -24,6 +25,15 @@ export const TopBar: React.FC<TopBarProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  
+  // Use notifications hook
+  const {
+    notifications,
+    unreadCount,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification
+  } = useNotifications(true);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -45,8 +55,8 @@ export const TopBar: React.FC<TopBarProps> = ({
     }
   };
 
-  const handleNotifications = () => {
-    showAlert('info', 'Notificaciones', 'Ver todas las notificaciones del sistema');
+  const handleRemoveNotification = (id: string) => {
+    deleteNotification(id);
   };
 
   return (
@@ -92,15 +102,12 @@ export const TopBar: React.FC<TopBarProps> = ({
         {/* Right side */}
         <div className="flex items-center space-x-4">
           {/* Notifications */}
-          <button
-            onClick={handleNotifications}
-            className="btn-interactive relative p-2.5 text-white hover:text-gray-200 hover:bg-white/15 rounded-lg icon-enhanced"
-          >
-            <Bell className="h-5 w-5" />
-            <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
-            </span>
-          </button>
+          <NotificationCenter
+            alerts={notifications}
+            onRemoveAlert={handleRemoveNotification}
+            onMarkAsRead={markAsRead}
+            onMarkAllAsRead={markAllAsRead}
+          />
           {/* User Menu */}
           <div className="relative" ref={userMenuRef}>
             <div className="flex items-center space-x-4">

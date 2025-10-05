@@ -442,8 +442,9 @@ export const WorkshopModule: React.FC<WorkshopModuleProps> = ({ showAlert, showC
 
       {/* New Order Modal */}
       {showOrderModal && (
-        <div className="fixed inset-0 w-full h-full backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="glass-card-strong p-6 w-full max-w-2xl rounded-xl border border-white/20 shadow-2xl">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="glass-card-strong max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-2xl font-bold text-white">Nueva Orden de Servicio</h3>
               <button 
@@ -822,6 +823,7 @@ export const WorkshopModule: React.FC<WorkshopModuleProps> = ({ showAlert, showC
                 </button>
               </div>
             </form>
+            </div>
           </div>
         </div>
       )}

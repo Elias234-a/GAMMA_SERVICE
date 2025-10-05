@@ -92,20 +92,10 @@ export const PurchasesModule: React.FC<PurchasesModuleProps> = ({ showAlert }) =
 
   // Order Modal Component
   const OrderModal = () => (
-    <div className="fixed inset-0 w-full h-full backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="glass-card-strong max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-5">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-white">Nueva Orden de Compra</h2>
-            <button 
-              onClick={() => setShowOrderModal(false)}
-              className="text-gray-400 hover:text-white transition-colors p-1"
-            >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="glass-card-strong w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+        <div className="p-6">
+          <h3 className="text-white mb-4">Nueva Orden de Compra</h3>
           
           <form onSubmit={handleCreateOrder} className="space-y-4">
             <div className="grid grid-cols-1 gap-4">
@@ -260,16 +250,15 @@ export const PurchasesModule: React.FC<PurchasesModuleProps> = ({ showAlert }) =
               <button
                 type="button"
                 onClick={() => setShowOrderModal(false)}
-                className="px-4 py-2 text-sm text-gray-200 bg-white/10 hover:bg-white/20 rounded-lg transition-all glass-hover border border-white/20"
+                className="px-6 py-3 text-gray-200 bg-white/10 hover:bg-white/20 rounded-lg transition-all glass-hover border border-white/20"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 btn-electric text-white rounded-lg transition-all glass-hover flex items-center space-x-2"
+                className="px-6 py-3 btn-emerald text-white rounded-lg transition-all glass-hover"
               >
-                <CheckCircle className="h-4 w-4" />
-                <span>Guardar Orden</span>
+                Guardar Orden
               </button>
             </div>
           </form>
@@ -533,20 +522,10 @@ export const PurchasesModule: React.FC<PurchasesModuleProps> = ({ showAlert }) =
       
       {/* Supplier Modal */}
       {showSupplierModal && (
-        <div className="fixed inset-0 w-full h-full backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="glass-card-strong max-w-2xl w-full">
-            <div className="p-5">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-white">Nuevo Proveedor</h2>
-                <button 
-                  onClick={() => setShowSupplierModal(false)}
-                  className="text-gray-400 hover:text-white transition-colors p-1"
-                >
-                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="glass-card-strong w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <h3 className="text-white mb-4">Nuevo Proveedor</h3>
               
               <form onSubmit={handleAddSupplier} className="space-y-4">
                 <div className="space-y-4">
@@ -800,15 +779,14 @@ export const PurchasesModule: React.FC<PurchasesModuleProps> = ({ showAlert }) =
                   <button
                     type="button"
                     onClick={() => setShowSupplierModal(false)}
-                    className="px-6 py-2 text-sm font-medium text-gray-300 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors duration-200"
+                    className="px-6 py-3 text-gray-200 bg-white/10 hover:bg-white/20 rounded-lg transition-all glass-hover border border-white/20"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
-                    className="px-6 py-2 bg-orange-600 hover:bg-orange-500 text-white text-sm font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors duration-200 flex items-center"
+                    className="px-6 py-3 btn-emerald text-white rounded-lg transition-all glass-hover"
                   >
-                    <CheckCircle className="h-4 w-4 mr-2" />
                     Guardar Proveedor
                   </button>
                 </div>

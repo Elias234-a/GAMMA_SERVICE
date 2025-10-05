@@ -626,11 +626,16 @@ export const PlatesModule: React.FC<PlatesModuleProps> = ({
                           <CheckCircle className="h-4 w-4" />
                         </button>
                       )}
-                      {request.status !== 'delivered' && (
+                      {request.status !== 'delivered' && request.status !== 'ready' && (
                         <button
-                          onClick={() => showAlert('info', 'Actualizar estado', 'Funcionalidad de actualización de estado disponible')}
+                          onClick={() => {
+                            const nextStatus = request.status === 'pending' ? 'documents_review' 
+                              : request.status === 'documents_review' ? 'in_process' 
+                              : 'in_process';
+                            updateRequestStatus(request.id, nextStatus);
+                          }}
                           className="text-yellow-600 hover:text-yellow-900 p-1 hover:bg-yellow-100 rounded"
-                          title="Actualizar estado"
+                          title="Avanzar estado"
                         >
                           <Edit className="h-4 w-4" />
                         </button>
@@ -653,10 +658,10 @@ export const PlatesModule: React.FC<PlatesModuleProps> = ({
 
       {/* Add Request Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="glass-card-strong max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <h3 className="text-white mb-4">
                 Nuevo Trámite de Placa
               </h3>
 
@@ -664,21 +669,14 @@ export const PlatesModule: React.FC<PlatesModuleProps> = ({
               <div className="flex items-center justify-between mb-6">
                 {steps.map((step, index) => (
                   <div key={step.id} className="flex items-center">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                      currentStep >= step.id ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center glass-content ${
+                      currentStep >= step.id ? 'bg-orange-500 text-white glow-orange' : 'bg-white/20 text-gray-300'
                     }`}>
                       {step.id}
                     </div>
-                    <div className="ml-2 hidden sm:block">
-                      <p className={`text-sm font-medium ${
-                        currentStep >= step.id ? 'text-blue-600' : 'text-gray-500'
-                      }`}>
-                        {step.title}
-                      </p>
-                    </div>
                     {index < steps.length - 1 && (
-                      <div className={`w-8 sm:w-20 h-1 mx-2 ${
-                        currentStep > step.id ? 'bg-blue-600' : 'bg-gray-200'
+                      <div className={`w-20 h-1 mx-2 rounded ${
+                        currentStep > step.id ? 'bg-orange-500' : 'bg-white/20'
                       }`}></div>
                     )}
                   </div>
@@ -700,14 +698,14 @@ export const PlatesModule: React.FC<PlatesModuleProps> = ({
                       });
                       setErrors({});
                     }}
-                    className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                    className="px-6 py-3 text-gray-200 bg-white/10 hover:bg-white/20 rounded-lg transition-all glass-hover border border-white/20"
                   >
                     Cancelar
                   </button>
                   {currentStep > 1 && (
                     <button
                       onClick={handlePrevStep}
-                      className="px-4 py-2 text-orange-600 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors"
+                      className="px-6 py-3 text-orange-300 bg-orange-500/20 hover:bg-orange-500/30 rounded-lg transition-all glass-hover border border-orange-500/30"
                     >
                       Anterior
                     </button>
@@ -717,14 +715,14 @@ export const PlatesModule: React.FC<PlatesModuleProps> = ({
                 {currentStep < 4 ? (
                   <button
                     onClick={handleNextStep}
-                    className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                    className="px-6 py-3 btn-electric text-white rounded-lg transition-all glass-hover"
                   >
                     Siguiente
                   </button>
                 ) : (
                   <button
                     onClick={handleSaveRequest}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                    className="px-6 py-3 btn-emerald text-white rounded-lg transition-all glass-hover"
                   >
                     Iniciar Trámite
                   </button>

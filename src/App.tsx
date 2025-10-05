@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { TopBar } from './components/TopBar';
 import { LoginScreen } from './components/LoginScreen';
 import { Dashboard } from './components/Dashboard';
+import { LoadingSpinner } from './components/LoadingSpinner';
 import { rolePermissions } from './types/auth.types';
+import authService from './services/authService';
 import { ClientsModule } from './components/ClientsModule';
 import { VehiclesModule } from './components/VehiclesModule';
 import { SalesModule } from './components/SalesModule';
@@ -78,6 +80,33 @@ export default function App() {
   const [currentUserRole, setCurrentUserRole] = useState<UserRole>('cliente');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [isSalesModalOpen, setIsSalesModalOpen] = useState(false);
+  
+  // Check if user is already authenticated on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        if (authService.isAuthenticated()) {
+          const user = authService.getCurrentUser();
+          if (user) {
+            setIsAuthenticated(true);
+            setCurrentUserRole(user.role);
+            setCurrentModule('dashboard');
+          }
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        // Clear invalid auth data
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+    
+    checkAuth();
+  }, []);
   
   // Toggle sidebar function
   const toggleSidebar = () => {
@@ -210,11 +239,17 @@ export default function App() {
     showConfirmDialog(
       'Cerrar sesión',
       '¿Está seguro que desea salir del sistema?',
-      () => {
-        setIsAuthenticated(false);
-        setCurrentModule('login');
-        showAlert('info', 'Sesión cerrada', 'Ha salido del sistema correctamente');
-        setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+      async () => {
+        try {
+          await authService.logout();
+        } catch (error) {
+          console.error('Logout error:', error);
+        } finally {
+          setIsAuthenticated(false);
+          setCurrentModule('login');
+          showAlert('info', 'Sesión cerrada', 'Ha salido del sistema correctamente');
+          setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+        }
       }
     );
   };
@@ -274,6 +309,7 @@ export default function App() {
           clients={clients}
           vehicles={vehicles}
           setVehicles={setVehicles}
+          onModalStateChange={setIsSalesModalOpen}
         />;
       case 'crm':
         return <CRMModule 
@@ -388,6 +424,15 @@ export default function App() {
     return titles[currentModule as keyof typeof titles] || 'GAMMA Service ERP';
   };
 
+  // Show loading spinner while initializing
+  if (isInitializing) {
+    return (
+      <div className="min-h-screen grid-background flex items-center justify-center">
+        <LoadingSpinner size="xl" text="Cargando aplicación..." />
+      </div>
+    );
+  }
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen grid-background">
@@ -400,37 +445,41 @@ export default function App() {
   return (
     <div className="h-screen flex grid-background">
       {/* Mobile overlay when sidebar is open */}
-      {isSidebarOpen && (
+      {isSidebarOpen && !isSalesModalOpen && (
         <div 
           className="lg:hidden fixed inset-0 bg-black/50 z-20"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
       
-      <Sidebar 
-        currentModule={currentModule} 
-        onModuleChange={(module) => {
-          setCurrentModule(module);
-          // Solo cerramos automáticamente en móviles (menos de 640px)
-          if (window.innerWidth < 640) {
-            setIsSidebarOpen(false);
-          }
-        }}
-        isOpen={isSidebarOpen}
-        userRole={currentUserRole}
-      />
-      
-      <div className="flex-1 flex flex-col min-w-0">
-        <TopBar 
-          title={getModuleTitle()} 
-          onLogout={handleLogout}
-          showAlert={showAlert}
-          onToggleSidebar={toggleSidebar}
-          isSidebarOpen={isSidebarOpen}
+      {!isSalesModalOpen && (
+        <Sidebar 
+          currentModule={currentModule} 
+          onModuleChange={(module) => {
+            setCurrentModule(module);
+            // Solo cerramos automáticamente en móviles (menos de 640px)
+            if (window.innerWidth < 640) {
+              setIsSidebarOpen(false);
+            }
+          }}
+          isOpen={isSidebarOpen}
           userRole={currentUserRole}
         />
+      )}
+      
+      <div className="flex-1 flex flex-col min-w-0">
+        {!isSalesModalOpen && (
+          <TopBar 
+            title={getModuleTitle()} 
+            onLogout={handleLogout}
+            showAlert={showAlert}
+            onToggleSidebar={toggleSidebar}
+            isSidebarOpen={isSidebarOpen}
+            userRole={currentUserRole}
+          />
+        )}
         
-        <main className="flex-1 overflow-auto p-3 sm:p-4 lg:p-6 grid-background-lg pt-0 custom-scroll">
+        <main className={`flex-1 overflow-auto ${!isSalesModalOpen ? 'p-3 sm:p-4 lg:p-6' : 'p-0'} grid-background-lg ${!isSalesModalOpen ? 'pt-0' : ''} custom-scroll`}>
           {renderCurrentModule()}
         </main>
 
