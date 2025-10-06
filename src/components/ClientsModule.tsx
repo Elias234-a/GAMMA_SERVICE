@@ -190,8 +190,8 @@ export const ClientsModule: React.FC<ClientsModuleProps> = ({
       <div className="glass-card-strong p-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
           <div>
-            <h1 className="text-2xl font-bold text-white">Gestión de Clientes</h1>
-            <p className="text-gray-200 mt-1">Administre la información de sus clientes</p>
+            <h1 className="text-2xl font-bold text-theme-primary">Gestión de Clientes</h1>
+            <p className="text-theme-secondary mt-1">Administre la información de sus clientes</p>
           </div>
           <button
             onClick={handleAddClient}
@@ -208,8 +208,8 @@ export const ClientsModule: React.FC<ClientsModuleProps> = ({
         <div className="glass-card p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-200">Total Clientes</p>
-              <p className="text-3xl font-bold text-white">{clients.length}</p>
+              <p className="text-sm font-medium text-theme-secondary">Total Clientes</p>
+              <p className="text-3xl font-bold text-theme-primary">{clients.length}</p>
             </div>
             <User className="h-8 w-8 text-blue-400" />
           </div>
@@ -217,8 +217,8 @@ export const ClientsModule: React.FC<ClientsModuleProps> = ({
         <div className="glass-card p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-200">Clientes Activos</p>
-              <p className="text-3xl font-bold text-white">
+              <p className="text-sm font-medium text-theme-secondary">Clientes Activos</p>
+              <p className="text-3xl font-bold text-theme-primary">
                 {clients.filter(c => c.status === 'active').length}
               </p>
             </div>
@@ -230,12 +230,12 @@ export const ClientsModule: React.FC<ClientsModuleProps> = ({
         <div className="glass-card p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-200">Nuevos Este Mes</p>
-              <p className="text-3xl font-bold text-white">
+              <p className="text-sm font-medium text-theme-secondary">Nuevos Este Mes</p>
+              <p className="text-3xl font-bold text-theme-primary">
                 {clients.filter(c => {
                   const clientDate = new Date(c.registrationDate);
                   const currentDate = new Date();
-                  return clientDate.getMonth() === currentDate.getMonth() && 
+                  return clientDate.getMonth() === currentDate.getMonth() &&
                          clientDate.getFullYear() === currentDate.getFullYear();
                 }).length}
               </p>
@@ -282,12 +282,12 @@ export const ClientsModule: React.FC<ClientsModuleProps> = ({
           <table className="w-full">
             <thead className="glass-content">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">Cliente</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">Identificación</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">Contacto</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">Fecha Registro</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">Estado</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">Acciones</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-theme-secondary uppercase tracking-wider">Cliente</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-theme-secondary uppercase tracking-wider">Identificación</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-theme-secondary uppercase tracking-wider">Contacto</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-theme-secondary uppercase tracking-wider">Fecha Registro</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-theme-secondary uppercase tracking-wider">Estado</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-theme-secondary uppercase tracking-wider">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
@@ -299,19 +299,19 @@ export const ClientsModule: React.FC<ClientsModuleProps> = ({
                         <User className="h-5 w-5 text-gray-300" />
                       </div>
                       <div>
-                        <div className="text-sm font-medium text-white">{client.name}</div>
-                        <div className="text-sm text-gray-300">{client.email}</div>
+                        <div className="text-sm font-medium text-theme-primary">{client.name}</div>
+                        <div className="text-sm text-theme-secondary">{client.email}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-theme-primary">
                     {client.identification}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-white">{client.phone}</div>
-                    <div className="text-sm text-gray-300">{client.address}</div>
+                    <div className="text-sm text-theme-primary">{client.phone}</div>
+                    <div className="text-sm text-theme-secondary">{client.address}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-theme-primary">
                     {new Date(client.registrationDate).toLocaleDateString('es-CO')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -367,7 +367,7 @@ export const ClientsModule: React.FC<ClientsModuleProps> = ({
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="glass-card-strong max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
-              <h3 className="text-white mb-4">
+              <h3 className="text-theme-primary mb-4">
                 {editingClient ? 'Editar Cliente' : 'Nuevo Cliente'}
               </h3>
               

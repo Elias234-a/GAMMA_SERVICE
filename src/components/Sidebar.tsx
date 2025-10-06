@@ -1,10 +1,10 @@
-import React from 'react';
-import { 
-  Home, 
-  Users, 
-  Car, 
-  ShoppingCart, 
-  FileText, 
+import React, { memo } from 'react';
+import {
+  Home,
+  Users,
+  Car,
+  ShoppingCart,
+  FileText,
   ClipboardCheck,
   BarChart3,
   Building2,
@@ -14,9 +14,12 @@ import {
   DollarSign,
   UserCheck,
   Globe,
+  Truck,
+  CreditCard,
 } from 'lucide-react';
 import { UserRole, rolePermissions } from '../types/auth.types';
 import gammaLogo from '../assets/logo_claro.png';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface MenuItem {
   id: string;
@@ -36,7 +39,9 @@ interface SidebarProps {
   userRole: UserRole;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ currentModule, onModuleChange, isOpen, userRole }) => {
+const SidebarComponent: React.FC<SidebarProps> = ({ currentModule, onModuleChange, isOpen, userRole }) => {
+  const { colors } = useTheme();
+
   const menuAreas: MenuArea[] = [
     {
       title: 'PRINCIPAL',
@@ -58,49 +63,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentModule, onModuleChange,
         },
         {
           id: 'clients',
-          label: 'Clientes',
+          label: 'Gestión de Clientes',
           icon: Users
         },
         {
           id: 'vehicles',
-          label: 'Vehículos',
+          label: 'Gestión de Vehículos',
           icon: Car
         },
-        {
-          id: 'crm',
-          label: 'CRM',
-          icon: MessageSquare
-        }
-      ]
-    },
-    {
-      title: 'POSTVENTA',
-      items: [
-        {
-          id: 'workshop',
-          label: 'Taller',
-          icon: Wrench
-        },
-        {
-          id: 'billing',
-          label: 'Facturación',
-          icon: FileText
-        },
-        {
-          id: 'financing',
-          label: 'Financiación',
-          icon: DollarSign
-        },
-        {
-          id: 'plates',
-          label: 'Trámites',
-          icon: ClipboardCheck
-        }
-      ]
-    },
-    {
-      title: 'ADMINISTRACIÓN',
-      items: [
         {
           id: 'inventory',
           label: 'Inventario',
@@ -108,33 +78,78 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentModule, onModuleChange,
         },
         {
           id: 'purchases',
-          label: 'Compras',
-          icon: ShoppingCart
+          label: 'Compras y Proveedores',
+          icon: Truck
+        }
+      ]
+    },
+    {
+      title: 'ÁREA DE FINANZAS',
+      items: [
+        {
+          id: 'financing',
+          label: 'Evaluación Crediticia',
+          icon: CreditCard
         },
         {
-          id: 'hr',
-          label: 'RRHH',
-          icon: UserCheck
-        },
-        {
-          id: 'reports',
-          label: 'Reportes',
-          icon: BarChart3
+          id: 'billing',
+          label: 'Facturación',
+          icon: DollarSign
         },
         {
           id: 'dian',
-          label: 'DIAN',
-          icon: Building2
+          label: 'Facturación DIAN',
+          icon: FileText
+        }
+      ]
+    },
+    {
+      title: 'TALLER',
+      items: [
+        {
+          id: 'workshop',
+          label: 'Servicios de Taller',
+          icon: Wrench
+        },
+        {
+          id: 'plates',
+          label: 'Trámites con Tránsito',
+          icon: ClipboardCheck
+        }
+      ]
+    },
+    {
+      title: 'ATENCIÓN AL CLIENTE',
+      items: [
+        {
+          id: 'crm',
+          label: 'CRM y Atención',
+          icon: MessageSquare
         },
         {
           id: 'portal',
-          label: 'Portal Cliente',
+          label: 'Portal del Cliente',
           icon: Globe
+        }
+      ]
+    },
+    {
+      title: 'REPORTES',
+      items: [
+        {
+          id: 'reports',
+          label: 'Reportes y Análisis',
+          icon: BarChart3
+        },
+        {
+          id: 'hr',
+          label: 'Recursos Humanos',
+          icon: UserCheck
         },
         {
           id: 'users',
-          label: 'Usuarios',
-          icon: Users
+          label: 'Usuarios y Roles',
+          icon: Building2
         }
       ]
     }
@@ -156,37 +171,54 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentModule, onModuleChange,
     }))
     .filter(area => area.items.length > 0);
 
+  // No retornar null, siempre renderizar el componente
   return (
-    <div className={`
-      ${isOpen ? 'w-52' : 'w-0 overflow-hidden'} 
-      glass-module border-r border-white/10 relative z-30
-      flex flex-col h-[calc(100vh-6rem-1.5rem)] fixed top-3 left-3 mb-3
-      ${isOpen ? 'block' : 'hidden lg:block'}
-      ${isOpen ? 'shadow-2xl' : ''}
-      transition-all duration-300 ease-in-out
-      rounded-xl overflow-hidden
-    `}>
-      {/* Logo Section */}
-      <div className="pt-4 pb-3 px-4 border-b border-white/10 mt-1">
-        <div className="flex flex-col items-center">
-          <img 
-            src={gammaLogo} 
-            alt="GAMMA Service" 
-            className="h-12 w-auto object-contain mb-2"
-          />
-          <p className="text-[10px] text-gray-300 text-center">Sistema ERP/DMS</p>
+    <div className={`h-full w-full backdrop-blur-3xl border rounded-2xl shadow-2xl flex flex-col overflow-hidden ${
+      isOpen ? 'pointer-events-auto' : 'pointer-events-none'
+    }`} style={{
+      backgroundColor: 'var(--background-glass)',
+      borderColor: 'var(--border)',
+      backdropFilter: 'blur(40px) saturate(180%)'
+    }}>
+      {/* Logo Section with improved spacing */}
+      <div className="p-4 border-b flex-shrink-0 backdrop-blur-md" style={{
+        borderColor: 'var(--border)',
+        backgroundColor: 'var(--background-glass)'
+      }}>
+        <div className="flex items-center justify-center mb-2">
+          <div className="relative group">
+            <img 
+              src={gammaLogo} 
+              alt="GAMMA Service" 
+              className="h-10 w-auto object-contain icon-glow transition-all duration-300 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-orange-500/20 to-emerald-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </div>
+        </div>
+        <div className="text-center space-y-0.5">
+          <h2 className="text-sm font-semibold tracking-wide text-theme-primary">GAMMA Service</h2>
+          <p className="text-[10px] font-medium text-theme-secondary">Sistema ERP/DMS</p>
         </div>
       </div>
       
-      {/* Navigation */}
-      <nav className={`flex-1 py-2 px-2 mx-2 overflow-y-auto custom-scroll ${!isOpen ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
-        <div className="space-y-2 pr-1">
+      {/* Navigation with improved hierarchy and scrolling */}
+      <nav className="flex-1 p-4 overflow-y-auto custom-scroll">
+        <div className="space-y-0.5">
           {filteredMenuAreas.map((area, areaIndex) => (
             <div key={areaIndex} className="relative">
-              <h3 className="px-3 py-2 text-xs font-semibold text-orange-400 uppercase tracking-wider">
-                {area.title}
-              </h3>
-              <div className="space-y-1">
+              {/* Area Title with better visual separation */}
+              <div className="mb-0.5 px-2">
+                <div className="flex items-center space-x-1.5">
+                  <div className="h-0.5 w-0.5 rounded-full bg-orange-400"></div>
+                  <h4 className="text-[9px] font-semibold uppercase tracking-wide text-theme-accent">
+                    {area.title}
+                  </h4>
+                  <div className="flex-1 h-px bg-gradient-to-r from-orange-400/40 via-emerald-400/20 to-transparent"></div>
+                </div>
+              </div>
+              
+              {/* Area Items with enhanced styling */}
+              <div className="space-y-0">
                 {area.items.map((item) => {
                   const Icon = item.icon;
                   const isActive = currentModule === item.id;
@@ -196,12 +228,28 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentModule, onModuleChange,
                       key={item.id}
                       onClick={() => onModuleChange(item.id)}
                       className={`
-                        group w-full flex items-center px-3 py-2 text-left rounded-md transition-all duration-200 relative overflow-hidden
-                        ${isActive 
-                          ? 'bg-orange-600 text-white' 
-                          : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                        group w-full flex items-center px-3 py-1.5 text-left rounded-lg transition-all duration-300 relative overflow-hidden
+                        ${isActive
+                          ? 'border shadow-lg backdrop-blur-sm text-theme-primary'
+                          : 'hover:border border-transparent text-theme-secondary hover:text-theme-primary'
                         }
                       `}
+                      style={{
+                        backgroundColor: isActive ? 'rgba(249, 115, 22, 0.25)' : 'transparent',
+                        borderColor: isActive ? 'rgba(249, 115, 22, 0.4)' : 'transparent'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isActive) {
+                          e.currentTarget.style.backgroundColor = 'var(--background-glass)';
+                          e.currentTarget.style.borderColor = 'var(--border)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isActive) {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.borderColor = 'transparent';
+                        }
+                      }}
                     >
                       {/* Active indicator */}
                       {isActive && (
@@ -210,27 +258,26 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentModule, onModuleChange,
                       
                       {/* Icon with improved spacing and effects */}
                       <div className={`
-                        flex items-center justify-center w-6 h-6 rounded-lg mr-3 transition-all duration-300 flex-shrink-0
+                        flex items-center justify-center w-6 h-6 rounded-lg mr-2.5 transition-all duration-300 flex-shrink-0
                         ${isActive 
                           ? 'bg-orange-500/30 shadow-glow' 
                           : 'bg-white/5 group-hover:bg-white/10 group-hover:scale-105'
                         }
                       `}>
-                        <Icon className={`h-3 w-3 icon-enhanced transition-colors duration-300 ${
-                          isActive ? 'text-orange-300' : 'text-gray-300 group-hover:text-white'
+                        <Icon className={`h-3.5 w-3.5 icon-enhanced transition-colors duration-300 ${
+                          isActive ? 'text-theme-accent' : 'text-theme-secondary'
                         }`} />
                       </div>
                       
-
                       {/* Label with better typography */}
                       <span className={`text-xs font-medium transition-colors duration-300 ${
-                        isActive ? 'text-white' : 'text-gray-200 group-hover:text-white'
+                        isActive ? 'text-theme-primary' : 'text-theme-secondary'
                       }`}>
                         {item.label}
                       </span>
                       
-
-                      {/* Hover effect */}
+                      {/* Hover effect overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-orange-500/0 to-emerald-500/0 group-hover:from-orange-500/5 group-hover:to-emerald-500/5 transition-all duration-300 rounded-lg"></div>
                     </button>
                   );
                 })}
@@ -241,16 +288,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentModule, onModuleChange,
       </nav>
       
       {/* Footer with improved styling */}
-      <div className="px-4 py-4 border-t border-white/20 mt-auto">
-        <div className="glass-content p-3 rounded-lg text-center">
-          <div className="flex items-center justify-center space-x-2 mb-1">
-            <div className="h-2 w-2 rounded-full bg-gradient-to-r from-orange-400 to-emerald-400 animate-pulse"></div>
-            <p className="text-xs font-semibold text-white">GAMMA Service v2.0</p>
+      <div className="p-4 border-t backdrop-blur-md flex-shrink-0" style={{
+        borderColor: 'var(--border)',
+        backgroundColor: 'var(--background-glass)'
+      }}>
+        <div className="glass-content p-1.5 rounded-lg text-center">
+          <div className="flex items-center justify-center space-x-1.5 mb-0.5">
+            <div className="h-1.5 w-1.5 rounded-full bg-gradient-to-r from-orange-400 to-emerald-400 animate-pulse"></div>
+            <p className="text-[9px] font-semibold text-theme-primary">GAMMA Service v2.0</p>
           </div>
-          <p className="text-xs text-gray-300">ERP Integral Colombia</p>
-          <div className="mt-2 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+          <p className="text-[8px] text-theme-secondary">ERP Integral Colombia</p>
         </div>
       </div>
     </div>
   );
 };
+
+export const Sidebar = memo(SidebarComponent);

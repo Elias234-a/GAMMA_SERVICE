@@ -1,0 +1,251 @@
+/* Theme Variables */
+:root {
+  /* Light Theme - Texto Negro */
+  --text-primary: #000000;
+  --text-secondary: #4B5563;
+  --text-accent: #F97316;
+  --background-primary: #FFFFFF;
+  --background-secondary: #F9FAFB;
+  --background-glass: rgba(255, 255, 255, 0.1);
+  --background-grid: linear-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px),
+                     linear-gradient(90deg, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+  --border: #E5E7EB;
+  --shadow: rgba(0, 0, 0, 0.1);
+  color-scheme: light;
+}
+
+.dark {
+  /* Dark Theme - Texto Blanco */
+  --text-primary: #FFFFFF;
+  --text-secondary: #D1D5DB;
+  --text-accent: #FFA500;
+  --background-primary: #0F0F0F;
+  --background-secondary: #1F2937;
+  --background-glass: rgba(255, 255, 255, 0.05);
+  --background-grid: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                     linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  --border: #374151;
+  --shadow: rgba(0, 0, 0, 0.3);
+  color-scheme: dark;
+}
+
+/* Theme Classes */
+.text-theme-primary { color: var(--text-primary); }
+.text-theme-secondary { color: var(--text-secondary); }
+.text-theme-accent { color: var(--text-accent); }
+
+.bg-theme-primary { background-color: var(--background-primary); }
+.bg-theme-secondary { background-color: var(--background-secondary); }
+.bg-theme-glass { background-color: var(--background-glass); }
+
+.border-theme { border-color: var(--border); }
+
+/* ========================================= */
+/* SISTEMA AUTOMÁTICO DE COLORES DE TEXTO */
+/* ========================================= */
+
+/* Modo Claro (por defecto) - TODO EN NEGRO AUTOMÁTICO */
+html:not(.dark) {
+  color: #000000;
+}
+
+html:not(.dark) body,
+html:not(.dark) h1,
+html:not(.dark) h2,
+html:not(.dark) h3,
+html:not(.dark) h4,
+html:not(.dark) h5,
+html:not(.dark) h6,
+html:not(.dark) p,
+html:not(.dark) span,
+html:not(.dark) div,
+html:not(.dark) label,
+html:not(.dark) input,
+html:not(.dark) textarea,
+html:not(.dark) select,
+html:not(.dark) button,
+html:not(.dark) a,
+html:not(.dark) li,
+html:not(.dark) td,
+html:not(.dark) th {
+  color: #000000 !important;
+}
+
+html:not(.dark) input::placeholder,
+html:not(.dark) textarea::placeholder,
+html:not(.dark) select::placeholder {
+  color: #6B7280 !important;
+}
+
+html:not(.dark) svg {
+  color: #000000 !important;
+}
+
+/* Modo Oscuro - TODO EN BLANCO AUTOMÁTICO */
+html.dark {
+  color: #FFFFFF;
+}
+
+html.dark body,
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark h5,
+html.dark h6,
+html.dark p,
+html.dark span,
+html.dark div,
+html.dark label,
+html.dark input,
+html.dark textarea,
+html.dark select,
+html.dark button,
+html.dark a,
+html.dark li,
+html.dark td,
+html.dark th {
+  color: #FFFFFF !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder,
+html.dark select::placeholder {
+  color: #9CA3AF !important;
+}
+
+html.dark svg {
+  color: #FFFFFF !important;
+}
+
+/* Excepciones: Colores específicos que se mantienen */
+html:not(.dark) .text-orange-300,
+html:not(.dark) .text-orange-400,
+html:not(.dark) .text-orange-500,
+html.dark .text-orange-300,
+html.dark .text-orange-400,
+html.dark .text-orange-500 {
+  color: #fb923c !important;
+}
+
+html:not(.dark) .text-red-400,
+html:not(.dark) .text-red-500,
+html.dark .text-red-400,
+html.dark .text-red-500 {
+  color: #f87171 !important;
+}
+
+html:not(.dark) .text-emerald-400,
+html:not(.dark) .text-emerald-500,
+html.dark .text-emerald-400,
+html.dark .text-emerald-500 {
+  color: #34d399 !important;
+}
+
+html:not(.dark) .text-blue-400,
+html:not(.dark) .text-blue-500,
+html.dark .text-blue-400,
+html.dark .text-blue-500 {
+  color: #60a5fa !important;
+}
+
+html:not(.dark) .text-green-500,
+html:not(.dark) .text-green-600,
+html.dark .text-green-500,
+html.dark .text-green-600 {
+  color: #22c55e !important;
+}
+
+html:not(.dark) .text-yellow-500,
+html:not(.dark) .text-yellow-600,
+html.dark .text-yellow-500,
+html.dark .text-yellow-600 {
+  color: #eab308 !important;
+}
+
+/* Excepciones: Elementos que deben mantener colores específicos */
+html:not(.dark) .bg-orange-500,
+html:not(.dark) .bg-orange-600,
+html.dark .bg-orange-500,
+html.dark .bg-orange-600 {
+  color: #FFFFFF !important;
+}
+
+html:not(.dark) .bg-red-500,
+html:not(.dark) .bg-red-600,
+html.dark .bg-red-500,
+html.dark .bg-red-600 {
+  color: #FFFFFF !important;
+}
+
+html:not(.dark) .bg-blue-500,
+html:not(.dark) .bg-blue-600,
+html.dark .bg-blue-500,
+html.dark .bg-blue-600 {
+  color: #FFFFFF !important;
+}
+
+html:not(.dark) .bg-green-500,
+html:not(.dark) .bg-green-600,
+html.dark .bg-green-500,
+html.dark .bg-green-600 {
+  color: #FFFFFF !important;
+}
+
+/* ========================================= */
+/* ALERTAS Y NOTIFICACIONES - SIEMPRE NEGRO */
+/* ========================================= */
+
+/* Las alertas tienen fondo blanco, por lo que el texto debe ser negro en ambos modos */
+html:not(.dark) .bg-white h4,
+html:not(.dark) .bg-white p,
+html:not(.dark) .bg-white span,
+html:not(.dark) .bg-white button,
+html.dark .bg-white h4,
+html.dark .bg-white p,
+html.dark .bg-white span,
+html.dark .bg-white button {
+  color: #000000 !important;
+}
+
+/* Específico para clases de texto de alertas */
+html:not(.dark) .text-gray-900,
+html:not(.dark) .text-gray-800,
+html:not(.dark) .text-gray-700,
+html:not(.dark) .text-gray-600,
+html:not(.dark) .text-gray-500,
+html:not(.dark) .text-gray-400,
+html.dark .text-gray-900,
+html.dark .text-gray-800,
+html.dark .text-gray-700,
+html.dark .text-gray-600,
+html.dark .text-gray-500,
+html.dark .text-gray-400 {
+  color: inherit !important;
+}
+
+/* Iconos de alerta mantienen sus colores específicos */
+html:not(.dark) .text-red-600,
+html.dark .text-red-600 {
+  color: #dc2626 !important;
+}
+
+html:not(.dark) .text-green-600,
+html.dark .text-green-600 {
+  color: #16a34a !important;
+}
+
+html:not(.dark) .text-blue-600,
+html.dark .text-blue-600 {
+  color: #2563eb !important;
+}
+
+html:not(.dark) .text-yellow-600,
+html.dark .text-yellow-600 {
+  color: #ca8a04 !important;
+}
+
+/* Transiciones suaves */
+* {
+  transition: color 0.2s ease, background-color 0.2s ease;
+}

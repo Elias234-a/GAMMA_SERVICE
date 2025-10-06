@@ -6,7 +6,7 @@ import authService from '../services/authService';
 import { UserRole } from '../types/auth.types';
 
 interface LoginScreenProps {
-  onLogin: (success: boolean, role?: UserRole) => void;
+  onLogin: (success: boolean, role?: UserRole, userName?: string) => void;
   showAlert: (type: AlertType, title: string, message: string) => void;
 }
 
@@ -118,15 +118,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
           });
           
           // Success - login with backend user data
-          onLogin(true, response.user.role);
+          onLogin(true, response.user.role, response.user.name);
           showAlert('success', 'Acceso exitoso', `Bienvenido ${response.user.name}`);
         } catch (backendError) {
           // Fallback to hardcoded credentials for demo
           const credentials = {
-            'admin@gammaservice.com': { password: 'admin123', role: 'Administrador' },
-            'vendedor@gammaservice.com': { password: 'vendedor123', role: 'Vendedor' },
-            'cliente@gammaservice.com': { password: 'cliente123', role: 'Cliente' },
-            'mecanico@gammaservice.com': { password: 'mecanico123', role: 'Mecánico' }
+            'admin@gammaservice.com': { password: 'admin123', role: 'Administrador', name: 'Administrador' },
+            'vendedor@gammaservice.com': { password: 'vendedor123', role: 'Vendedor', name: 'Vendedor' },
+            'cliente@gammaservice.com': { password: 'cliente123', role: 'Cliente', name: 'Cliente' },
+            'mecanico@gammaservice.com': { password: 'mecanico123', role: 'Mecánico', name: 'Mecánico' }
           };
 
           const user = credentials[formData.email as keyof typeof credentials];
@@ -134,15 +134,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
           if (user && user.password === formData.password) {
             if (user.role === formData.role) {
               const validRole = user.role as UserRole;
-              onLogin(true, validRole);
-              showAlert('success', 'Acceso exitoso', 'Bienvenido (modo demo)');
+              onLogin(true, validRole, user.name);
+              showAlert('success', 'Acceso exitoso', `Bienvenido ${user.name}`);
             } else {
               showAlert('error', 'Error de autenticación', 'El rol seleccionado no coincide con las credenciales');
               onLogin(false);
             }
           } else {
             showAlert('error', 'Error de autenticación', 'Correo o contraseña incorrectos');
-            onLogin(false);
+            onLogin(false, undefined, undefined);
           }
         }
       } else {

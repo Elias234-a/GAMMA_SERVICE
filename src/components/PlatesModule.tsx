@@ -436,11 +436,11 @@ export const PlatesModule: React.FC<PlatesModuleProps> = ({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="glass-card-strong rounded-lg p-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Trámite de Placas</h1>
-            <p className="text-gray-600 mt-1">Gestione los trámites de placas vehiculares</p>
+            <h1 className="text-2xl font-bold text-theme-primary">Trámite de Placas</h1>
+            <p className="text-theme-secondary mt-1">Gestione los trámites de placas vehiculares</p>
           </div>
           <button
             onClick={handleAddRequest}
@@ -452,83 +452,83 @@ export const PlatesModule: React.FC<PlatesModuleProps> = ({
           </button>
         </div>
         {availableVehicles.length === 0 && (
-          <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p className="text-sm text-yellow-800">No hay vehículos disponibles para trámite de placas</p>
+          <div className="mt-4 p-3 glass-content border border-yellow-500/30 rounded-lg">
+            <p className="text-sm text-yellow-300">No hay vehículos disponibles para trámite de placas</p>
           </div>
         )}
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="glass-card rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Trámites</p>
-              <p className="text-3xl font-bold text-gray-900">{plateRequests.length}</p>
+              <p className="text-sm font-medium text-theme-secondary">Total Trámites</p>
+              <p className="text-3xl font-bold text-theme-primary">{plateRequests.length}</p>
             </div>
-            <FileText className="h-8 w-8 text-blue-600" />
+            <FileText className="h-8 w-8 text-blue-400 icon-enhanced" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="glass-card rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Pendientes</p>
-              <p className="text-3xl font-bold text-gray-900">
+              <p className="text-sm font-medium text-theme-secondary">Pendientes</p>
+              <p className="text-3xl font-bold text-theme-primary">
                 {plateRequests.filter(r => r.status === 'pending').length}
               </p>
             </div>
-            <Clock className="h-8 w-8 text-yellow-600" />
+            <Clock className="h-8 w-8 text-yellow-400 icon-enhanced" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="glass-card rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">En Proceso</p>
-              <p className="text-3xl font-bold text-gray-900">
+              <p className="text-sm font-medium text-theme-secondary">En Proceso</p>
+              <p className="text-3xl font-bold text-theme-primary">
                 {plateRequests.filter(r => ['documents_review', 'in_process'].includes(r.status)).length}
               </p>
             </div>
-            <AlertTriangle className="h-8 w-8 text-purple-600" />
+            <AlertTriangle className="h-8 w-8 text-purple-400 icon-enhanced" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="glass-card rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Listas</p>
-              <p className="text-3xl font-bold text-gray-900">
+              <p className="text-sm font-medium text-theme-secondary">Listas</p>
+              <p className="text-3xl font-bold text-theme-primary">
                 {plateRequests.filter(r => r.status === 'ready').length}
               </p>
             </div>
-            <CheckCircle className="h-8 w-8 text-green-600" />
+            <CheckCircle className="h-8 w-8 text-green-400 icon-enhanced" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="glass-card rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Entregadas</p>
-              <p className="text-3xl font-bold text-gray-900">
+              <p className="text-sm font-medium text-theme-secondary">Entregadas</p>
+              <p className="text-3xl font-bold text-theme-primary">
                 {plateRequests.filter(r => r.status === 'delivered').length}
               </p>
             </div>
-            <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-              <div className="w-4 h-4 bg-gray-600 rounded-full"></div>
+            <div className="w-8 h-8 glass-content rounded-full flex items-center justify-center">
+              <div className="w-4 h-4 bg-gray-400 rounded-full"></div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="glass-card-strong rounded-lg p-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-theme-secondary" />
               <input
                 type="text"
                 placeholder="Buscar por cliente, número de trámite, placa..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="form-input w-full pl-10 pr-4 py-2 text-theme-primary"
               />
             </div>
           </div>
@@ -536,7 +536,7 @@ export const PlatesModule: React.FC<PlatesModuleProps> = ({
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="form-input w-full px-3 py-2 text-theme-primary"
             >
               <option value="all">Todos los estados</option>
               <option value="pending">Pendientes</option>
@@ -550,60 +550,60 @@ export const PlatesModule: React.FC<PlatesModuleProps> = ({
       </div>
 
       {/* Requests Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="glass-card-strong rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="glass-content">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trámite</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehículo</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Placa</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Costo</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-theme-secondary uppercase tracking-wider">Trámite</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-theme-secondary uppercase tracking-wider">Cliente</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-theme-secondary uppercase tracking-wider">Vehículo</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-theme-secondary uppercase tracking-wider">Placa</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-theme-secondary uppercase tracking-wider">Estado</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-theme-secondary uppercase tracking-wider">Costo</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-theme-secondary uppercase tracking-wider">Acciones</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="divide-y divide-white/10">
               {filteredRequests.map((request) => (
-                <tr key={request.id} className="hover:bg-gray-50">
+                <tr key={request.id} className="hover:bg-white/5 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{request.requestNumber}</div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm font-medium text-theme-primary">{request.requestNumber}</div>
+                      <div className="text-sm text-theme-secondary">
                         Solicitud: {new Date(request.requestDate).toLocaleDateString('es-CO')}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-theme-secondary">
                         Entrega: {new Date(request.estimatedDelivery).toLocaleDateString('es-CO')}
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-theme-primary">
                     {getClientName(request.clientId)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-theme-primary">
                     {getVehicleInfo(request.vehicleId)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {request.plateNumber ? (
-                      <div className="bg-gray-100 px-3 py-1 rounded-lg text-center font-mono text-sm font-bold">
+                      <div className="glass-content px-3 py-1 rounded-lg text-center font-mono text-sm font-bold text-theme-primary">
                         {request.plateNumber}
                       </div>
                     ) : (
-                      <span className="text-gray-500 text-sm">Sin asignar</span>
+                      <span className="text-theme-secondary text-sm">Sin asignar</span>
                     )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {getStatusBadge(request.status)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-theme-primary">
                     ${request.cost.toLocaleString('es-CO')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
                       <button
                         onClick={() => showAlert('info', 'Ver trámite', `Mostrando detalles de ${request.requestNumber}`)}
-                        className="text-blue-600 hover:text-blue-900 p-1 hover:bg-blue-100 rounded"
+                        className="text-blue-400 hover:text-blue-300 p-1 hover:bg-blue-500/20 rounded transition-all"
                         title="Ver detalles"
                       >
                         <Eye className="h-4 w-4" />
@@ -611,7 +611,7 @@ export const PlatesModule: React.FC<PlatesModuleProps> = ({
                       {request.status === 'in_process' && !request.plateNumber && (
                         <button
                           onClick={() => generatePlateNumber(request.id)}
-                          className="text-green-600 hover:text-green-900 p-1 hover:bg-green-100 rounded"
+                          className="text-green-400 hover:text-green-300 p-1 hover:bg-green-500/20 rounded transition-all"
                           title="Asignar placa"
                         >
                           <FileText className="h-4 w-4" />
@@ -620,7 +620,7 @@ export const PlatesModule: React.FC<PlatesModuleProps> = ({
                       {request.status === 'ready' && (
                         <button
                           onClick={() => deliverPlate(request.id)}
-                          className="text-purple-600 hover:text-purple-900 p-1 hover:bg-purple-100 rounded"
+                          className="text-purple-400 hover:text-purple-300 p-1 hover:bg-purple-500/20 rounded transition-all"
                           title="Entregar placa"
                         >
                           <CheckCircle className="h-4 w-4" />
@@ -634,7 +634,7 @@ export const PlatesModule: React.FC<PlatesModuleProps> = ({
                               : 'in_process';
                             updateRequestStatus(request.id, nextStatus);
                           }}
-                          className="text-yellow-600 hover:text-yellow-900 p-1 hover:bg-yellow-100 rounded"
+                          className="text-yellow-400 hover:text-yellow-300 p-1 hover:bg-yellow-500/20 rounded transition-all"
                           title="Avanzar estado"
                         >
                           <Edit className="h-4 w-4" />
@@ -650,8 +650,8 @@ export const PlatesModule: React.FC<PlatesModuleProps> = ({
 
         {filteredRequests.length === 0 && (
           <div className="p-8 text-center">
-            <FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500">No se encontraron trámites</p>
+            <FileText className="h-12 w-12 text-theme-secondary mx-auto mb-4 icon-enhanced" />
+            <p className="text-theme-secondary">No se encontraron trámites</p>
           </div>
         )}
       </div>
@@ -661,7 +661,7 @@ export const PlatesModule: React.FC<PlatesModuleProps> = ({
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="glass-card-strong max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
-              <h3 className="text-white mb-4">
+              <h3 className="text-theme-primary text-xl font-bold mb-4">
                 Nuevo Trámite de Placa
               </h3>
 
@@ -669,8 +669,8 @@ export const PlatesModule: React.FC<PlatesModuleProps> = ({
               <div className="flex items-center justify-between mb-6">
                 {steps.map((step, index) => (
                   <div key={step.id} className="flex items-center">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center glass-content ${
-                      currentStep >= step.id ? 'bg-orange-500 text-white glow-orange' : 'bg-white/20 text-gray-300'
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center glass-content font-semibold ${
+                      currentStep >= step.id ? 'bg-orange-500 text-white glow-orange' : 'bg-white/20 text-theme-secondary'
                     }`}>
                       {step.id}
                     </div>
@@ -698,7 +698,7 @@ export const PlatesModule: React.FC<PlatesModuleProps> = ({
                       });
                       setErrors({});
                     }}
-                    className="px-6 py-3 text-gray-200 bg-white/10 hover:bg-white/20 rounded-lg transition-all glass-hover border border-white/20"
+                    className="px-6 py-3 text-theme-primary bg-white/10 hover:bg-white/20 rounded-lg transition-all glass-hover border border-white/20"
                   >
                     Cancelar
                   </button>

@@ -195,12 +195,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
       <div className="glass-card-strong p-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
           <div>
-            <h1 className="text-2xl font-bold text-white">Panel Principal</h1>
-            <p className="text-gray-200 mt-1">Bienvenido al sistema GAMMA Service</p>
+            <h1 className="text-2xl font-bold text-theme-primary">Panel Principal</h1>
+            <p className="text-theme-secondary mt-1">Bienvenido al sistema GAMMA Service</p>
           </div>
           <div className="mt-4 sm:mt-0 text-right">
-            <p className="text-sm text-gray-300">Último acceso</p>
-            <p className="text-sm font-medium text-white">{new Date().toLocaleDateString('es-CO')}</p>
+            <p className="text-sm text-theme-secondary">Último acceso</p>
+            <p className="text-sm font-medium text-theme-primary">{new Date().toLocaleDateString('es-CO')}</p>
           </div>
         </div>
       </div>
@@ -210,8 +210,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
         <div className="glass-card p-6 hover:shadow-xl transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-200">Clientes Activos</p>
-              <p className="text-3xl font-bold text-white">{activeClients}</p>
+              <p className="text-sm font-medium text-theme-secondary">Clientes Activos</p>
+              <p className="text-3xl font-bold text-theme-primary">{activeClients}</p>
               <p className={`text-sm flex items-center mt-1 ${metrics.clientsGrowth >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                 {metrics.clientsGrowth >= 0 ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingUp className="h-4 w-4 mr-1 rotate-180" />}
                 {metrics.clientsGrowth >= 0 ? '+' : ''}{metrics.clientsGrowth.toFixed(1)}% vs mes anterior
@@ -226,8 +226,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
         <div className="glass-card p-6 hover:shadow-xl transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-200">Vehículos Disponibles</p>
-              <p className="text-3xl font-bold text-white">{availableVehicles}</p>
+              <p className="text-sm font-medium text-theme-secondary">Vehículos Disponibles</p>
+              <p className="text-3xl font-bold text-theme-primary">{availableVehicles}</p>
               <p className={`text-sm flex items-center mt-1 ${metrics.vehiclesGrowth >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                 {metrics.vehiclesGrowth >= 0 ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingUp className="h-4 w-4 mr-1 rotate-180" />}
                 {metrics.vehiclesGrowth >= 0 ? '+' : ''}{metrics.vehiclesGrowth.toFixed(1)}% vs mes anterior
@@ -242,8 +242,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
         <div className="glass-card p-6 hover:shadow-xl transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-200">Ventas Pendientes</p>
-              <p className="text-3xl font-bold text-white">{pendingSales}</p>
+              <p className="text-sm font-medium text-theme-secondary">Ventas Pendientes</p>
+              <p className="text-3xl font-bold text-theme-primary">{pendingSales}</p>
               <p className="text-sm text-orange-400 flex items-center mt-1">
                 <Calendar className="h-4 w-4 mr-1" />
                 {pendingSales > 0 ? 'Requieren atención' : 'Todo al día'}
@@ -258,11 +258,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
         <div className="glass-card p-6 hover:shadow-xl transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-200">Ingresos Totales</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-sm font-medium text-theme-secondary">Ingresos Totales</p>
+              <p className="text-2xl font-bold text-theme-primary">
                 ${(totalRevenue / 1000000).toFixed(1)}M
               </p>
-              <p className="text-xs text-gray-400">${totalRevenue.toLocaleString('es-CO')} COP</p>
+              <p className="text-xs text-theme-secondary">${totalRevenue.toLocaleString('es-CO')} COP</p>
               <p className={`text-sm flex items-center mt-1 ${metrics.revenueGrowth >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                 {metrics.revenueGrowth >= 0 ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingUp className="h-4 w-4 mr-1 rotate-180" />}
                 {metrics.revenueGrowth >= 0 ? '+' : ''}{metrics.revenueGrowth.toFixed(1)}% vs mes anterior
@@ -277,8 +277,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
 
       {/* Quick Access to Main Flow Areas */}
       <div className="glass-card-strong p-6">
-        <h2 className="text-lg font-semibold text-white mb-2">Acceso Rápido a Flujos Principales</h2>
-        <p className="text-sm text-gray-300 mb-6">Navegue directamente a las áreas principales del sistema</p>
+        <h2 className="text-lg font-semibold text-theme-primary mb-2">Acceso Rápido a Flujos Principales</h2>
+        <p className="text-sm text-theme-secondary mb-6">Navegue directamente a las áreas principales del sistema</p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {quickAccessFlows.map((flow, index) => {
             const Icon = flow.icon;
@@ -293,8 +293,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
                     <Icon className={`h-6 w-6 ${flow.iconColor}`} />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-white">{flow.title}</h3>
-                    <p className="text-sm text-gray-200 mt-1">{flow.description}</p>
+                    <h3 className="font-semibold text-theme-primary">{flow.title}</h3>
+                    <p className="text-sm text-theme-secondary mt-1">{flow.description}</p>
                   </div>
                 </div>
               </button>
@@ -308,7 +308,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
         {/* Sales Trend Chart */}
         <div className="glass-card p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-white">Tendencia de Ventas</h2>
+            <h2 className="text-lg font-semibold text-theme-primary">Tendencia de Ventas</h2>
             <div className="flex items-center space-x-2">
               <button className="px-3 py-1 text-xs rounded-lg bg-orange-500/20 text-orange-300 border border-orange-400/30">
                 6 Meses
@@ -339,8 +339,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
           </ResponsiveContainer>
           <div className="mt-4 grid grid-cols-2 gap-4">
             <div className="text-center">
-              <p className="text-sm text-gray-400">Total Ventas</p>
-              <p className="text-xl font-bold text-white">{metrics.totalSales}</p>
+              <p className="text-sm text-theme-secondary">Total Ventas</p>
+              <p className="text-xl font-bold text-theme-primary">{metrics.totalSales}</p>
             </div>
             <div className="text-center">
               <p className="text-sm text-gray-400">Tasa Conversión</p>
@@ -351,7 +351,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
 
         {/* Sales by Status Pie Chart */}
         <div className="glass-card p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Distribución de Ventas</h2>
+          <h2 className="text-lg font-semibold text-theme-primary mb-4">Distribución de Ventas</h2>
           <ResponsiveContainer width="100%" height={250}>
             <RePieChart>
               <Pie
@@ -396,7 +396,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Revenue Bar Chart */}
         <div className="lg:col-span-2 glass-card p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Ingresos Mensuales</h2>
+          <h2 className="text-lg font-semibold text-theme-primary mb-4">Ingresos Mensuales</h2>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={salesByMonth}>
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -418,7 +418,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
 
         {/* Payment Methods */}
         <div className="glass-card p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Métodos de Pago</h2>
+          <h2 className="text-lg font-semibold text-theme-primary mb-4">Métodos de Pago</h2>
           <div className="space-y-4">
             {salesByPayment.map((method, index) => {
               const total = salesByPayment.reduce((sum, m) => sum + m.value, 0);
@@ -444,11 +444,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
             })}
           </div>
           <div className="mt-6 p-4 bg-gradient-to-r from-orange-500/10 to-emerald-500/10 rounded-lg border border-orange-400/20">
-            <p className="text-xs text-gray-300 mb-1">Valor Promedio por Venta</p>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-xs text-theme-secondary mb-1">Valor Promedio por Venta</p>
+            <p className="text-2xl font-bold text-theme-primary">
               ${(metrics.averageSaleValue / 1000000).toFixed(1)}M
             </p>
-            <p className="text-xs text-gray-400">${metrics.averageSaleValue.toLocaleString('es-CO')} COP</p>
+            <p className="text-xs text-theme-secondary">${metrics.averageSaleValue.toLocaleString('es-CO')} COP</p>
           </div>
         </div>
       </div>
@@ -457,7 +457,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Activity */}
         <div className="glass-card p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Actividad Reciente</h2>
+          <h2 className="text-lg font-semibold text-theme-primary mb-4">Actividad Reciente</h2>
           <div className="space-y-4">
             {recentActivity.map((activity) => (
               <div key={activity.id} className="flex items-start space-x-3 p-3 glass-content rounded-lg">
@@ -485,7 +485,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
         {/* Notifications */}
         <div className="glass-card p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-white">Notificaciones</h2>
+            <h2 className="text-lg font-semibold text-theme-primary">Notificaciones</h2>
             <Bell className="h-5 w-5 text-gray-300" />
           </div>
           <div className="space-y-4">
@@ -532,7 +532,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
             <Calendar className="h-6 w-6 text-orange-400" />
-            <h2 className="text-xl font-bold text-white">Calendario de Actividades</h2>
+            <h2 className="text-xl font-bold text-theme-primary">Calendario de Actividades</h2>
           </div>
           
           <div className="flex items-center space-x-2">
@@ -571,8 +571,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ showAlert, clients, vehicl
         {!showCalendar && (
           <div className="glass-card p-8 text-center">
             <Calendar className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-white mb-2">Calendario de Actividades</h3>
-            <p className="text-gray-300 mb-6">
+            <h3 className="text-lg font-semibold text-theme-primary mb-2">Calendario de Actividades</h3>
+            <p className="text-theme-secondary mb-6">
               Gestiona tus citas, reuniones y eventos importantes en un solo lugar
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">

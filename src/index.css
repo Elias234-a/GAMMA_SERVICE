@@ -1,4 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+@import "./styles/theme.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /*! tailwindcss v4.1.3 | MIT License | https://tailwindcss.com */
 @layer properties {
   @supports (((-webkit-hyphens: none)) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color: rgb(from red r g b)))) {
@@ -461,6 +468,11 @@
     font-family: Poppins, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
   }
 
+  /* Fondo oscuro con cuadrícula para modo oscuro (mantener el existente) */
+  html:not(.light-mode) body {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) fixed;
+  }
+
   .glass {
     background: var(--glass-bg);
     -webkit-backdrop-filter: var(--backdrop-blur);
@@ -489,7 +501,8 @@
   }
 
   .glass-module {
-    -webkit-backdrop-filter: blur(35px);
+    -webkit-backdrop-filter: blur(50px);
+    backdrop-filter: blur(50px);
     border-radius: var(--radius-lg);
     z-index: 1;
     color: #fffffff2;
@@ -1066,22 +1079,64 @@
 
   .custom-scroll {
     scrollbar-width: thin;
-    scrollbar-color: #2563eb4d #ffffff0d;
+    scrollbar-color: rgba(249, 115, 22, 0.3) rgba(255, 255, 255, 0.05);
     overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    overscroll-behavior: contain; /* Prevent scroll chaining */
+    touch-action: pan-y; /* Allow vertical scrolling on touch devices */
   }
 
   .custom-scroll::-webkit-scrollbar {
     width: 6px;
+    height: 6px;
+  }
+
+  .custom-scroll::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    margin: 4px 0;
   }
 
   .custom-scroll::-webkit-scrollbar-thumb {
-    background: linear-gradient(#2563eb66 0%, #10b98166 100%);
-    border-radius: 8px;
+    background: linear-gradient(180deg, rgba(249, 115, 22, 0.6) 0%, rgba(16, 185, 129, 0.5) 100%);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .custom-scroll::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, var(--electric-blue) 0%, var(--emerald-green) 100%);
-    box-shadow: 0 0 8px #2563eb4d;
+    background: linear-gradient(180deg, rgba(249, 115, 22, 0.8) 0%, rgba(16, 185, 129, 0.7) 100%);
+    box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
+  }
+  
+  .custom-scroll::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(180deg, rgba(249, 115, 22, 0.9) 0%, rgba(16, 185, 129, 0.8) 100%);
+  }
+  
+  /* Scrollbar para Firefox */
+  @supports (scrollbar-color: auto) {
+    .custom-scroll {
+      scrollbar-color: rgba(249, 115, 22, 0.6) rgba(255, 255, 255, 0.08);
+      scrollbar-width: thin;
+    }
+  }
+  
+  /* Clase adicional para scrollbar delgado de Tailwind */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  /* Asegurar que el glass-module tenga el padding interno correcto */
+  .glass-module {
+    border-radius: 12px;
+  }
+  
+  /* Smooth transitions para el sidebar */
+  @media (max-width: 1023px) {
+    .glass-module {
+      will-change: transform;
+    }
   }
 
   .glow-blue {
@@ -1104,6 +1159,8 @@
     -webkit-backdrop-filter: blur(30px);
     background: #ffffff1f;
     border: 1px solid #fff3;
+    position: relative;
+    z-index: 40;
     border-radius: 1rem;
     margin: .75rem;
     box-shadow: 0 8px 32px #0006, inset 0 1px #ffffff26;
@@ -4682,4 +4739,50 @@ html {
     opacity: var(--tw-enter-opacity, 1);
     transform: translate3d(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0), 0) scale3d(var(--tw-enter-scale, 1), var(--tw-enter-scale, 1), var(--tw-enter-scale, 1)) rotate(var(--tw-enter-rotate, 0));
   }
+}
+
+/* ============================================ */
+/* SISTEMA DE TEMAS - DARK/LIGHT MODE */
+/* ============================================ */
+
+/* Fondo CLARO con cuadrícula (por defecto) */
+html:not(.dark) {
+  background-color: #ffffff;
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.08) 1px, transparent 1px),
+    radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(249, 115, 22, 0.04) 0%, transparent 40%);
+  background-size: 
+    40px 40px,
+    40px 40px,
+    600px 600px,
+    600px 600px;
+  background-position: 
+    -1px -1px,
+    -1px -1px,
+    0 0,
+    0 0;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+html:not(.dark) body {
+  background: transparent;
+}
+
+/* Fondo OSCURO (modo dark) */
+html.dark {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) fixed;
+  min-height: 100vh;
+}
+
+html.dark body {
+  background: transparent;
+}
+
+/* Transiciones suaves */
+html,
+body {
+  transition: background 0.3s ease, color 0.3s ease;
 }

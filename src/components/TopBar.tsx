@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, Search, User, LogOut, Settings } from 'lucide-react';
+import React, { useState, useEffect, useRef, memo } from 'react';
+import { Menu, X, Search, User, LogOut, Settings, Sun, Moon } from 'lucide-react';
 import { AlertType } from '../App';
 import { NotificationCenter } from './NotificationCenter';
 import { useNotifications } from '../hooks/useNotifications';
 import { UserRole } from '../types/auth.types';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface TopBarProps {
   title: string;
@@ -12,19 +13,22 @@ interface TopBarProps {
   onToggleSidebar: () => void;
   isSidebarOpen: boolean;
   userRole?: UserRole;
+  userName?: string;
 }
 
-export const TopBar: React.FC<TopBarProps> = ({ 
-  title, 
-  onLogout, 
-  showAlert, 
-  onToggleSidebar, 
+const TopBarComponent: React.FC<TopBarProps> = ({
+  title,
+  onLogout,
+  showAlert,
+  onToggleSidebar,
   isSidebarOpen,
-  userRole
+  userRole,
+  userName
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const { isDark, toggleTheme, colors } = useTheme();
   
   // Use notifications hook
   const {
@@ -59,6 +63,11 @@ export const TopBar: React.FC<TopBarProps> = ({
     deleteNotification(id);
   };
 
+  const handleToggleTheme = () => {
+    toggleTheme();
+    showAlert('info', 'Tema', isDark ? 'Modo claro activado' : 'Modo oscuro activado');
+  };
+
   return (
     <header className="topbar-container px-4 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between h-16">
@@ -66,8 +75,11 @@ export const TopBar: React.FC<TopBarProps> = ({
         <div className="flex items-center space-x-4">
           {/* Hamburger Menu Button */}
           <button
-            onClick={onToggleSidebar}
-            className="btn-interactive p-3 text-white hover:text-gray-200 hover:bg-white/15 rounded-lg icon-enhanced"
+            onClick={() => {
+              console.log('Toggle sidebar clicked, current state:', isSidebarOpen);
+              onToggleSidebar();
+            }}
+            className="btn-interactive p-3 hover:bg-white/15 rounded-lg icon-enhanced relative z-50 text-theme-primary"
           >
             {isSidebarOpen ? (
               <X className="h-5 w-5" />
@@ -78,7 +90,7 @@ export const TopBar: React.FC<TopBarProps> = ({
 
           {/* Page Title */}
           <div className="hidden sm:block">
-            <h1 className="text-xl font-semibold text-readable">{title}</h1>
+            <h1 className="text-xl font-semibold text-theme-primary">{title}</h1>
           </div>
         </div>
 
@@ -86,7 +98,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         <div className="flex-1 max-w-lg mx-4">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-300" />
+              <Search className="h-5 w-5 text-theme-secondary" />
             </div>
             <input
               type="text"
@@ -94,13 +106,16 @@ export const TopBar: React.FC<TopBarProps> = ({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              className="form-input block w-full pl-10 pr-3 py-2.5 placeholder-white/60 text-white"
+              className="form-input block w-full pl-10 pr-3 py-2.5 text-theme-primary"
+              style={{
+                backgroundColor: 'var(--background-secondary)'
+              }}
             />
           </div>
         </div>
 
         {/* Right side */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-6">
           {/* Notifications */}
           <NotificationCenter
             alerts={notifications}
@@ -108,24 +123,33 @@ export const TopBar: React.FC<TopBarProps> = ({
             onMarkAsRead={markAsRead}
             onMarkAllAsRead={markAllAsRead}
           />
+          
+          {/* Theme Toggle */}
+          <button
+            onClick={handleToggleTheme}
+            className="btn-interactive p-3 hover:bg-white/15 rounded-lg icon-enhanced transition-all duration-300 text-theme-primary"
+            title={isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+          >
+            {isDark ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+          </button>
+          
           {/* User Menu */}
           <div className="relative" ref={userMenuRef}>
-            <div className="flex items-center space-x-4">
-              {userRole && (
-                <div className="hidden md:flex items-center px-3 py-1 rounded-full bg-gray-700 bg-opacity-50 text-xs font-medium text-white">
-                  {userRole}
-                </div>
+            <button
+              onClick={() => setShowUserMenu(!showUserMenu)}
+              className="flex items-center space-x-2 p-1 hover:bg-white/10 rounded-lg transition-colors focus:outline-none text-theme-primary"
+            >
+              <div className="h-8 w-8 rounded-full bg-orange-500 flex items-center justify-center">
+                <User className="h-4 w-4 text-white" />
+              </div>
+              {userName && (
+                <span className="hidden md:inline text-sm font-medium">{userName}</span>
               )}
-              <button 
-                onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center space-x-2 text-white hover:text-gray-200 focus:outline-none"
-              >
-                <div className="h-8 w-8 rounded-full bg-orange-500 flex items-center justify-center">
-                  <User className="h-4 w-4 text-white" />
-                </div>
-                <span className="hidden md:inline text-sm font-medium">{userRole ? userRole : 'Usuario'}</span>
-              </button>
-            </div>
+            </button>
 
             {/* User Menu Dropdown */}
             {showUserMenu && (
@@ -146,12 +170,12 @@ export const TopBar: React.FC<TopBarProps> = ({
                           <User className="h-5 w-5 text-white" />
                         </div>
                         <div className="flex-1">
-                          <p className="text-sm font-semibold text-white">Administrador</p>
-                          <p className="text-xs text-gray-300">admin@gammaservice.com</p>
+                          <p className="text-sm font-semibold" style={{ color: colors.text.primary }}>Administrador</p>
+                          <p className="text-xs" style={{ color: colors.text.secondary }}>admin@gammaservice.com</p>
                         </div>
                       </div>
                       <div className="mt-3 px-3 py-1.5 bg-gradient-to-r from-orange-500/20 to-orange-600/20 rounded-lg border border-orange-500/30">
-                        <p className="text-xs text-orange-300 font-medium text-center">🛡️ Acceso Completo</p>
+                        <p className="text-xs font-medium text-center" style={{ color: colors.text.accent }}>🛡️ Acceso Completo</p>
                       </div>
                     </div>
                     
@@ -162,21 +186,23 @@ export const TopBar: React.FC<TopBarProps> = ({
                           setShowUserMenu(false);
                           showAlert('info', 'Perfil', 'Configuración de perfil próximamente');
                         }}
-                        className="w-full text-left px-4 py-3 text-sm text-white hover:bg-white/10 transition-colors flex items-center space-x-3 group"
+                        className="w-full text-left px-4 py-3 text-sm hover:bg-white/10 transition-colors flex items-center space-x-3 group"
+                        style={{ color: colors.text.primary }}
                       >
-                        <User className="h-4 w-4 text-orange-400 group-hover:text-orange-300" />
-                        <span className="group-hover:text-orange-100">Mi Perfil</span>
+                        <User className="h-4 w-4" style={{ color: colors.text.accent }} />
+                        <span style={{ color: colors.text.primary }}>Mi Perfil</span>
                       </button>
-                      
+
                       <button
                         onClick={() => {
                           setShowUserMenu(false);
                           showAlert('info', 'Configuración', 'Panel de configuración próximamente');
                         }}
-                        className="w-full text-left px-4 py-3 text-sm text-white hover:bg-white/10 transition-colors flex items-center space-x-3 group"
+                        className="w-full text-left px-4 py-3 text-sm hover:bg-white/10 transition-colors flex items-center space-x-3 group"
+                        style={{ color: colors.text.primary }}
                       >
-                        <Settings className="h-4 w-4 text-blue-400 group-hover:text-blue-300" />
-                        <span className="group-hover:text-blue-100">Configuración</span>
+                        <Settings className="h-4 w-4" style={{ color: colors.text.accent }} />
+                        <span style={{ color: colors.text.primary }}>Configuración</span>
                       </button>
                       
                       <div className="h-px bg-white/10 mx-2 my-1" />
@@ -186,7 +212,8 @@ export const TopBar: React.FC<TopBarProps> = ({
                           setShowUserMenu(false);
                           onLogout();
                         }}
-                        className="w-full text-left px-4 py-3 text-sm text-white hover:bg-red-500/20 transition-colors flex items-center space-x-3 group"
+                        className="w-full text-left px-4 py-3 text-sm hover:bg-red-500/20 transition-colors flex items-center space-x-3 group"
+                        style={{ color: colors.text.primary }}
                       >
                         <LogOut className="h-4 w-4 text-red-400 group-hover:text-red-300" />
                         <span className="group-hover:text-red-100">Cerrar Sesión</span>
@@ -202,8 +229,10 @@ export const TopBar: React.FC<TopBarProps> = ({
 
       {/* Mobile Page Title */}
       <div className="sm:hidden pb-3">
-        <h1 className="text-lg font-semibold text-readable">{title}</h1>
+        <h1 className="text-lg font-semibold text-theme-primary">{title}</h1>
       </div>
     </header>
   );
 };
+
+export const TopBar = memo(TopBarComponent);

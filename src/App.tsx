@@ -6,6 +6,7 @@ import { Dashboard } from './components/Dashboard';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { rolePermissions } from './types/auth.types';
 import authService from './services/authService';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { ClientsModule } from './components/ClientsModule';
 import { VehiclesModule } from './components/VehiclesModule';
 import { SalesModule } from './components/SalesModule';
@@ -74,11 +75,13 @@ export interface Sale {
   contractGenerated: boolean;
 }
 
-export default function App() {
+function AppContent() {
+  const { colors } = useTheme();
   const [currentModule, setCurrentModule] = useState<string>('login');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUserRole, setCurrentUserRole] = useState<UserRole>('cliente');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [currentUserName, setCurrentUserName] = useState<string>('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [isInitializing, setIsInitializing] = useState(true);
   const [isSalesModalOpen, setIsSalesModalOpen] = useState(false);
@@ -107,6 +110,19 @@ export default function App() {
     
     checkAuth();
   }, []);
+  
+  // Handle window resize for sidebar - only auto-open on desktop, don't auto-close
+  useEffect(() => {
+    const handleResize = () => {
+      // Solo auto-abrir en desktop, no auto-cerrar
+      if (window.innerWidth >= 1024 && !isSidebarOpen) {
+        setIsSidebarOpen(true);
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isSidebarOpen]);
   
   // Toggle sidebar function
   const toggleSidebar = () => {
@@ -208,10 +224,11 @@ export default function App() {
     });
   };
 
-  const handleLogin = (success: boolean, role?: UserRole) => {
+  const handleLogin = (success: boolean, role?: UserRole, userName?: string) => {
     if (success && role) {
       setIsAuthenticated(true);
       setCurrentUserRole(role);
+      setCurrentUserName(userName || 'Usuario');
       setCurrentModule('dashboard');
       showAlert('success', 'Acceso exitoso', `Bienvenido a GAMMA Service (${getRoleName(role)})`);
     } else {
@@ -427,7 +444,11 @@ export default function App() {
   // Show loading spinner while initializing
   if (isInitializing) {
     return (
-      <div className="min-h-screen grid-background flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{
+        backgroundColor: colors.background.primary,
+        backgroundImage: colors.background.grid,
+        backgroundSize: '20px 20px'
+      }}>
         <LoadingSpinner size="xl" text="Cargando aplicación..." />
       </div>
     );
@@ -435,7 +456,11 @@ export default function App() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen grid-background">
+      <div className="min-h-screen" style={{
+        backgroundColor: colors.background.primary,
+        backgroundImage: colors.background.grid,
+        backgroundSize: '20px 20px'
+      }}>
         {renderCurrentModule()}
         <NotificationSystem alerts={alerts} onRemoveAlert={removeAlert} />
       </div>
@@ -443,32 +468,47 @@ export default function App() {
   }
 
   return (
-    <div className="h-screen flex grid-background">
-      {/* Mobile overlay when sidebar is open */}
-      {isSidebarOpen && !isSalesModalOpen && (
+    <div className="min-h-screen relative" style={{
+      backgroundColor: colors.background.primary,
+      backgroundImage: colors.background.grid,
+      backgroundSize: '20px 20px'
+    }}>
+      {/* Overlay para móviles cuando el sidebar está abierto */}
+      {isSidebarOpen && (
         <div 
-          className="lg:hidden fixed inset-0 bg-black/50 z-20"
-          onClick={() => setIsSidebarOpen(false)}
+          className="fixed inset-0 bg-black/50 z-20 lg:hidden"
+          onClick={toggleSidebar}
         />
       )}
       
-      {!isSalesModalOpen && (
+      {/* Sidebar */}
+      <div
+        className={`fixed top-0 left-0 z-30 h-screen w-64 p-3 transition-all duration-200 ease-out ${
+            isSidebarOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
+        }`}
+      >
         <Sidebar 
           currentModule={currentModule} 
           onModuleChange={(module) => {
             setCurrentModule(module);
-            // Solo cerramos automáticamente en móviles (menos de 640px)
-            if (window.innerWidth < 640) {
+            // Cerrar automáticamente en móviles al seleccionar un módulo
+            if (window.innerWidth < 1024) {
               setIsSidebarOpen(false);
             }
           }}
           isOpen={isSidebarOpen}
           userRole={currentUserRole}
         />
-      )}
+      </div>
       
-      <div className="flex-1 flex flex-col min-w-0">
-        {!isSalesModalOpen && (
+      {/* Contenido principal */}
+      <div
+        className={`min-h-screen flex flex-col transition-all duration-200 ${
+          isSidebarOpen ? 'ml-64' : 'ml-0'
+        }`}
+      >
+        {/* TopBar */}
+        <div className={`sticky top-0 z-20 ${isSalesModalOpen ? 'hidden' : ''}`}>
           <TopBar 
             title={getModuleTitle()} 
             onLogout={handleLogout}
@@ -476,10 +516,12 @@ export default function App() {
             onToggleSidebar={toggleSidebar}
             isSidebarOpen={isSidebarOpen}
             userRole={currentUserRole}
+            userName={currentUserName}
           />
-        )}
+        </div>
         
-        <main className={`flex-1 overflow-auto ${!isSalesModalOpen ? 'p-3 sm:p-4 lg:p-6' : 'p-0'} grid-background-lg ${!isSalesModalOpen ? 'pt-0' : ''} custom-scroll`}>
+        {/* Contenido */}
+        <main className={`flex-1 overflow-auto w-full ${!isSalesModalOpen ? 'p-4 md:p-6' : 'p-0'}`}>
           {renderCurrentModule()}
         </main>
 
@@ -494,5 +536,13 @@ export default function App() {
         />
       </div>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }
