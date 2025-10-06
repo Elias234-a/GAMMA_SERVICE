@@ -140,56 +140,56 @@ export const ReportsModule: React.FC<ReportsModuleProps> = ({
     switch (reportType) {
       case 'sales':
         return (
-          <div className="space-y-4">
-            <h4 className="text-white">Vista Previa - Reporte de Ventas</h4>
+          <div className="space-y-6">
+            <h4 className="text-lg font-semibold text-theme-primary">Vista Previa - Reporte de Ventas</h4>
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="glass-content p-4 rounded-lg">
-                <p className="text-blue-300">Total Ventas</p>
-                <p className="text-white">{salesStats.totalSales}</p>
+              <div className="glass-card p-4 rounded-lg glass-hover">
+                <p className="text-sm font-medium text-blue-400 mb-1">Total Ventas</p>
+                <p className="text-3xl font-bold text-theme-primary">{salesStats.totalSales}</p>
               </div>
-              <div className="glass-content p-4 rounded-lg">
-                <p className="text-green-300">Completadas</p>
-                <p className="text-white">{salesStats.completedSales}</p>
+              <div className="glass-card p-4 rounded-lg glass-hover">
+                <p className="text-sm font-medium text-green-400 mb-1">Completadas</p>
+                <p className="text-3xl font-bold text-theme-primary">{salesStats.completedSales}</p>
               </div>
-              <div className="glass-content p-4 rounded-lg">
-                <p className="text-purple-300">Ingresos Totales</p>
-                <p className="text-white">${salesStats.totalRevenue.toLocaleString('es-CO')} COP</p>
+              <div className="glass-card p-4 rounded-lg glass-hover">
+                <p className="text-sm font-medium text-purple-400 mb-1">Ingresos Totales</p>
+                <p className="text-xl font-bold text-theme-primary">${salesStats.totalRevenue.toLocaleString('es-CO')}</p>
               </div>
-              <div className="glass-content p-4 rounded-lg">
-                <p className="text-orange-300">Venta Promedio</p>
-                <p className="text-white">${salesStats.averageSale.toLocaleString('es-CO')} COP</p>
+              <div className="glass-card p-4 rounded-lg glass-hover">
+                <p className="text-sm font-medium text-orange-400 mb-1">Venta Promedio</p>
+                <p className="text-xl font-bold text-theme-primary">${salesStats.averageSale.toLocaleString('es-CO')}</p>
               </div>
             </div>
 
-            <div className="overflow-x-auto glass-content rounded-lg">
+            <div className="overflow-x-auto glass-card rounded-lg">
               <table className="w-full">
-                <thead className="bg-white/10">
+                <thead className="glass-content">
                   <tr>
-                    <th className="px-4 py-2 text-left text-white/80 uppercase border-b border-white/20">Venta</th>
-                    <th className="px-4 py-2 text-left text-white/80 uppercase border-b border-white/20">Cliente</th>
-                    <th className="px-4 py-2 text-left text-white/80 uppercase border-b border-white/20">Fecha</th>
-                    <th className="px-4 py-2 text-left text-white/80 uppercase border-b border-white/20">Total</th>
-                    <th className="px-4 py-2 text-left text-white/80 uppercase border-b border-white/20">Estado</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-theme-secondary uppercase tracking-wider border-b border-white/10">Venta</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-theme-secondary uppercase tracking-wider border-b border-white/10">Cliente</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-theme-secondary uppercase tracking-wider border-b border-white/10">Fecha</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-theme-secondary uppercase tracking-wider border-b border-white/10">Total</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-theme-secondary uppercase tracking-wider border-b border-white/10">Estado</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredSales.slice(0, 5).map((sale) => {
                     const client = clients.find(c => c.id === sale.clientId);
                     return (
-                      <tr key={sale.id} className="border-b border-white/10">
-                        <td className="px-4 py-2 text-white">{sale.saleNumber}</td>
-                        <td className="px-4 py-2 text-white">{client?.name || 'N/A'}</td>
-                        <td className="px-4 py-2 text-white">{new Date(sale.saleDate).toLocaleDateString('es-CO')}</td>
-                        <td className="px-4 py-2 text-white">${sale.totalPrice.toLocaleString('es-CO')} COP</td>
-                        <td className="px-4 py-2 text-white">{sale.status}</td>
+                      <tr key={sale.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                        <td className="px-4 py-3 text-sm text-theme-primary font-medium">{sale.saleNumber}</td>
+                        <td className="px-4 py-3 text-sm text-theme-primary">{client?.name || 'N/A'}</td>
+                        <td className="px-4 py-3 text-sm text-theme-secondary">{new Date(sale.saleDate).toLocaleDateString('es-CO')}</td>
+                        <td className="px-4 py-3 text-sm text-theme-primary font-semibold">${sale.totalPrice.toLocaleString('es-CO')}</td>
+                        <td className="px-4 py-3 text-sm text-theme-secondary">{sale.status}</td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
               {filteredSales.length > 5 && (
-                <p className="text-white/60 mt-2">... y {filteredSales.length - 5} registros más</p>
+                <p className="text-theme-secondary text-sm p-3">... y {filteredSales.length - 5} registros más</p>
               )}
             </div>
           </div>
@@ -381,31 +381,31 @@ export const ReportsModule: React.FC<ReportsModuleProps> = ({
       <div className="glass-card-strong p-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-white">Reportes y Análisis</h1>
-            <p className="text-white/80 mt-1">Genere reportes detallados del sistema</p>
+            <h1 className="text-2xl font-bold text-theme-primary">Reportes y Análisis</h1>
+            <p className="text-theme-secondary mt-1">Genere reportes detallados del sistema</p>
           </div>
-          <TrendingUp className="h-8 w-8 text-white icon-enhanced" />
+          <TrendingUp className="h-8 w-8 text-theme-accent icon-enhanced" />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="flex flex-col lg:flex-row gap-6">
         {/* Report Configuration */}
-        <div className="lg:col-span-1 space-y-6">
+        <div className="lg:w-1/3 space-y-6">
           <div className="glass-card-strong p-6">
-            <h2 className="text-white mb-4">Configuración del Reporte</h2>
+            <h2 className="text-xl font-semibold text-theme-primary mb-4">Configuración del Reporte</h2>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-white/90 mb-2">
+                <label className="block text-theme-secondary mb-2 font-medium">
                   Tipo de Reporte
                 </label>
                 <select
                   value={reportType}
                   onChange={(e) => setReportType(e.target.value)}
-                  className="dropdown-menu w-full px-4 py-3 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 cursor-pointer"
+                  className="form-input w-full px-4 py-3 rounded-lg text-theme-primary focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer"
                 >
                   {reportTypes.map(type => (
-                    <option key={type.value} value={type.value} className="dropdown-option bg-gray-800 text-white">
+                    <option key={type.value} value={type.value}>
                       {type.label}
                     </option>
                   ))}
@@ -413,43 +413,43 @@ export const ReportsModule: React.FC<ReportsModuleProps> = ({
               </div>
 
               <div>
-                <label className="block text-white/90 mb-2">
+                <label className="block text-theme-secondary mb-2 font-medium">
                   Fecha Desde
                 </label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/60" />
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-theme-secondary" />
                   <input
                     type="date"
                     value={dateFrom}
                     onChange={(e) => setDateFrom(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2 glass-content border-white/20 rounded-lg bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="form-input w-full pl-10 pr-3 py-2.5 rounded-lg text-theme-primary focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-white/90 mb-2">
+                <label className="block text-theme-secondary mb-2 font-medium">
                   Fecha Hasta
                 </label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/60" />
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-theme-secondary" />
                   <input
                     type="date"
                     value={dateTo}
                     onChange={(e) => setDateTo(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2 glass-content border-white/20 rounded-lg bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="form-input w-full pl-10 pr-3 py-2.5 rounded-lg text-theme-primary focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-white/90 mb-2">
+                <label className="block text-theme-secondary mb-2 font-medium">
                   Formato de Exportación
                 </label>
                 <select
                   value={format}
                   onChange={(e) => setFormat(e.target.value)}
-                  className="w-full px-3 py-2 glass-content border-white/20 rounded-lg bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className="form-input w-full px-3 py-2.5 rounded-lg text-theme-primary focus:outline-none focus:ring-2 focus:ring-orange-500"
                 >
                   {formats.map(fmt => (
                     <option key={fmt.value} value={fmt.value}>{fmt.label}</option>
@@ -517,44 +517,44 @@ export const ReportsModule: React.FC<ReportsModuleProps> = ({
 
           {/* Quick Reports */}
           <div className="glass-card-strong p-6">
-            <h3 className="text-white mb-4">Reportes Rápidos</h3>
+            <h3 className="text-xl font-semibold text-theme-primary mb-4">Reportes Rápidos</h3>
             <div className="space-y-2">
               <button
                 onClick={() => showAlert('success', 'Reporte generado', 'Reporte de ventas del mes actual generado')}
-                className="w-full text-left px-3 py-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                className="w-full text-left px-3 py-2.5 text-theme-secondary hover:text-theme-primary hover:bg-white/10 rounded-lg transition-all glass-hover"
               >
-                Ventas del mes actual
+                📊 Ventas del mes actual
               </button>
               <button
                 onClick={() => showAlert('success', 'Reporte generado', 'Reporte de clientes nuevos generado')}
-                className="w-full text-left px-3 py-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                className="w-full text-left px-3 py-2.5 text-theme-secondary hover:text-theme-primary hover:bg-white/10 rounded-lg transition-all glass-hover"
               >
-                Clientes nuevos (últimos 30 días)
+                👥 Clientes nuevos (últimos 30 días)
               </button>
               <button
                 onClick={() => showAlert('success', 'Reporte generado', 'Reporte de inventario actual generado')}
-                className="w-full text-left px-3 py-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                className="w-full text-left px-3 py-2.5 text-theme-secondary hover:text-theme-primary hover:bg-white/10 rounded-lg transition-all glass-hover"
               >
-                Inventario actual
+                🚗 Inventario actual
               </button>
               <button
                 onClick={() => showAlert('success', 'Reporte generado', 'Reporte financiero del trimestre generado')}
-                className="w-full text-left px-3 py-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                className="w-full text-left px-3 py-2.5 text-theme-secondary hover:text-theme-primary hover:bg-white/10 rounded-lg transition-all glass-hover"
               >
-                Financiero del trimestre
+                💰 Financiero del trimestre
               </button>
             </div>
           </div>
         </div>
 
         {/* Report Preview */}
-        <div className="lg:col-span-2">
+        <div className="lg:w-2/3 flex-1">
           <div className="glass-card-strong p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-white">Vista Previa del Reporte</h2>
-              <div className="flex items-center space-x-2 text-white/80">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-theme-primary">Vista Previa del Reporte</h2>
+              <div className="flex items-center space-x-2 text-theme-secondary glass-content px-3 py-1.5 rounded-lg">
                 <Calendar className="h-4 w-4" />
-                <span>{dateFrom} a {dateTo}</span>
+                <span className="text-sm font-medium">{dateFrom} a {dateTo}</span>
               </div>
             </div>
             

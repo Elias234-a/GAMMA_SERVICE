@@ -19,7 +19,6 @@ import {
 } from 'lucide-react';
 import { UserRole, rolePermissions } from '../types/auth.types';
 import gammaLogo from '../assets/logo_claro.png';
-import { useTheme } from '../contexts/ThemeContext';
 
 interface MenuItem {
   id: string;
@@ -40,7 +39,6 @@ interface SidebarProps {
 }
 
 const SidebarComponent: React.FC<SidebarProps> = ({ currentModule, onModuleChange, isOpen, userRole }) => {
-  const { colors } = useTheme();
 
   const menuAreas: MenuArea[] = [
     {
@@ -231,24 +229,12 @@ const SidebarComponent: React.FC<SidebarProps> = ({ currentModule, onModuleChang
                         group w-full flex items-center px-3 py-1.5 text-left rounded-lg transition-all duration-300 relative overflow-hidden
                         ${isActive
                           ? 'border shadow-lg backdrop-blur-sm text-theme-primary'
-                          : 'hover:border border-transparent text-theme-secondary hover:text-theme-primary'
+                          : 'border-transparent text-theme-secondary'
                         }
                       `}
                       style={{
                         backgroundColor: isActive ? 'rgba(249, 115, 22, 0.25)' : 'transparent',
                         borderColor: isActive ? 'rgba(249, 115, 22, 0.4)' : 'transparent'
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isActive) {
-                          e.currentTarget.style.backgroundColor = 'var(--background-glass)';
-                          e.currentTarget.style.borderColor = 'var(--border)';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isActive) {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                          e.currentTarget.style.borderColor = 'transparent';
-                        }
                       }}
                     >
                       {/* Active indicator */}
@@ -258,26 +244,23 @@ const SidebarComponent: React.FC<SidebarProps> = ({ currentModule, onModuleChang
                       
                       {/* Icon with improved spacing and effects */}
                       <div className={`
-                        flex items-center justify-center w-6 h-6 rounded-lg mr-2.5 transition-all duration-300 flex-shrink-0
+                        flex items-center justify-center w-6 h-6 rounded-lg mr-2.5 flex-shrink-0
                         ${isActive 
                           ? 'bg-orange-500/30 shadow-glow' 
-                          : 'bg-white/5 group-hover:bg-white/10 group-hover:scale-105'
+                          : 'bg-white/5'
                         }
                       `}>
-                        <Icon className={`h-3.5 w-3.5 icon-enhanced transition-colors duration-300 ${
+                        <Icon className={`h-3.5 w-3.5 icon-enhanced ${
                           isActive ? 'text-theme-accent' : 'text-theme-secondary'
                         }`} />
                       </div>
                       
                       {/* Label with better typography */}
-                      <span className={`text-xs font-medium transition-colors duration-300 ${
+                      <span className={`text-xs font-medium ${
                         isActive ? 'text-theme-primary' : 'text-theme-secondary'
                       }`}>
                         {item.label}
                       </span>
-                      
-                      {/* Hover effect overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-orange-500/0 to-emerald-500/0 group-hover:from-orange-500/5 group-hover:to-emerald-500/5 transition-all duration-300 rounded-lg"></div>
                     </button>
                   );
                 })}

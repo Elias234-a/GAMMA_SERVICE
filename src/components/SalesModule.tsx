@@ -443,7 +443,7 @@ export const SalesModule: React.FC<SalesModuleProps> = ({
   };
 
   return (
-    <div className="space-y-6 glass-module fade-in">
+    <div className="space-y-6">
       {/* Header */}
       <div className="glass-card-strong p-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">

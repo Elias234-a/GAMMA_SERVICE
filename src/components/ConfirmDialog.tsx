@@ -58,13 +58,13 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
             <div className="flex-shrink-0">
               {getIcon()}
             </div>
-            <h3 className="text-lg font-semibold text-white">
+            <h3 className="text-lg font-semibold text-theme-primary">
               {title}
             </h3>
           </div>
           <button
             onClick={onCancel}
-            className="text-gray-300 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
+            className="text-theme-secondary hover:text-theme-primary transition-colors p-1 rounded-full hover:bg-white/10"
           >
             <X className="h-5 w-5" />
           </button>
@@ -72,14 +72,14 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
         {/* Message */}
         <div className="px-6 pb-6">
-          <p className="text-white/90 leading-relaxed">{message}</p>
+          <p className="text-theme-secondary leading-relaxed">{message}</p>
         </div>
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 justify-end p-6 pt-0 border-t border-white/20">
           <button
             onClick={onCancel}
-            className="btn-responsive bg-white/10 text-white hover:bg-white/20 border-white/30"
+            className="btn-responsive bg-white/10 hover:bg-white/20 border-white/30"
           >
             <Ban className="h-4 w-4" />
             <span>Cancelar</span>

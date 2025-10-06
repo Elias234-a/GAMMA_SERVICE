@@ -245,7 +245,139 @@ html.dark .text-yellow-600 {
   color: #ca8a04 !important;
 }
 
+/* ========================================= */
+/* DROPDOWNS Y POPOVERS */
+/* ========================================= */
+
+/* Dropdown content */
+html:not(.dark) [data-slot="dropdown-menu-content"],
+html:not(.dark) .dropdown-content,
+html:not(.dark) .popover-content {
+  background-color: #ffffff;
+  color: #000000;
+  border-color: #e5e7eb;
+}
+
+html.dark [data-slot="dropdown-menu-content"],
+html.dark .dropdown-content,
+html.dark .popover-content {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Dropdown items */
+html:not(.dark) [data-slot="dropdown-menu-item"],
+html:not(.dark) .dropdown-item {
+  color: #000000;
+}
+
+html.dark [data-slot="dropdown-menu-item"],
+html.dark .dropdown-item {
+  color: #FFFFFF;
+}
+
+/* Dropdown separators */
+html:not(.dark) [data-slot="dropdown-menu-separator"] {
+  background-color: #e5e7eb;
+}
+
+html.dark [data-slot="dropdown-menu-separator"] {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ========================================= */
+/* MODALES Y DIALOGS */
+/* ========================================= */
+
+/* Modal content */
+html:not(.dark) [role="dialog"],
+html:not(.dark) .modal-content,
+html:not(.dark) .dialog-content {
+  color: #000000;
+}
+
+html.dark [role="dialog"],
+html.dark .modal-content,
+html.dark .dialog-content {
+  color: #FFFFFF;
+}
+
+/* Modal overlay */
+html:not(.dark) .modal-overlay,
+html:not(.dark) [data-slot="dialog-overlay"] {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+html.dark .modal-overlay,
+html.dark [data-slot="dialog-overlay"] {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* ========================================= */
+/* TOOLTIPS */
+/* ========================================= */
+
+html:not(.dark) [data-slot="tooltip-content"],
+html:not(.dark) .tooltip {
+  background-color: #1f2937;
+  color: #ffffff;
+}
+
+html.dark [data-slot="tooltip-content"],
+html.dark .tooltip {
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #000000;
+}
+
+/* ========================================= */
+/* CARDS Y CONTENEDORES */
+/* ========================================= */
+
+/* Card backgrounds en modo claro */
+html:not(.dark) .card,
+html:not(.dark) [data-slot="card"] {
+  background-color: #ffffff;
+  border-color: #e5e7eb;
+}
+
+html.dark .card,
+html.dark [data-slot="card"] {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ========================================= */
+/* BADGES Y PILLS */
+/* ========================================= */
+
+html:not(.dark) .badge,
+html:not(.dark) .pill {
+  color: #000000;
+}
+
+html.dark .badge,
+html.dark .pill {
+  color: #FFFFFF;
+}
+
+/* ========================================= */
+/* LOADERS Y SPINNERS */
+/* ========================================= */
+
+html:not(.dark) .spinner,
+html:not(.dark) .loader {
+  border-color: #e5e7eb;
+  border-top-color: #3b82f6;
+}
+
+html.dark .spinner,
+html.dark .loader {
+  border-color: rgba(255, 255, 255, 0.1);
+  border-top-color: #60a5fa;
+}
+
 /* Transiciones suaves */
 * {
-  transition: color 0.2s ease, background-color 0.2s ease;
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 }
