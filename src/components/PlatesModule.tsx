@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Search, Eye, Edit, FileText, Clock, CheckCircle, AlertTriangle } from 'lucide-react';
 import { AlertType, Client, Vehicle } from '../App';
+import plateService from '../services/plateService';
 
 interface PlateRequest {
   id: string;
@@ -45,8 +46,22 @@ export const PlatesModule: React.FC<PlatesModuleProps> = ({
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Mock plate requests data
-  const [plateRequests, setPlateRequests] = useState<PlateRequest[]>([
+  const [plateRequests, setPlateRequests] = useState<PlateRequest[]>([]);
+  
+  // Load plate requests from backend
+  useEffect(() => {
+    const loadPlateRequests = async () => {
+      try {
+        const response = await plateService.getAll();
+        setPlateRequests(response.data || []);
+      } catch (error) {
+        console.error('Error loading plate requests:', error);
+      }
+    };
+    loadPlateRequests();
+  }, []);
+  
+  const [plateRequestsOLD] = useState<PlateRequest[]>([
     {
       id: '1',
       requestNumber: 'PLA-2024-001',

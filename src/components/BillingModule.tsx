@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Search, Eye, Download, Mail, FileText, DollarSign, Calendar } from 'lucide-react';
 import { AlertType, Sale, Client, Vehicle } from '../App';
 import { FormSelect, FormTextarea } from './ui/FormInput';
+import invoiceService from '../services/invoiceService';
 
 interface Invoice {
   id: string;
@@ -44,8 +45,22 @@ export const BillingModule: React.FC<BillingModuleProps> = ({
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Mock invoices data
-  const [invoices, setInvoices] = useState<Invoice[]>([
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  
+  // Load invoices from backend
+  useEffect(() => {
+    const loadInvoices = async () => {
+      try {
+        const response = await invoiceService.getAll();
+        setInvoices(response.data || []);
+      } catch (error) {
+        console.error('Error loading invoices:', error);
+      }
+    };
+    loadInvoices();
+  }, []);
+  
+  const [invoicesOLD] = useState<Invoice[]>([
     {
       id: '1',
       invoiceNumber: 'FAC-2024-001',

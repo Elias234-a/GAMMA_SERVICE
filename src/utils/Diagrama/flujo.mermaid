@@ -1,0 +1,93 @@
+flowchart TD
+    %% --- INICIO Y LOGIN ---
+    A[🏁 Inicio del Sistema GAMMA] --> B[🔐 Login del Usuario]
+    B --> C{¿Credenciales válidas?}
+    C -->|❌ No| D[⚠️ Mostrar Alerta: Acceso Denegado]
+    D --> B
+    C -->|✅ Sí| E[👤 Seleccionar Rol de Usuario]
+
+    %% --- ROLES DISPONIBLES ---
+    E -->|Administrador| F1[🧭 Panel General del Administrador]
+    E -->|Asesor Comercial| F2[💼 Módulo de Ventas y Cotizaciones]
+    E -->|Mecánico| F3[🔧 Módulo de Taller y Servicios]
+    E -->|Cliente| F4[🚗 Panel del Cliente]
+
+    %% --- PANEL DEL ADMINISTRADOR ---
+    F1 --> G1[👥 Gestión de Usuarios y Roles]
+    F1 --> G2[🚙 Gestión de Vehículos e Inventario]
+    F1 --> G3[📊 Reportes, KPIs y Métricas]
+    F1 --> G4[🔔 Alertas y Notificaciones del Sistema]
+    G1 --> H1[✉️ Creación de Cuentas con Correos Corporativos]
+    G2 --> H2[📦 Control de Entradas/Salidas de Vehículos]
+    G3 --> H3[📑 Exportar Reportes a PDF o Excel]
+    G4 --> H4[📨 Envío de Notificaciones por Email y WebSocket]
+
+    %% --- MÓDULO DE VENTAS ---
+    F2 --> I1[🧾 Registro de Venta o Cotización]
+    I1 --> I2[👤 Validar Cliente y Vehículo]
+    I2 -->|✅ Aprobado| I3[💰 Generar Factura y Contrato PDF]
+    I2 -->|❌ Rechazado| I4[⚠️ Mostrar Alerta: Cliente No Aprobado]
+    I3 --> I5[📉 Actualizar Inventario]
+    I3 --> I6[📢 Notificar al Administrador y Cliente]
+    I5 --> G2
+    I6 --> G4
+
+    %% --- MÓDULO DE TALLER ---
+    F3 --> J1[🛠️ Registrar Servicio Mecánico]
+    J1 --> J2[👨‍🔧 Asignar Vehículo y Mecánico]
+    J2 --> J3[🔄 Actualizar Estado del Servicio]
+    J3 --> J4[📄 Generar Reporte Técnico PDF]
+    J4 --> J5[📢 Enviar Alerta a Cliente y Admin]
+    J5 --> G4
+
+    %% --- MÓDULO DEL CLIENTE ---
+    F4 --> K1[🚘 Ver Catálogo de Vehículos]
+    F4 --> K2[🧾 Ver Historial de Compras y Servicios]
+    F4 --> K3[💬 Enviar Retroalimentación del Servicio]
+    K3 --> G4
+    K3 -->|👍 Retroalimentación Positiva| L1[🔁 Mejoras en la Atención y Servicio]
+    L1 --> G3
+
+    %% --- INVENTARIO ---
+    G2 --> M1[📦 Control de Stock de Vehículos y Repuestos]
+    M1 --> M2{¿Stock Bajo?}
+    M2 -->|⚠️ Sí| G4
+    M2 -->|✅ No| F1
+
+    %% --- REPORTES ---
+    G3 --> N1[📈 Generar Reportes por Fecha, Cliente o Tipo]
+    N1 --> N2[💾 Exportar PDF/Excel]
+    N2 --> G4
+
+    %% --- PRINCIPIOS SISTÉMICOS ---
+    subgraph P[🧠 Principios de Teoría General de Sistemas Aplicados en GAMMA]
+        P1[🤝 Sinergia: todos los módulos se interconectan para mejorar el rendimiento general]
+        P2[🧬 Morfogénesis: el sistema evoluciona al añadir nuevos roles o funciones sin romper la estructura]
+        P3[⚖️ Homeostasis: las alertas mantienen el equilibrio interno y evitan fallos del sistema]
+        P4[🔁 Retroalimentación: los datos de clientes y reportes corrigen procesos y mejoran la toma de decisiones]
+        P5[♻️ Entropía: control de datos, limpieza de registros antiguos y respaldo automático]
+        P6[🎯 Equifinalidad: diferentes rutas logran el mismo fin, satisfacción del cliente y sostenibilidad]
+    end
+
+    %% --- CONEXIONES CON PRINCIPIOS ---
+    F1 --> P1
+    F2 --> P1
+    F3 --> P1
+    F4 --> P4
+    G4 --> P3
+    G3 --> P5
+    G3 --> P6
+    F2 --> P6
+    F3 --> P6
+
+    %% --- PERFIL Y SESIÓN ---
+    subgraph S[👥 Gestión de Sesión del Usuario]
+        S1[📄 Ver Perfil e Información del Rol]
+        S2[⚙️ Configuración de Cuenta]
+        S3[🔒 Cerrar Sesión]
+    end
+    F1 --> S
+    F2 --> S
+    F3 --> S
+    F4 --> S
+    S3 --> A

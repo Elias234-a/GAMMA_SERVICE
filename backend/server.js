@@ -16,14 +16,33 @@ import logger from './config/logger.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Import routes
+// Import routes - Core
 import userRoutes from './routes/users.js';
+import notificationRoutes from './routes/notifications.js';
+
+// Import routes - Business Core
+import vehicleRoutes from './routes/vehicles.js';
+import clientRoutes from './routes/clients.js';
+import saleRoutes from './routes/sales.js';
+import invoiceRoutes from './routes/invoices.js';
+import serviceRoutes from './routes/services.js';
+
+// Import routes - Operations
+import inventoryRoutes from './routes/inventory.js';
+import purchaseRoutes from './routes/purchases.js';
+import hrRoutes from './routes/hr.js';
+import financingRoutes from './routes/financing.js';
+import plateRoutes from './routes/plates.js';
+
+// Import routes - Legacy/External
 import orderRoutes from './routes/orders.js';
 import technicianRoutes from './routes/technicians.js';
 import dianRoutes from './routes/dian.js';
 import datacreditoRoutes from './routes/datacredito.js';
 import transitoRoutes from './routes/transito.js';
-import notificationRoutes from './routes/notifications.js';
+
+// Import routes - Reports
+import reportRoutes from './routes/reports.js';
 
 // Inicializar la aplicación Express
 const app = express();
@@ -64,19 +83,38 @@ app.use((req, res, next) => {
   next();
 });
 
-// Configuración de rutas
-app.use('/api/users', userRoutes);
-app.use('/api/notifications', notificationRoutes);
-
 // Documentación de la API
 app.use('/api-docs', 
   swaggerUi.serve, 
   swaggerUi.setup(specs, {
     explorer: true,
     customCss: '.swagger-ui .topbar { display: none }',
-    customSiteTitle: 'Documentación de la API',
+    customSiteTitle: 'GAMMA Service ERP - API Documentation',
   })
 );
+
+// Configuración de rutas - Core
+app.use('/api/users', userRoutes);
+app.use('/api/notifications', notificationRoutes);
+
+// Business Core Routes
+app.use('/api/vehicles', vehicleRoutes);
+app.use('/api/clients', clientRoutes);
+app.use('/api/sales', saleRoutes);
+app.use('/api/invoices', invoiceRoutes);
+app.use('/api/services', serviceRoutes); // or /api/workshop
+
+// Operations Routes
+app.use('/api/inventory', inventoryRoutes);
+app.use('/api/purchases', purchaseRoutes);
+app.use('/api/hr', hrRoutes); // or /api/employees
+app.use('/api/financing', financingRoutes);
+app.use('/api/plates', plateRoutes);
+
+// Reports Routes
+app.use('/api/reports', reportRoutes);
+
+// Legacy/External Routes
 app.use('/api/orders', orderRoutes);
 app.use('/api/technicians', technicianRoutes);
 app.use('/api/dian', dianRoutes);
@@ -92,9 +130,16 @@ app.get('/', (req, res) => {
 app.get('/api', (req, res) => {
   res.json({
     status: 'success',
-    message: 'Bienvenido a la API de Gestión de Técnicos y Órdenes',
+    message: 'Bienvenido a GAMMA Service ERP API',
     documentation: '/api-docs',
-    version: '1.0.0'
+    version: '1.0.0',
+    endpoints: {
+      core: ['/users', '/notifications'],
+      business: ['/vehicles', '/clients', '/sales', '/invoices', '/services'],
+      operations: ['/inventory', '/purchases', '/hr', '/financing', '/plates'],
+      reports: ['/reports'],
+      external: ['/dian', '/datacredito', '/transito']
+    }
   });
 });
 

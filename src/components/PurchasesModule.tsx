@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Package, Plus, Search, Truck, FileText, DollarSign, CheckCircle, Clock, Building, Trash2 } from 'lucide-react';
 import { AlertType } from '../App';
+import purchaseService from '../services/purchaseService';
 
 interface PurchasesModuleProps {
   showAlert: (type: AlertType, title: string, message: string) => void;
@@ -374,8 +375,23 @@ export const PurchasesModule: React.FC<PurchasesModuleProps> = ({ showAlert }) =
     }
   ]);
 
+  const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrder[]>([]);
+  
+  // Load purchases from backend
+  useEffect(() => {
+    const loadPurchases = async () => {
+      try {
+        const response = await purchaseService.getAll();
+        setPurchaseOrders(response.data || []);
+      } catch (error) {
+        console.error('Error loading purchases:', error);
+      }
+    };
+    loadPurchases();
+  }, []);
+  
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [purchaseOrders, _setPurchaseOrders] = useState<PurchaseOrder[]>([
+  const [purchaseOrdersOLD, _] = useState<PurchaseOrder[]>([
     {
       id: '1',
       orderNumber: 'OC-2024-001',

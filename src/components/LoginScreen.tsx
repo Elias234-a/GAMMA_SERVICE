@@ -4,6 +4,7 @@ import { AlertType } from '../App';
 import gammaLogo from '../assets/logo_claro.png';
 import authService from '../services/authService';
 import { UserRole } from '../types/auth.types';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface LoginScreenProps {
   onLogin: (success: boolean, role?: UserRole, userName?: string) => void;
@@ -11,6 +12,7 @@ interface LoginScreenProps {
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) => {
+  const { colors } = useTheme();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -187,7 +189,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
 
   if (showForgotPassword) {
     return (
-      <div className="min-h-screen flex items-center justify-center grid-background py-12 px-4 sm:px-6 lg:px-8">
+      <div 
+        className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" 
+        style={{ 
+          backgroundColor: colors.background.primary,
+          backgroundImage: colors.background.grid,
+          backgroundSize: '20px 20px'
+        }}
+      >
         <div className="max-w-md w-full space-y-8">
           <div>
             <div className="mx-auto flex justify-center">
@@ -197,31 +206,30 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                 className="h-16 w-auto object-contain"
               />
             </div>
-            <h2 className="mt-6 text-center text-3xl font-bold text-white">
+            <h2 className="mt-6 text-center text-3xl font-bold" style={{ color: colors.text.primary }}>
               Recuperar Contraseña
             </h2>
-            <p className="mt-2 text-center text-sm text-gray-300">
+            <p className="mt-2 text-center text-sm" style={{ color: colors.text.secondary }}>
               Ingrese su correo electrónico para recibir las instrucciones
             </p>
           </div>
 
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="recoveryEmail" className="block text-sm font-medium text-white mb-2">
+              <label htmlFor="recoveryEmail" className="block text-sm font-medium mb-2" style={{ color: colors.text.primary }}>
                 Correo Electrónico *
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
+                  <Mail className="h-5 w-5" style={{ color: colors.text.secondary }} />
                 </div>
                 <input
                   id="recoveryEmail"
                   type="email"
                   value={formData.recoveryEmail}
                   onChange={(e) => handleInputChange('recoveryEmail', e.target.value)}
-                  className={`appearance-none block w-full pl-10 pr-3 py-3 border ${
-                    errors.recoveryEmail ? 'border-red-300' : 'border-gray-300'
-                  } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
+                  className="glass-input appearance-none block w-full pl-10 pr-3 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  style={{ color: colors.text.primary }}
                   placeholder="correo@ejemplo.com"
                 />
               </div>
@@ -248,7 +256,12 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
               <button
                 type="button"
                 onClick={() => setShowForgotPassword(false)}
-                className="w-full py-3 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                style={{
+                  backgroundColor: colors.background.secondary,
+                  color: colors.text.primary,
+                  borderColor: colors.border
+                }}
+                className="w-full py-3 px-4 border rounded-lg text-sm font-medium hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
                 Volver al Login
               </button>
@@ -261,7 +274,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
 
   // FORMULARIO PRINCIPAL
   return (
-    <div className="min-h-screen flex items-center justify-center grid-background py-12 px-4 sm:px-6 lg:px-8">
+    <div 
+      className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" 
+      style={{ 
+        backgroundColor: colors.background.primary,
+        backgroundImage: colors.background.grid,
+        backgroundSize: '20px 20px'
+      }}
+    >
       <div className="max-w-md w-full space-y-8">
         <div>
           <div className="mx-auto flex justify-center">
@@ -271,10 +291,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
               className="h-16 w-auto object-contain"
             />
           </div>
-          <h2 className="mt-6 text-center text-3xl font-bold text-white">
+          <h2 className="mt-6 text-center text-3xl font-bold" style={{ color: colors.text.primary }}>
             {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-300">
+          <p className="mt-2 text-center text-sm" style={{ color: colors.text.secondary }}>
             {isLogin ? 'Acceda a GAMMA Service' : 'Registrarse en GAMMA Service'}
           </p>
         </div>
@@ -283,20 +303,19 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
           <div className="space-y-3">
             {/* Rol de Usuario - PRIMERO */}
             <div>
-              <label htmlFor="role" className="block text-sm font-medium text-white mb-1">
+              <label htmlFor="role" className="block text-sm font-medium mb-1" style={{ color: colors.text.primary }}>
                 Rol de Usuario *
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <UserCircle className="h-5 w-5 text-gray-400" />
+                  <UserCircle className="h-5 w-5" style={{ color: colors.text.secondary }} />
                 </div>
                 <select
                   id="role"
                   value={formData.role}
                   onChange={e => handleInputChange('role', e.target.value)}
-                  className={`appearance-none block w-full pl-10 pr-10 py-2 text-sm border ${
-                    errors.role ? 'border-red-300' : 'border-gray-300'
-                  } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500`}
+                  className="glass-input appearance-none block w-full pl-10 pr-10 py-2 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  style={{ color: colors.text.primary }}
                 >
                   <option value="">Seleccione un rol</option>
                   <option value="Administrador">Administrador</option>
@@ -305,7 +324,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                   <option value="Mecánico">Mecánico</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <ChevronDown className="h-5 w-5 text-gray-400" />
+                  <ChevronDown className="h-5 w-5" style={{ color: colors.text.secondary }} />
                 </div>
               </div>
               {errors.role && <p className="mt-1 text-sm text-red-600">{errors.role}</p>}
@@ -315,63 +334,60 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
               <>
                 {/* Campos de registro */}
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-white mb-1">
+                  <label htmlFor="name" className="block text-sm font-medium mb-1" style={{ color: colors.text.primary }}>
                     Nombre *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                      <User className="h-5 w-5 text-gray-400" />
+                      <User className="h-5 w-5" style={{ color: colors.text.secondary }} />
                     </div>
                     <input
                       id="name"
                       type="text"
                       value={formData.name}
                       onChange={e => handleInputChange('name', e.target.value)}
-                      className={`appearance-none block w-full pl-10 pr-3 py-2 border ${
-                        errors.name ? 'border-red-300' : 'border-gray-300'
-                      } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500`}
+                      className="glass-input appearance-none block w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      style={{ color: colors.text.primary }}
                       placeholder="Juan Pérez"
                     />
                   </div>
                   {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
                 </div>
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-white mb-1">
+                  <label htmlFor="phone" className="block text-sm font-medium mb-1" style={{ color: colors.text.primary }}>
                     Teléfono *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                      <Phone className="h-5 w-5 text-gray-400" />
+                      <Phone className="h-5 w-5" style={{ color: colors.text.secondary }} />
                     </div>
                     <input
                       id="phone"
                       type="tel"
                       value={formData.phone}
                       onChange={e => handleInputChange('phone', e.target.value)}
-                      className={`appearance-none block w-full pl-10 pr-3 py-2 border ${
-                        errors.phone ? 'border-red-300' : 'border-gray-300'
-                      } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500`}
+                      className="glass-input appearance-none block w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      style={{ color: colors.text.primary }}
                       placeholder="+57 300 123 4567"
                     />
                   </div>
                   {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
                 </div>
                 <div>
-                  <label htmlFor="address" className="block text-sm font-medium text-white mb-1">
+                  <label htmlFor="address" className="block text-sm font-medium mb-1" style={{ color: colors.text.primary }}>
                     Dirección *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                      <MapPin className="h-5 w-5 text-gray-400" />
+                      <MapPin className="h-5 w-5" style={{ color: colors.text.secondary }} />
                     </div>
                     <input
                       id="address"
                       type="text"
                       value={formData.address}
                       onChange={e => handleInputChange('address', e.target.value)}
-                      className={`appearance-none block w-full pl-10 pr-3 py-2 border ${
-                        errors.address ? 'border-red-300' : 'border-gray-300'
-                      } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500`}
+                      className="glass-input appearance-none block w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      style={{ color: colors.text.primary }}
                       placeholder="Calle 123 #45-67"
                     />
                   </div>
@@ -382,42 +398,40 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
 
             {/* Email y contraseña */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-white mb-1">
+              <label htmlFor="email" className="block text-sm font-medium mb-1" style={{ color: colors.text.primary }}>
                 Correo Electrónico *
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
+                  <Mail className="h-5 w-5" style={{ color: colors.text.secondary }} />
                 </div>
                 <input
                   id="email"
                   type="email"
                   value={formData.email}
                   onChange={e => handleInputChange('email', e.target.value)}
-                  className={`appearance-none block w-full pl-10 pr-3 py-2 border ${
-                    errors.email ? 'border-red-300' : 'border-gray-300'
-                  } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500`}
+                  className="glass-input appearance-none block w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  style={{ color: colors.text.primary }}
                   placeholder="correo@ejemplo.com"
                 />
               </div>
               {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-white mb-1">
+              <label htmlFor="password" className="block text-sm font-medium mb-1" style={{ color: colors.text.primary }}>
                 Contraseña *
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+                  <Lock className="h-5 w-5" style={{ color: colors.text.secondary }} />
                 </div>
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={e => handleInputChange('password', e.target.value)}
-                  className={`appearance-none block w-full pl-10 pr-10 py-2 border ${
-                    errors.password ? 'border-red-300' : 'border-gray-300'
-                  } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500`}
+                  className="glass-input appearance-none block w-full pl-10 pr-10 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  style={{ color: colors.text.primary }}
                   placeholder="••••••••"
                 />
                 <button
@@ -426,28 +440,27 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
                   aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5 text-gray-400" /> : <Eye className="h-5 w-5 text-gray-400" />}
+                  {showPassword ? <EyeOff className="h-5 w-5" style={{ color: colors.text.secondary }} /> : <Eye className="h-5 w-5" style={{ color: colors.text.secondary }} />}
                 </button>
               </div>
               {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
             </div>
             {!isLogin && (
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-white mb-1">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium mb-1" style={{ color: colors.text.primary }}>
                   Confirmar Contraseña *
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
+                    <Lock className="h-5 w-5" style={{ color: colors.text.secondary }} />
                   </div>
                   <input
                     id="confirmPassword"
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={formData.confirmPassword}
                     onChange={e => handleInputChange('confirmPassword', e.target.value)}
-                    className={`appearance-none block w-full pl-10 pr-10 py-2 border ${
-                      errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                    } placeholder-gray-400 text-white bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500`}
+                    className="glass-input appearance-none block w-full pl-10 pr-10 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    style={{ color: colors.text.primary }}
                     placeholder="••••••••"
                   />
                   <button
@@ -456,7 +469,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
                     aria-label={showConfirmPassword ? 'Ocultar confirmación' : 'Mostrar confirmación'}
                   >
-                    {showConfirmPassword ? <EyeOff className="h-5 w-5 text-gray-400" /> : <Eye className="h-5 w-5 text-gray-400" />}
+                    {showConfirmPassword ? <EyeOff className="h-5 w-5" style={{ color: colors.text.secondary }} /> : <Eye className="h-5 w-5" style={{ color: colors.text.secondary }} />}
                   </button>
                 </div>
                 {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}

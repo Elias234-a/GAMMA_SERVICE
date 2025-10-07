@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Search, Edit, Trash2, Eye, Car, DollarSign } from 'lucide-react';
 import { AlertType, Vehicle, Client } from '../App';
 import { FormInput, FormSelect } from './ui/FormInput';
+import vehicleService from '../services/vehicleService';
 
 interface VehiclesModuleProps {
   showAlert: (type: AlertType, title: string, message: string) => void;
@@ -132,40 +133,50 @@ export const VehiclesModule: React.FC<VehiclesModuleProps> = ({
     showConfirmDialog(
       'Eliminar Vehículo',
       `¿Está seguro que desea eliminar el vehículo "${vehicle.brand} ${vehicle.model}"? Esta acción no se puede deshacer.`,
-      () => {
-        setVehicles(prev => prev.filter(v => v.id !== vehicle.id));
-        showAlert('success', 'Vehículo eliminado', 'El vehículo ha sido eliminado exitosamente');
+      async () => {
+        try {
+          await vehicleService.delete(vehicle.id);
+          setVehicles(prev => prev.filter(v => v.id !== vehicle.id));
+          showAlert('success', 'Vehículo eliminado', 'El vehículo ha sido eliminado exitosamente');
+        } catch (error) {
+          showAlert('error', 'Error', 'No se pudo eliminar el vehículo');
+        }
       }
     );
   };
 
-  const handleSaveVehicle = () => {
+  const handleSaveVehicle = async () => {
     if (!validateForm()) {
       showAlert('error', 'Datos inválidos', 'Por favor corrija los errores en el formulario');
       return;
     }
 
-    if (editingVehicle) {
-      // Update existing vehicle
-      setVehicles(prev => prev.map(vehicle => 
-        vehicle.id === editingVehicle.id 
-          ? { ...vehicle, ...formData }
-          : vehicle
-      ));
-      showAlert('success', 'Vehículo actualizado', 'Los datos del vehículo han sido actualizados');
-    } else {
-      // Add new vehicle
-      const newVehicle: Vehicle = {
-        id: Date.now().toString(),
-        ...formData,
-        status: 'available'
-      };
-      setVehicles(prev => [...prev, newVehicle]);
-      showAlert('success', 'Vehículo registrado', 'El vehículo ha sido registrado exitosamente');
-    }
+    try {
+      if (editingVehicle) {
+        // Update existing vehicle
+        const updated = await vehicleService.update(editingVehicle.id, formData);
+        setVehicles(prev => prev.map(vehicle => 
+          vehicle.id === editingVehicle.id 
+            ? { ...vehicle, ...updated.data }
+            : vehicle
+        ));
+        showAlert('success', 'Vehículo actualizado', 'Los datos del vehículo han sido actualizados');
+      } else {
+        // Add new vehicle
+        const newVehicle = await vehicleService.create({
+          ...formData,
+          status: 'available'
+        });
+        setVehicles(prev => [...prev, newVehicle.data]);
+        showAlert('success', 'Vehículo registrado', 'El vehículo ha sido registrado exitosamente');
+      }
 
-    setShowAddModal(false);
-    setEditingVehicle(null);
+      setShowAddModal(false);
+      setEditingVehicle(null);
+    } catch (error) {
+      showAlert('error', 'Error', editingVehicle ? 'No se pudo actualizar el vehículo' : 'No se pudo crear el vehículo');
+    }
+    
     setFormData({
       brand: '',
       model: '',

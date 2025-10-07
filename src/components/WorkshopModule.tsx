@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Wrench, Calendar, Clock, User, CheckCircle, AlertCircle, Settings, Car, FileText, DollarSign, Phone, MapPin } from 'lucide-react';
 import { AlertType } from '../App';
+import workshopService from '../services/workshopService';
 
 interface WorkshopModuleProps {
   showAlert: (type: AlertType, title: string, message: string) => void;
@@ -217,7 +218,22 @@ export const WorkshopModule: React.FC<WorkshopModuleProps> = ({ showAlert, showC
     );
   };
 
-  const [serviceOrders, setServiceOrders] = useState<ServiceOrder[]>([
+  const [serviceOrders, setServiceOrders] = useState<ServiceOrder[]>([]);
+  
+  // Load orders from backend
+  useEffect(() => {
+    const loadOrders = async () => {
+      try {
+        const response = await workshopService.getAll();
+        setServiceOrders(response.data || []);
+      } catch (error) {
+        console.error('Error loading orders:', error);
+      }
+    };
+    loadOrders();
+  }, []);
+  
+  const [serviceOrdersOLD] = useState<ServiceOrder[]>([
     {
       id: '1',
       orderNumber: 'OS-2024-001',
@@ -295,7 +311,8 @@ export const WorkshopModule: React.FC<WorkshopModuleProps> = ({ showAlert, showC
     }
   ]);
 
-  const [technicians, setTechnicians] = useState<Technician[]>([
+  const [technicians, setTechnicians] = useState<Technician[]>([]);
+  const [techniciansOLD] = useState<Technician[]>([
     {
       id: '1',
       name: 'Carlos Méndez',

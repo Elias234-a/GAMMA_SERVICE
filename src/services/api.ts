@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // API Configuration
-const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:8001/api';
 
 // Create axios instance
 const apiClient = axios.create({
@@ -30,11 +30,16 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response: any) => response,
   (error: any) => {
-    if (error.response?.status === 401) {
-      // Unauthorized - clear token and redirect to login
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('user');
-      window.location.href = '/';
+    // Solo limpiar y redirigir si es un 401 y NO es una petición de login
+    if (error.response?.status === 401 && !error.config?.url?.includes('/login')) {
+      console.warn('Sesión expirada o no autorizada');
+      // Solo limpiar si realmente está autenticado
+      const hasToken = localStorage.getItem('authToken');
+      if (hasToken) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+        window.location.href = '/';
+      }
     }
     return Promise.reject(error);
   }

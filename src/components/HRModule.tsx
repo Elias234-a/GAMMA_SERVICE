@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import hrService from '../services/hrService';
 import { 
   Users, 
   UserPlus, 
@@ -38,7 +39,22 @@ interface HRModuleProps {
 }
 
 export const HRModule: React.FC<HRModuleProps> = ({ showAlert, showConfirmDialog }) => {
-  const [employees, setEmployees] = useState<Employee[]>([
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  
+  // Load employees from backend
+  useEffect(() => {
+    const loadEmployees = async () => {
+      try {
+        const response = await hrService.getAll();
+        setEmployees(response.data || []);
+      } catch (error) {
+        console.error('Error loading employees:', error);
+      }
+    };
+    loadEmployees();
+  }, []);
+  
+  const [employeesOLD] = useState<Employee[]>([
     {
       id: '1',
       name: 'Ana María Rodríguez',

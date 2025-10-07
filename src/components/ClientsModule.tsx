@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Search, Edit, Trash2, Eye, User } from 'lucide-react';
 import { AlertType, Client } from '../App';
 import { FormInput, FormTextarea } from './ui/FormInput';
+import clientService from '../services/clientService';
 
 interface ClientsModuleProps {
   showAlert: (type: AlertType, title: string, message: string) => void;
@@ -111,41 +112,50 @@ export const ClientsModule: React.FC<ClientsModuleProps> = ({
     showConfirmDialog(
       'Eliminar Cliente',
       `¿Está seguro que desea eliminar el cliente "${client.name}"? Esta acción no se puede deshacer.`,
-      () => {
-        setClients(prev => prev.filter(c => c.id !== client.id));
-        showAlert('success', 'Cliente eliminado', 'El cliente ha sido eliminado exitosamente');
+      async () => {
+        try {
+          await clientService.delete(client.id);
+          setClients(prev => prev.filter(c => c.id !== client.id));
+          showAlert('success', 'Cliente eliminado', 'El cliente ha sido eliminado exitosamente');
+        } catch (error) {
+          showAlert('error', 'Error', 'No se pudo eliminar el cliente');
+        }
       }
     );
   };
 
-  const handleSaveClient = () => {
+  const handleSaveClient = async () => {
     if (!validateForm()) {
       showAlert('error', 'Datos inválidos', 'Por favor corrija los errores en el formulario');
       return;
     }
 
-    if (editingClient) {
-      // Update existing client
-      setClients(prev => prev.map(client => 
-        client.id === editingClient.id 
-          ? { ...client, ...formData }
-          : client
-      ));
-      showAlert('success', 'Cliente actualizado', 'Los datos del cliente han sido actualizados');
-    } else {
-      // Add new client
-      const newClient: Client = {
-        id: Date.now().toString(),
-        ...formData,
-        registrationDate: new Date().toISOString().split('T')[0],
-        status: 'active'
-      };
-      setClients(prev => [...prev, newClient]);
-      showAlert('success', 'Cliente registrado', 'El cliente ha sido registrado exitosamente');
-    }
+    try {
+      if (editingClient) {
+        // Update existing client
+        const updated = await clientService.update(editingClient.id, formData);
+        setClients(prev => prev.map(client => 
+          client.id === editingClient.id 
+            ? { ...client, ...updated.data }
+            : client
+        ));
+        showAlert('success', 'Cliente actualizado', 'Los datos del cliente han sido actualizados');
+      } else {
+        // Add new client
+        const newClient = await clientService.create({
+          ...formData,
+          registrationDate: new Date().toISOString().split('T')[0],
+          status: 'active'
+        });
+        setClients(prev => [...prev, newClient.data]);
+        showAlert('success', 'Cliente registrado', 'El cliente ha sido registrado exitosamente');
+      }
 
-    setShowAddModal(false);
-    setEditingClient(null);
+      setShowAddModal(false);
+      setEditingClient(null);
+    } catch (error) {
+      showAlert('error', 'Error', editingClient ? 'No se pudo actualizar el cliente' : 'No se pudo crear el cliente');
+    }
     setFormData({
       name: '',
       identification: '',

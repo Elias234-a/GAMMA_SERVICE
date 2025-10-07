@@ -25,6 +25,9 @@ import { UserRolesModule } from './components/UserRolesModule';
 import { NotificationSystem } from './components/NotificationSystem';
 import { ConfirmDialog } from './components/ConfirmDialog';
 import { UserRole } from './types/auth.types';
+import vehicleService from './services/vehicleService';
+import clientService from './services/clientService';
+import saleService from './services/saleService';
 
 export type AlertType = 'success' | 'error' | 'warning' | 'info';
 
@@ -111,6 +114,31 @@ function AppContent() {
     checkAuth();
   }, []);
   
+  // Load data from backend when authenticated
+  useEffect(() => {
+    const loadData = async () => {
+      if (!isAuthenticated || isInitializing) return;
+      
+      try {
+        // Load all data in parallel
+        const [vehiclesRes, clientsRes, salesRes] = await Promise.all([
+          vehicleService.getAll().catch(() => ({ data: [] })),
+          clientService.getAll().catch(() => ({ data: [] })),
+          saleService.getAll().catch(() => ({ data: [] }))
+        ]);
+        
+        if (vehiclesRes.data) setVehicles(vehiclesRes.data);
+        if (clientsRes.data) setClients(clientsRes.data);
+        if (salesRes.data) setSales(salesRes.data);
+      } catch (error) {
+        console.error('Error loading data:', error);
+        // Don't show error alert on initial load, just log it
+      }
+    };
+    
+    loadData();
+  }, [isAuthenticated, isInitializing]);
+  
   // Handle window resize for sidebar - only auto-open on desktop, don't auto-close
   useEffect(() => {
     const handleResize = () => {
@@ -143,56 +171,9 @@ function AppContent() {
   });
 
   // Global data states
-  const [clients, setClients] = useState<Client[]>([
-    {
-      id: '1',
-      name: 'María García López',
-      identification: '12345678901',
-      phone: '+57 300 123 4567',
-      email: 'maria.garcia@email.com',
-      address: 'Calle 123 #45-67, Bogotá',
-      registrationDate: '2024-01-15',
-      status: 'active'
-    },
-    {
-      id: '2',
-      name: 'Carlos Rodríguez Pérez',
-      identification: '98765432109',
-      phone: '+57 310 987 6543',
-      email: 'carlos.rodriguez@email.com',
-      address: 'Carrera 45 #12-34, Medellín',
-      registrationDate: '2024-01-20',
-      status: 'active'
-    }
-  ]);
-
-  const [vehicles, setVehicles] = useState<Vehicle[]>([
-    {
-      id: '1',
-      clientId: '',
-      brand: 'Toyota',
-      model: 'Corolla',
-      year: 2024,
-      plate: '',
-      vin: 'JT2BF28K123456789',
-      color: 'Blanco',
-      status: 'available',
-      price: 85000000
-    },
-    {
-      id: '2',
-      clientId: '',
-      brand: 'Chevrolet',
-      model: 'Spark',
-      year: 2023,
-      plate: '',
-      vin: 'KL1TD66E987654321',
-      color: 'Rojo',
-      status: 'available',
-      price: 45000000
-    }
-  ]);
-
+  // Estados sin datos mock - se cargarán del backend
+  const [clients, setClients] = useState<Client[]>([]);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [sales, setSales] = useState<Sale[]>([]);
 
   const showAlert = (type: AlertType, title: string, message: string) => {

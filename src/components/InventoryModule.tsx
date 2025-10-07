@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Package, Plus, Search, Filter, Edit, Trash2, AlertTriangle, TrendingUp, TrendingDown, Eye, Download, Truck, Settings, BarChart3, Car, Wrench, Sparkles, X } from 'lucide-react';
 import { AlertType } from '../App';
+import inventoryService from '../services/inventoryService';
 
 interface InventoryModuleProps {
   showAlert: (type: AlertType, title: string, message: string) => void;
@@ -63,7 +64,24 @@ export const InventoryModule: React.FC<InventoryModuleProps> = ({ showAlert, sho
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-  const [inventory, setInventory] = useState<InventoryItem[]>([
+  const [inventory, setInventory] = useState<InventoryItem[]>([]); const [loading, setLoading] = useState(true);
+  
+  // Load inventory data from backend
+  useEffect(() => {
+    const loadInventory = async () => {
+      try {
+        const response = await inventoryService.getAll();
+        setInventory(response.data || []);
+      } catch (error) {
+        console.error('Error loading inventory:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadInventory();
+  }, []);
+  
+  const [inventoryOLD] = useState<InventoryItem[]>([
     // Vehículos
     {
       id: '1',
@@ -300,30 +318,30 @@ export const InventoryModule: React.FC<InventoryModuleProps> = ({ showAlert, sho
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
     
     setIsSubmitting(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      const newItem: InventoryItem = {
-        ...formData,
-        id: Math.random().toString(36).substr(2, 9),
-        lastUpdated: new Date().toISOString(),
-        status: formData.currentStock === 0 
-          ? 'out_of_stock' 
-          : formData.currentStock <= formData.minStock 
-            ? 'low_stock' 
-            : 'in_stock'
-      };
-
-      setInventory(prev => [...prev, newItem]);
+    try {
+      if (editingItem) {
+        const updated = await inventoryService.update(editingItem.id, formData);
+        setInventory(prev => prev.map(item => 
+          item.id === editingItem.id ? updated.data : item
+        ));
+        showAlert('success', 'Éxito', 'El artículo se ha actualizado correctamente');
+      } else {
+        const newItem = await inventoryService.create(formData);
+        setInventory(prev => [...prev, newItem.data]);
+        showAlert('success', 'Éxito', 'El artículo se ha agregado correctamente');
+      }
       setShowAddModal(false);
+    } catch (error) {
+      showAlert('error', 'Error', 'No se pudo guardar el artículo');
+    } finally {
       setIsSubmitting(false);
-      showAlert('success', 'Éxito', 'El artículo se ha agregado correctamente');
-    }, 1000);
+    }
   };
 
   const lowStockItems = inventory.filter(item => item.status === 'low_stock' || item.status === 'out_of_stock');

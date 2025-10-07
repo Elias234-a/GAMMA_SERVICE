@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Search, Eye, Edit, Trash2, FileText, DollarSign, Calendar, User } from 'lucide-react';
 import { AlertType, Sale, Client, Vehicle } from '../App';
+import saleService from '../services/saleService';
 
 interface SalesModuleProps {
   showAlert: (type: AlertType, title: string, message: string) => void;
@@ -135,13 +136,18 @@ export const SalesModule: React.FC<SalesModuleProps> = ({
     showConfirmDialog(
       'Eliminar Venta',
       `¿Está seguro que desea eliminar la venta ${sale.saleNumber}? Esta acción no se puede deshacer.`,
-      () => {
-        // Return vehicle to available status
-        setVehicles(prev => prev.map(v => 
-          v.id === sale.vehicleId ? { ...v, status: 'available', clientId: '' } : v
-        ));
-        setSales(prev => prev.filter(s => s.id !== sale.id));
-        showAlert('success', 'Venta eliminada', 'La venta ha sido eliminada exitosamente');
+      async () => {
+        try {
+          await saleService.delete(sale.id);
+          // Return vehicle to available status
+          setVehicles(prev => prev.map(v => 
+            v.id === sale.vehicleId ? { ...v, status: 'available', clientId: '' } : v
+          ));
+          setSales(prev => prev.filter(s => s.id !== sale.id));
+          showAlert('success', 'Venta eliminada', 'La venta ha sido eliminada exitosamente');
+        } catch (error) {
+          showAlert('error', 'Error', 'No se pudo eliminar la venta');
+        }
       }
     );
   };
@@ -164,46 +170,50 @@ export const SalesModule: React.FC<SalesModuleProps> = ({
     setCurrentStep(prev => prev - 1);
   };
 
-  const handleSaveSale = () => {
+  const handleSaveSale = async () => {
     if (!validateCurrentStep()) {
       showAlert('error', 'Datos inválidos', 'Por favor corrija los errores en el formulario');
       return;
     }
 
-    if (editingSale) {
-      // Update existing sale
-      setSales(prev => prev.map(sale => 
-        sale.id === editingSale.id 
-          ? { ...sale, ...formData }
-          : sale
-      ));
-      showAlert('success', 'Venta actualizada', 'Los datos de la venta han sido actualizados');
-    } else {
-      // Add new sale
-      const newSale: Sale = {
-        id: Date.now().toString(),
-        saleNumber: `VEN-${Date.now().toString().slice(-6)}`,
-        ...formData,
-        saleDate: new Date().toISOString().split('T')[0],
-        status: 'pending',
-        contractGenerated: false
-      };
-      setSales(prev => [...prev, newSale]);
-      
-      // Update vehicle status and assign to client
-      setVehicles(prev => prev.map(v => 
-        v.id === formData.vehicleId 
-          ? { ...v, status: 'sold', clientId: formData.clientId }
-          : v
-      ));
-      
-      showAlert('success', 'Venta registrada', 'La venta ha sido registrada exitosamente');
-    }
+    try {
+      if (editingSale) {
+        // Update existing sale
+        const updated = await saleService.update(editingSale.id, formData);
+        setSales(prev => prev.map(sale => 
+          sale.id === editingSale.id 
+            ? { ...sale, ...updated.data }
+            : sale
+        ));
+        showAlert('success', 'Venta actualizada', 'Los datos de la venta han sido actualizados');
+      } else {
+        // Add new sale
+        const newSale = await saleService.create({
+          ...formData,
+          saleDate: new Date().toISOString().split('T')[0],
+          status: 'pending',
+          contractGenerated: false
+        });
+        setSales(prev => [...prev, newSale.data]);
+        
+        // Update vehicle status and assign to client
+        setVehicles(prev => prev.map(v => 
+          v.id === formData.vehicleId 
+            ? { ...v, status: 'sold', clientId: formData.clientId }
+            : v
+        ));
+        
+        showAlert('success', 'Venta registrada', 'La venta ha sido registrada exitosamente');
+      }
 
-    setShowAddModal(false);
-    onModalStateChange?.(false);
-    setEditingSale(null);
-    setCurrentStep(1);
+      setShowAddModal(false);
+      onModalStateChange?.(false);
+      setEditingSale(null);
+      setCurrentStep(1);
+    } catch (error) {
+      showAlert('error', 'Error', editingSale ? 'No se pudo actualizar la venta' : 'No se pudo crear la venta');
+      return;
+    }
     setFormData({
       clientId: '',
       vehicleId: '',

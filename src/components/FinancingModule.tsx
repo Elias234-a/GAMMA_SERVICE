@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CreditCard, Search, CheckCircle, XCircle, Clock, AlertTriangle, DollarSign, Calculator } from 'lucide-react';
 import { AlertType, Client, Vehicle } from '../App';
+import financingService from '../services/financingService';
 
 interface CreditEvaluation {
   id: string;
@@ -53,8 +54,22 @@ export const FinancingModule: React.FC<FinancingModuleProps> = ({
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Mock credit evaluations data
-  const [evaluations, setEvaluations] = useState<CreditEvaluation[]>([
+  const [evaluations, setEvaluations] = useState<CreditEvaluation[]>([]);
+  
+  // Load financing data from backend
+  useEffect(() => {
+    const loadEvaluations = async () => {
+      try {
+        const response = await financingService.getAll();
+        setEvaluations(response.data || []);
+      } catch (error) {
+        console.error('Error loading evaluations:', error);
+      }
+    };
+    loadEvaluations();
+  }, []);
+  
+  const [evaluationsOLD] = useState<CreditEvaluation[]>([
     {
       id: '1',
       clientId: '1',
