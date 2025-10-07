@@ -1,19 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense, lazy, useCallback, useMemo } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { TopBar } from './components/TopBar';
 import { LoginScreen } from './components/LoginScreen';
-import { Dashboard } from './components/Dashboard';
 import { LoadingSpinner } from './components/LoadingSpinner';
+import ThemedLiquidEther from './components/ThemedLiquidEther';
 import { rolePermissions } from './types/auth.types';
 import authService from './services/authService';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
-import { ClientsModule } from './components/ClientsModule';
-import { VehiclesModule } from './components/VehiclesModule';
-import { SalesModule } from './components/SalesModule';
-import { BillingModule } from './components/BillingModule';
-import { PlatesModule } from './components/PlatesModule';
-import { ReportsModule } from './components/ReportsModule';
-import { FinancingModule } from './components/FinancingModule';
+
+// Lazy loading para módulos pesados
+const Dashboard = lazy(() => import('./components/Dashboard').then(module => ({ default: module.Dashboard })));
+const ClientsModule = lazy(() => import('./components/ClientsModule').then(module => ({ default: module.ClientsModule })));
+const VehiclesModule = lazy(() => import('./components/VehiclesModule').then(module => ({ default: module.VehiclesModule })));
+const SalesModule = lazy(() => import('./components/SalesModule').then(module => ({ default: module.SalesModule })));
+const BillingModule = lazy(() => import('./components/BillingModule').then(module => ({ default: module.BillingModule })));
+const PlatesModule = lazy(() => import('./components/PlatesModule').then(module => ({ default: module.PlatesModule })));
+const ReportsModule = lazy(() => import('./components/ReportsModule').then(module => ({ default: module.ReportsModule })));
+const FinancingModule = lazy(() => import('./components/FinancingModule').then(module => ({ default: module.FinancingModule })));
 import { InventoryModule } from './components/InventoryModule';
 import { CRMModule } from './components/CRMModule';
 import { WorkshopModule } from './components/WorkshopModule';
@@ -84,7 +87,7 @@ function AppContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUserRole, setCurrentUserRole] = useState<UserRole>('cliente');
   const [currentUserName, setCurrentUserName] = useState<string>('');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [isInitializing, setIsInitializing] = useState(true);
   const [isSalesModalOpen, setIsSalesModalOpen] = useState(false);
@@ -139,12 +142,13 @@ function AppContent() {
     loadData();
   }, [isAuthenticated, isInitializing]);
   
-  // Handle window resize for sidebar - only auto-open on desktop, don't auto-close
+  // Handle window resize for sidebar - no auto-open behavior
   useEffect(() => {
     const handleResize = () => {
-      // Solo auto-abrir en desktop, no auto-cerrar
-      if (window.innerWidth >= 1024 && !isSidebarOpen) {
-        setIsSidebarOpen(true);
+      // No auto-open behavior - user controls sidebar manually
+      // Only auto-close on mobile if it was open
+      if (window.innerWidth < 1024 && isSidebarOpen) {
+        setIsSidebarOpen(false);
       }
     };
     
@@ -152,10 +156,10 @@ function AppContent() {
     return () => window.removeEventListener('resize', handleResize);
   }, [isSidebarOpen]);
   
-  // Toggle sidebar function
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  // Toggle sidebar function - memoized to prevent re-renders
+  const toggleSidebar = useCallback(() => {
+    setIsSidebarOpen(prev => !prev);
+  }, []);
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
     title: string;
@@ -176,7 +180,8 @@ function AppContent() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [sales, setSales] = useState<Sale[]>([]);
 
-  const showAlert = (type: AlertType, title: string, message: string) => {
+  // Memoized functions to prevent unnecessary re-renders
+  const showAlert = useCallback((type: AlertType, title: string, message: string) => {
     const newAlert: Alert = {
       id: Date.now().toString(),
       type,
@@ -189,13 +194,13 @@ function AppContent() {
     setTimeout(() => {
       setAlerts(prev => prev.filter(alert => alert.id !== newAlert.id));
     }, 5000);
-  };
+  }, []);
 
-  const removeAlert = (id: string) => {
+  const removeAlert = useCallback((id: string) => {
     setAlerts(prev => prev.filter(alert => alert.id !== id));
-  };
+  }, []);
 
-  const showConfirmDialog = (title: string, message: string, onConfirm: () => void) => {
+  const showConfirmDialog = useCallback((title: string, message: string, onConfirm: () => void) => {
     setConfirmDialog({
       isOpen: true,
       title,
@@ -203,7 +208,7 @@ function AppContent() {
       onConfirm,
       onCancel: () => setConfirmDialog(prev => ({ ...prev, isOpen: false }))
     });
-  };
+  }, []);
 
   const handleLogin = (success: boolean, role?: UserRole, userName?: string) => {
     if (success && role) {
@@ -286,29 +291,37 @@ function AppContent() {
           showAlert={showAlert}
         />;
       case 'dashboard':
-        return <Dashboard 
-          showAlert={showAlert} 
-          clients={clients}
-          vehicles={vehicles}
-          sales={sales}
-          onNavigateToModule={setCurrentModule}
-        />;
+        return (
+          <Suspense fallback={<LoadingSpinner size="lg" text="Cargando módulo..." />}>
+            <Dashboard 
+              showAlert={showAlert} 
+              clients={clients}
+              vehicles={vehicles}
+              sales={sales}
+              onNavigateToModule={setCurrentModule}
+            />
+          </Suspense>
+        );
       case 'inventory':
         return <InventoryModule 
           showAlert={showAlert} 
           showConfirmDialog={showConfirmDialog}
         />;
       case 'sales':
-        return <SalesModule 
-          showAlert={showAlert} 
-          showConfirmDialog={showConfirmDialog}
-          sales={sales}
-          setSales={setSales}
-          clients={clients}
-          vehicles={vehicles}
-          setVehicles={setVehicles}
-          onModalStateChange={setIsSalesModalOpen}
-        />;
+        return (
+          <Suspense fallback={<LoadingSpinner size="lg" text="Cargando módulo..." />}>
+            <SalesModule 
+              showAlert={showAlert} 
+              showConfirmDialog={showConfirmDialog}
+              sales={sales}
+              setSales={setSales}
+              clients={clients}
+              vehicles={vehicles}
+              setVehicles={setVehicles}
+              onModalStateChange={setIsSalesModalOpen}
+            />
+          </Suspense>
+        );
       case 'crm':
         return <CRMModule 
           showAlert={showAlert} 
@@ -320,28 +333,40 @@ function AppContent() {
           showConfirmDialog={showConfirmDialog}
         />;
       case 'billing':
-        return <BillingModule 
-          showAlert={showAlert} 
-          showConfirmDialog={showConfirmDialog}
-          sales={sales}
-          clients={clients}
-          vehicles={vehicles}
-        />;
+        return (
+          <Suspense fallback={<LoadingSpinner size="lg" text="Cargando módulo..." />}>
+            <BillingModule 
+              showAlert={showAlert} 
+              showConfirmDialog={showConfirmDialog}
+              sales={sales}
+              clients={clients}
+              vehicles={vehicles}
+            />
+          </Suspense>
+        );
       case 'clients':
-        return <ClientsModule 
-          showAlert={showAlert} 
-          showConfirmDialog={showConfirmDialog}
-          clients={clients}
-          setClients={setClients}
-        />;
+        return (
+          <Suspense fallback={<LoadingSpinner size="lg" text="Cargando módulo..." />}>
+            <ClientsModule 
+              showAlert={showAlert} 
+              showConfirmDialog={showConfirmDialog}
+              clients={clients}
+              setClients={setClients}
+            />
+          </Suspense>
+        );
       case 'vehicles':
-        return <VehiclesModule 
-          showAlert={showAlert} 
-          showConfirmDialog={showConfirmDialog}
-          vehicles={vehicles}
-          setVehicles={setVehicles}
-          clients={clients}
-        />;
+        return (
+          <Suspense fallback={<LoadingSpinner size="lg" text="Cargando módulo..." />}>
+            <VehiclesModule 
+              showAlert={showAlert} 
+              showConfirmDialog={showConfirmDialog}
+              vehicles={vehicles}
+              setVehicles={setVehicles}
+              clients={clients}
+            />
+          </Suspense>
+        );
       case 'purchases':
         return <PurchasesModule 
           showAlert={showAlert} 
@@ -353,31 +378,43 @@ function AppContent() {
           showConfirmDialog={showConfirmDialog}
         />;
       case 'plates':
-        return <PlatesModule 
-          showAlert={showAlert} 
-          showConfirmDialog={showConfirmDialog}
-          clients={clients}
-          vehicles={vehicles}
-        />;
+        return (
+          <Suspense fallback={<LoadingSpinner size="lg" text="Cargando módulo..." />}>
+            <PlatesModule 
+              showAlert={showAlert} 
+              showConfirmDialog={showConfirmDialog}
+              clients={clients}
+              vehicles={vehicles}
+            />
+          </Suspense>
+        );
       case 'financing':
-        return <FinancingModule 
-          showAlert={showAlert} 
-          showConfirmDialog={showConfirmDialog}
-          clients={clients}
-          vehicles={vehicles}
-        />;
+        return (
+          <Suspense fallback={<LoadingSpinner size="lg" text="Cargando módulo..." />}>
+            <FinancingModule 
+              showAlert={showAlert} 
+              showConfirmDialog={showConfirmDialog}
+              clients={clients}
+              vehicles={vehicles}
+            />
+          </Suspense>
+        );
       case 'dian':
         return <DIANModule 
           showAlert={showAlert} 
           showConfirmDialog={showConfirmDialog}
         />;
       case 'reports':
-        return <ReportsModule 
-          showAlert={showAlert}
-          sales={sales}
-          clients={clients}
-          vehicles={vehicles}
-        />;
+        return (
+          <Suspense fallback={<LoadingSpinner size="lg" text="Cargando módulo..." />}>
+            <ReportsModule 
+              showAlert={showAlert}
+              sales={sales}
+              clients={clients}
+              vehicles={vehicles}
+            />
+          </Suspense>
+        );
       case 'portal':
         return <ClientPortalModule 
           showAlert={showAlert} 
@@ -389,13 +426,17 @@ function AppContent() {
           showConfirmDialog={showConfirmDialog}
         />;
       default:
-        return <Dashboard 
-          showAlert={showAlert} 
-          clients={clients}
-          vehicles={vehicles}
-          sales={sales}
-          onNavigateToModule={setCurrentModule}
-        />;
+        return (
+          <Suspense fallback={<LoadingSpinner size="lg" text="Cargando módulo..." />}>
+            <Dashboard 
+              showAlert={showAlert} 
+              clients={clients}
+              vehicles={vehicles}
+              sales={sales}
+              onNavigateToModule={setCurrentModule}
+            />
+          </Suspense>
+        );
     }
   };
 
@@ -425,12 +466,17 @@ function AppContent() {
   // Show loading spinner while initializing
   if (isInitializing) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{
+      <div className="min-h-screen flex items-center justify-center relative" style={{
         backgroundColor: colors.background.primary,
         backgroundImage: colors.background.grid,
         backgroundSize: '20px 20px'
       }}>
-        <LoadingSpinner size="xl" text="Cargando aplicación..." />
+        <div className="absolute inset-0 z-0">
+          <ThemedLiquidEther />
+        </div>
+        <div className="relative z-10">
+          <LoadingSpinner size="xl" text="Cargando aplicación..." />
+        </div>
       </div>
     );
   }
@@ -454,6 +500,11 @@ function AppContent() {
       backgroundImage: colors.background.grid,
       backgroundSize: '20px 20px'
     }}>
+      {/* Fondo animado para toda la aplicación */}
+      <div className="fixed inset-0 z-0">
+        <ThemedLiquidEther />
+      </div>
+      
       {/* Overlay para móviles cuando el sidebar está abierto */}
       {isSidebarOpen && (
         <div 

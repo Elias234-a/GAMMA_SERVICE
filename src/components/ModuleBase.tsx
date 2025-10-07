@@ -1,5 +1,6 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, memo } from 'react';
 import { AlertType } from '../App';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface ModuleBaseProps {
   title: string;
@@ -10,7 +11,7 @@ interface ModuleBaseProps {
   filters?: ReactNode;
 }
 
-export const ModuleBase: React.FC<ModuleBaseProps> = ({
+export const ModuleBase: React.FC<ModuleBaseProps> = memo(({
   title,
   description,
   children,
@@ -18,14 +19,16 @@ export const ModuleBase: React.FC<ModuleBaseProps> = ({
   actions,
   filters
 }) => {
+  const { colors } = useTheme();
+  
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative z-10">
       {/* Encabezado */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">{title}</h1>
+          <h1 className="text-2xl font-bold" style={{ color: colors.text.primary }}>{title}</h1>
           {description && (
-            <p className="text-sm text-gray-300 mt-1">{description}</p>
+            <p className="text-sm mt-1" style={{ color: colors.text.secondary }}>{description}</p>
           )}
         </div>
         <div className="flex items-center space-x-2">
@@ -35,7 +38,13 @@ export const ModuleBase: React.FC<ModuleBaseProps> = ({
 
       {/* Filtros */}
       {filters && (
-        <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+        <div 
+          className="backdrop-blur-sm rounded-xl p-4 border"
+          style={{ 
+            backgroundColor: colors.background.glass,
+            borderColor: colors.border
+          }}
+        >
           <div className="flex flex-wrap items-end gap-4">
             {filters}
           </div>
@@ -43,9 +52,16 @@ export const ModuleBase: React.FC<ModuleBaseProps> = ({
       )}
 
       {/* Contenido */}
-      <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden">
+      <div 
+        className="backdrop-blur-sm rounded-xl border overflow-hidden"
+        style={{ 
+          backgroundColor: colors.background.glass,
+          borderColor: colors.border
+        }}
+      >
         {children}
       </div>
     </div>
   );
-};
+ }
+);

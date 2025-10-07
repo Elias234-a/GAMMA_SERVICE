@@ -154,70 +154,108 @@ const TopBarComponent: React.FC<TopBarProps> = ({
             {/* User Menu Dropdown */}
             {showUserMenu && (
               <>
-                {/* Backdrop overlay */}
+                {/* Backdrop overlay - Much stronger blur */}
                 <div 
-                  className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+                  className="fixed top-16 left-0 right-0 bottom-0 bg-black/80 backdrop-blur-xl z-[9998] transition-all duration-300"
                   onClick={() => setShowUserMenu(false)}
                 />
                 
                 {/* Dropdown Menu */}
-                <div className="absolute right-0 mt-2 w-64 glass-card-strong rounded-lg shadow-2xl border border-white/30 z-50 animate-in slide-in-from-top-2 duration-200">
-                  <div className="py-1">
-                    {/* Profile Header */}
-                    <div className="px-4 py-4 border-b border-white/20">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center shadow-glow">
-                          <User className="h-5 w-5 text-white" />
+                <div className="absolute right-0 mt-2 w-80 rounded-2xl shadow-2xl border z-[9999] animate-in slide-in-from-top-2 duration-200"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(40, 44, 52, 0.95) 0%, rgba(30, 33, 40, 0.98) 100%)',
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(20px)'
+                  }}
+                >
+                  {/* Profile Header */}
+                  <div className="px-5 py-4 border-b border-white/10">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className="relative">
+                        <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center shadow-lg">
+                          <User className="h-6 w-6 text-white" />
                         </div>
-                        <div className="flex-1">
-                          <p className="text-sm font-semibold" style={{ color: colors.text.primary }}>Administrador</p>
-                          <p className="text-xs" style={{ color: colors.text.secondary }}>admin@gammaservice.com</p>
-                        </div>
+                        {/* Online indicator */}
+                        <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-gray-800"></div>
                       </div>
-                      <div className="mt-3 px-3 py-1.5 bg-gradient-to-r from-orange-500/20 to-orange-600/20 rounded-lg border border-orange-500/30">
-                        <p className="text-xs font-medium text-center" style={{ color: colors.text.accent }}>🛡️ Acceso Completo</p>
+                      <div className="flex-1">
+                        <p className="text-base font-bold text-white">
+                          {userName || 'Administrador'}
+                        </p>
+                        <p className="text-xs text-gray-400">admin@gammaservice.com</p>
                       </div>
                     </div>
-                    
-                    {/* Menu Options */}
-                    <div className="py-1">
-                      <button
-                        onClick={() => {
-                          setShowUserMenu(false);
-                          showAlert('info', 'Perfil', 'Configuración de perfil próximamente');
-                        }}
-                        className="w-full text-left px-4 py-3 text-sm hover:bg-white/10 transition-colors flex items-center space-x-3 group"
-                        style={{ color: colors.text.primary }}
-                      >
-                        <User className="h-4 w-4" style={{ color: colors.text.accent }} />
-                        <span style={{ color: colors.text.primary }}>Mi Perfil</span>
-                      </button>
+                    {/* Access Badge */}
+                    <div className="px-3 py-2 rounded-lg" 
+                      style={{
+                        background: 'linear-gradient(90deg, rgba(249, 115, 22, 0.3) 0%, rgba(168, 85, 247, 0.3) 50%, rgba(236, 72, 153, 0.3) 100%)',
+                        border: '1px solid rgba(249, 115, 22, 0.3)'
+                      }}
+                    >
+                      <p className="text-xs font-semibold text-center text-white flex items-center justify-center gap-2">
+                        <span>🔥</span>
+                        Acceso Completo al Sistema
+                        <span>✨</span>
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Menu Options */}
+                  <div className="py-2">
+                    <button
+                      onClick={() => {
+                        setShowUserMenu(false);
+                        showAlert('info', 'Perfil', 'Configuración de perfil próximamente');
+                      }}
+                      className="w-full text-left px-5 py-3 hover:bg-white/5 transition-all duration-200 flex items-center space-x-3 group"
+                    >
+                      <div className="w-10 h-10 bg-gradient-to-br from-orange-500/20 to-orange-600/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <User className="h-5 w-5 text-orange-400" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-white">Mi Perfil</p>
+                        <p className="text-xs text-gray-400">Ver y editar información</p>
+                      </div>
+                    </button>
 
-                      <button
-                        onClick={() => {
-                          setShowUserMenu(false);
-                          showAlert('info', 'Configuración', 'Panel de configuración próximamente');
-                        }}
-                        className="w-full text-left px-4 py-3 text-sm hover:bg-white/10 transition-colors flex items-center space-x-3 group"
-                        style={{ color: colors.text.primary }}
-                      >
-                        <Settings className="h-4 w-4" style={{ color: colors.text.accent }} />
-                        <span style={{ color: colors.text.primary }}>Configuración</span>
-                      </button>
-                      
-                      <div className="h-px bg-white/10 mx-2 my-1" />
-                      
-                      <button
-                        onClick={() => {
-                          setShowUserMenu(false);
-                          onLogout();
-                        }}
-                        className="w-full text-left px-4 py-3 text-sm hover:bg-red-500/20 transition-colors flex items-center space-x-3 group"
-                        style={{ color: colors.text.primary }}
-                      >
-                        <LogOut className="h-4 w-4 text-red-400 group-hover:text-red-300" />
-                        <span className="group-hover:text-red-100">Cerrar Sesión</span>
-                      </button>
+                    <button
+                      onClick={() => {
+                        setShowUserMenu(false);
+                        showAlert('info', 'Configuración', 'Panel de configuración próximamente');
+                      }}
+                      className="w-full text-left px-5 py-3 hover:bg-white/5 transition-all duration-200 flex items-center space-x-3 group"
+                    >
+                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <Settings className="h-5 w-5 text-blue-400" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-white">Configuración</p>
+                        <p className="text-xs text-gray-400">Preferencias del sistema</p>
+                      </div>
+                    </button>
+                    
+                    <button
+                      onClick={() => {
+                        setShowUserMenu(false);
+                        onLogout();
+                      }}
+                      className="w-full text-left px-5 py-3 hover:bg-red-500/10 transition-all duration-200 flex items-center space-x-3 group"
+                    >
+                      <div className="w-10 h-10 bg-gradient-to-br from-red-500/20 to-pink-500/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <LogOut className="h-5 w-5 text-red-400" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-white group-hover:text-red-100">Cerrar Sesión</p>
+                        <p className="text-xs text-gray-400">Salir del sistema</p>
+                      </div>
+                    </button>
+                  </div>
+
+                  {/* Footer - Last activity */}
+                  <div className="px-5 py-3 border-t border-white/10">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-gray-400">Última actividad</span>
+                      <span className="text-cyan-400 font-medium">Hace 2 min</span>
                     </div>
                   </div>
                 </div>

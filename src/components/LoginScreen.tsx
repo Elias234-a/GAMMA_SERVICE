@@ -5,6 +5,7 @@ import gammaLogo from '../assets/logo_claro.png';
 import authService from '../services/authService';
 import { UserRole } from '../types/auth.types';
 import { useTheme } from '../contexts/ThemeContext';
+import ThemedLiquidEther from './ThemedLiquidEther';
 
 interface LoginScreenProps {
   onLogin: (success: boolean, role?: UserRole, userName?: string) => void;
@@ -190,14 +191,17 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
   if (showForgotPassword) {
     return (
       <div 
-        className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" 
+        className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative" 
         style={{ 
           backgroundColor: colors.background.primary,
           backgroundImage: colors.background.grid,
           backgroundSize: '20px 20px'
         }}
       >
-        <div className="max-w-md w-full space-y-8">
+        <div className="absolute inset-0 z-0">
+          <ThemedLiquidEther />
+        </div>
+        <div className="max-w-md w-full space-y-8 relative z-10">
           <div>
             <div className="mx-auto flex justify-center">
               <img
@@ -220,7 +224,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                 Correo Electrónico *
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
                   <Mail className="h-5 w-5" style={{ color: colors.text.secondary }} />
                 </div>
                 <input
@@ -228,8 +232,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                   type="email"
                   value={formData.recoveryEmail}
                   onChange={(e) => handleInputChange('recoveryEmail', e.target.value)}
-                  className="glass-input appearance-none block w-full pl-10 pr-3 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  style={{ color: colors.text.primary }}
+                  className="appearance-none block w-full pl-10 pr-3 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  style={{ 
+                    color: colors.text.primary,
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 4px 20px 0 rgba(31, 38, 135, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.2)'
+                  }}
                   placeholder="correo@ejemplo.com"
                 />
               </div>
@@ -275,14 +286,17 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
   // FORMULARIO PRINCIPAL
   return (
     <div 
-      className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" 
+      className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative" 
       style={{ 
         backgroundColor: colors.background.primary,
         backgroundImage: colors.background.grid,
         backgroundSize: '20px 20px'
       }}
     >
-      <div className="max-w-md w-full space-y-8">
+      <div className="absolute inset-0 z-0">
+        <ThemedLiquidEther />
+      </div>
+      <div className="max-w-md w-full space-y-8 relative z-10">
         <div>
           <div className="mx-auto flex justify-center">
             <img
@@ -307,15 +321,22 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                 Rol de Usuario *
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10">
                   <UserCircle className="h-5 w-5" style={{ color: colors.text.secondary }} />
                 </div>
                 <select
                   id="role"
                   value={formData.role}
                   onChange={e => handleInputChange('role', e.target.value)}
-                  className="glass-input appearance-none block w-full pl-10 pr-10 py-2 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  style={{ color: colors.text.primary }}
+                  className="appearance-none block w-full pl-10 pr-10 py-2 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  style={{ 
+                    color: colors.text.primary,
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 4px 20px 0 rgba(31, 38, 135, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.2)'
+                  }}
                 >
                   <option value="">Seleccione un rol</option>
                   <option value="Administrador">Administrador</option>
@@ -338,7 +359,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                     Nombre *
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10">
                       <User className="h-5 w-5" style={{ color: colors.text.secondary }} />
                     </div>
                     <input
@@ -346,8 +367,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                       type="text"
                       value={formData.name}
                       onChange={e => handleInputChange('name', e.target.value)}
-                      className="glass-input appearance-none block w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      style={{ color: colors.text.primary }}
+                      className="appearance-none block w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      style={{ 
+                        color: colors.text.primary,
+                        background: 'rgba(255, 255, 255, 0.15)',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        boxShadow: '0 4px 20px 0 rgba(31, 38, 135, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.2)'
+                      }}
                       placeholder="Juan Pérez"
                     />
                   </div>
@@ -358,7 +386,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                     Teléfono *
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10">
                       <Phone className="h-5 w-5" style={{ color: colors.text.secondary }} />
                     </div>
                     <input
@@ -366,8 +394,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                       type="tel"
                       value={formData.phone}
                       onChange={e => handleInputChange('phone', e.target.value)}
-                      className="glass-input appearance-none block w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      style={{ color: colors.text.primary }}
+                      className="appearance-none block w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      style={{ 
+                        color: colors.text.primary,
+                        background: 'rgba(255, 255, 255, 0.15)',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        boxShadow: '0 4px 20px 0 rgba(31, 38, 135, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.2)'
+                      }}
                       placeholder="+57 300 123 4567"
                     />
                   </div>
@@ -378,7 +413,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                     Dirección *
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10">
                       <MapPin className="h-5 w-5" style={{ color: colors.text.secondary }} />
                     </div>
                     <input
@@ -386,8 +421,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                       type="text"
                       value={formData.address}
                       onChange={e => handleInputChange('address', e.target.value)}
-                      className="glass-input appearance-none block w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      style={{ color: colors.text.primary }}
+                      className="appearance-none block w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      style={{ 
+                        color: colors.text.primary,
+                        background: 'rgba(255, 255, 255, 0.15)',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        boxShadow: '0 4px 20px 0 rgba(31, 38, 135, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.2)'
+                      }}
                       placeholder="Calle 123 #45-67"
                     />
                   </div>
@@ -402,7 +444,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                 Correo Electrónico *
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10">
                   <Mail className="h-5 w-5" style={{ color: colors.text.secondary }} />
                 </div>
                 <input
@@ -410,8 +452,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                   type="email"
                   value={formData.email}
                   onChange={e => handleInputChange('email', e.target.value)}
-                  className="glass-input appearance-none block w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  style={{ color: colors.text.primary }}
+                  className="appearance-none block w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  style={{ 
+                    color: colors.text.primary,
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 4px 20px 0 rgba(31, 38, 135, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.2)'
+                  }}
                   placeholder="correo@ejemplo.com"
                 />
               </div>
@@ -422,7 +471,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                 Contraseña *
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10">
                   <Lock className="h-5 w-5" style={{ color: colors.text.secondary }} />
                 </div>
                 <input
@@ -430,8 +479,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={e => handleInputChange('password', e.target.value)}
-                  className="glass-input appearance-none block w-full pl-10 pr-10 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  style={{ color: colors.text.primary }}
+                  className="appearance-none block w-full pl-10 pr-10 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  style={{ 
+                    color: colors.text.primary,
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 4px 20px 0 rgba(31, 38, 135, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.2)'
+                  }}
                   placeholder="••••••••"
                 />
                 <button
@@ -451,7 +507,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                   Confirmar Contraseña *
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10">
                     <Lock className="h-5 w-5" style={{ color: colors.text.secondary }} />
                   </div>
                   <input
@@ -459,8 +515,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={formData.confirmPassword}
                     onChange={e => handleInputChange('confirmPassword', e.target.value)}
-                    className="glass-input appearance-none block w-full pl-10 pr-10 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    style={{ color: colors.text.primary }}
+                    className="appearance-none block w-full pl-10 pr-10 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    style={{ 
+                      color: colors.text.primary,
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      backdropFilter: 'blur(8px)',
+                      WebkitBackdropFilter: 'blur(8px)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      boxShadow: '0 4px 20px 0 rgba(31, 38, 135, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.2)'
+                    }}
                     placeholder="••••••••"
                   />
                   <button

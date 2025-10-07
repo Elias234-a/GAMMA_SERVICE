@@ -216,37 +216,41 @@
     z-index: 1;
   }
 
-  /* Glass input fields */
+  /* Glass input fields - EFECTO MUY VISIBLE */
   .glass-input {
-    background: rgba(255, 255, 255, 0.15) !important;
+    background: rgba(255, 255, 255, 0.25) !important;
     border-radius: 12px !important;
     box-shadow: 
-      0 4px 30px rgba(0, 0, 0, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+      0 8px 32px 0 rgba(31, 38, 135, 0.37),
+      inset 0 2px 4px rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(15px) saturate(180%);
+    -webkit-backdrop-filter: blur(15px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
     transition: all 0.3s ease;
   }
 
   .glass-input:hover {
-    background: rgba(255, 255, 255, 0.18) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    background: rgba(255, 255, 255, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 
+      0 8px 32px 0 rgba(31, 38, 135, 0.45),
+      inset 0 2px 4px rgba(255, 255, 255, 0.35);
   }
 
   .glass-input:focus {
-    background: rgba(255, 255, 255, 0.2) !important;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(59, 130, 246, 0.5) !important;
+    background: rgba(255, 255, 255, 0.35) !important;
+    backdrop-filter: blur(20px) saturate(200%);
+    -webkit-backdrop-filter: blur(20px) saturate(200%);
+    border: 1px solid rgba(37, 99, 235, 0.8) !important;
     box-shadow: 
-      0 4px 30px rgba(0, 0, 0, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.25),
-      0 0 0 3px rgba(59, 130, 246, 0.2);
+      0 8px 32px 0 rgba(37, 99, 235, 0.4),
+      inset 0 2px 4px rgba(255, 255, 255, 0.4),
+      0 0 0 4px rgba(37, 99, 235, 0.25);
   }
 
   .glass-input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 400;
   }
   
   .glass-input option {
