@@ -185,13 +185,34 @@ const clientSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
-// Índices
+// Índices simples
 clientSchema.index({ email: 1 });
 clientSchema.index({ identificationNumber: 1 });
-clientSchema.index({ status: 1 });
-clientSchema.index({ category: 1 });
-clientSchema.index({ 'address.city': 1 });
 clientSchema.index({ isDeleted: 1 });
+
+// Índices compuestos para queries comunes (OPTIMIZACIÓN)
+clientSchema.index({ status: 1, category: 1 }); // Filtros combinados
+clientSchema.index({ isDeleted: 1, status: 1 }); // Queries con ambos
+clientSchema.index({ createdAt: -1 }); // Ordenamiento por fecha
+clientSchema.index({ 'address.city': 1, status: 1 }); // Búsqueda por ciudad
+clientSchema.index({ totalSpent: -1 }); // Top clientes por gasto
+clientSchema.index({ lastPurchaseDate: -1 }); // Actividad reciente
+
+// Índice de búsqueda de texto para búsquedas generales
+clientSchema.index({ 
+  firstName: 'text', 
+  lastName: 'text', 
+  email: 'text',
+  phone: 'text'
+}, {
+  weights: {
+    firstName: 10,
+    lastName: 10,
+    email: 5,
+    phone: 3
+  },
+  name: 'client_text_search'
+});
 
 // Virtual para nombre completo
 clientSchema.virtual('fullName').get(function() {

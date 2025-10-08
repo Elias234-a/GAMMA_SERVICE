@@ -82,25 +82,22 @@ export const getVehicles = async (req, res) => {
       if (maxPrice) query.price.$lte = parseFloat(maxPrice);
     }
 
-    // Búsqueda general
+    // Búsqueda general usando índice de texto (OPTIMIZACIÓN)
     if (search) {
-      query.$or = [
-        { brand: new RegExp(search, 'i') },
-        { model: new RegExp(search, 'i') },
-        { plate: new RegExp(search, 'i') },
-        { vin: new RegExp(search, 'i') },
-        { description: new RegExp(search, 'i') }
-      ];
+      query.$text = { $search: search };
     }
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const sort = { [sortBy]: sortOrder === 'asc' ? 1 : -1 };
 
+    // OPTIMIZACIÓN: Solo seleccionar campos necesarios y usar .lean()
     const vehicles = await Vehicle.find(query)
+      .select('brand model year plate vin color price cost status category type mileage transmission fuel images currentOwner location createdAt')
       .populate('currentOwner', 'firstName lastName email')
       .sort(sort)
       .limit(parseInt(limit))
-      .skip(skip);
+      .skip(skip)
+      .lean(); // Retorna objetos JS planos, 40-60% más rápido
 
     const total = await Vehicle.countDocuments(query);
 
@@ -243,9 +240,12 @@ export const deleteVehicle = async (req, res) => {
  */
 export const getAvailableVehicles = async (req, res) => {
   try {
+    // OPTIMIZACIÓN: Usar .lean() y .select() para mejorar rendimiento
     const vehicles = await Vehicle.findAvailable()
+      .select('brand model year plate price color status category images')
       .sort({ createdAt: -1 })
-      .limit(50);
+      .limit(50)
+      .lean();
 
     res.json({
       success: true,
@@ -393,37 +393,52 @@ export const addNote = async (req, res) => {
  */
 export const getVehicleStats = async (req, res) => {
   try {
-    const total = await Vehicle.countDocuments({ isDeleted: false });
-    const available = await Vehicle.countDocuments({ status: 'available', isDeleted: false });
-    const sold = await Vehicle.countDocuments({ status: 'sold', isDeleted: false });
-    const reserved = await Vehicle.countDocuments({ status: 'reserved', isDeleted: false });
-    const inService = await Vehicle.countDocuments({ status: 'in_service', isDeleted: false });
-
-    const totalValue = await Vehicle.aggregate([
-      { $match: { isDeleted: false, status: 'available' } },
-      { $group: { _id: null, total: { $sum: '$price' } } }
-    ]);
-
-    const byCategory = await Vehicle.aggregate([
+    // OPTIMIZACIÓN: Usar agregación $facet para reducir múltiples queries a una
+    const stats = await Vehicle.aggregate([
       { $match: { isDeleted: false } },
-      { $group: { _id: '$category', count: { $sum: 1 } } }
+      {
+        $facet: {
+          counts: [
+            {
+              $group: {
+                _id: '$status',
+                count: { $sum: 1 }
+              }
+            }
+          ],
+          totalValue: [
+            { $match: { status: 'available' } },
+            { $group: { _id: null, total: { $sum: '$price' } } }
+          ],
+          byCategory: [
+            { $group: { _id: '$category', count: { $sum: 1 } } },
+            { $sort: { count: -1 } }
+          ],
+          byBrand: [
+            { $group: { _id: '$brand', count: { $sum: 1 } } },
+            { $sort: { count: -1 } },
+            { $limit: 10 }
+          ]
+        }
+      }
     ]);
 
-    const byBrand = await Vehicle.aggregate([
-      { $match: { isDeleted: false } },
-      { $group: { _id: '$brand', count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: 10 }
-    ]);
+    const { counts, totalValue, byCategory, byBrand } = stats[0];
+    
+    // Parsear counts por status
+    const statusCounts = counts.reduce((acc, item) => {
+      acc[item._id] = item.count;
+      return acc;
+    }, {});
 
     res.json({
       success: true,
       data: {
-        total,
-        available,
-        sold,
-        reserved,
-        inService,
+        total: counts.reduce((sum, item) => sum + item.count, 0),
+        available: statusCounts.available || 0,
+        sold: statusCounts.sold || 0,
+        reserved: statusCounts.reserved || 0,
+        inService: statusCounts.in_service || 0,
         totalInventoryValue: totalValue[0]?.total || 0,
         byCategory,
         byBrand

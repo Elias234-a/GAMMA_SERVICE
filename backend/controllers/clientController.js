@@ -22,20 +22,21 @@ export const getClients = async (req, res) => {
 
     if (status) query.status = status;
     if (category) query.category = category;
+    
+    // Usar búsqueda de texto si está disponible (OPTIMIZACIÓN)
     if (search) {
-      query.$or = [
-        { firstName: new RegExp(search, 'i') },
-        { lastName: new RegExp(search, 'i') },
-        { email: new RegExp(search, 'i') },
-        { identificationNumber: new RegExp(search, 'i') }
-      ];
+      query.$text = { $search: search };
     }
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
+    
+    // OPTIMIZACIÓN: Solo seleccionar campos necesarios y usar .lean()
     const clients = await Client.find(query)
+      .select('firstName lastName email phone identificationNumber status category totalSpent totalPurchases address.city createdAt')
       .sort({ [sortBy]: sortOrder === 'asc' ? 1 : -1 })
       .limit(parseInt(limit))
-      .skip(skip);
+      .skip(skip)
+      .lean(); // Retorna objetos JS planos, 40-60% más rápido
 
     const total = await Client.countDocuments(query);
 
@@ -112,15 +113,40 @@ export const deleteClient = async (req, res) => {
 
 export const getClientStats = async (req, res) => {
   try {
-    const total = await Client.countDocuments({ isDeleted: false });
-    const active = await Client.countDocuments({ status: 'active', isDeleted: false });
-    const vip = await Client.countDocuments({ category: 'vip', isDeleted: false });
-    const prospects = await Client.countDocuments({ category: 'prospect', isDeleted: false });
+    // OPTIMIZACIÓN: Usar agregación $facet para reducir múltiples queries a una
+    const stats = await Client.aggregate([
+      { $match: { isDeleted: false } },
+      {
+        $facet: {
+          counts: [
+            {
+              $group: {
+                _id: null,
+                total: { $sum: 1 },
+                active: { $sum: { $cond: [{ $eq: ['$status', 'active'] }, 1, 0] } },
+                vip: { $sum: { $cond: [{ $eq: ['$category', 'vip'] }, 1, 0] } },
+                prospects: { $sum: { $cond: [{ $eq: ['$status', 'prospect'] }, 1, 0] } }
+              }
+            }
+          ],
+          topClients: [
+            { $sort: { totalSpent: -1 } },
+            { $limit: 10 },
+            {
+              $project: {
+                firstName: 1,
+                lastName: 1,
+                totalSpent: 1,
+                totalPurchases: 1
+              }
+            }
+          ]
+        }
+      }
+    ]);
 
-    const topClients = await Client.find({ isDeleted: false })
-      .sort({ totalSpent: -1 })
-      .limit(10)
-      .select('firstName lastName totalSpent totalPurchases');
+    const { counts, topClients } = stats[0];
+    const { total, active, vip, prospects } = counts[0] || { total: 0, active: 0, vip: 0, prospects: 0 };
 
     res.json({
       success: true,

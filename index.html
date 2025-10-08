@@ -6,6 +6,23 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>GAMMA</title>
       <link rel="icon" type="image/png" href="/src/assets/favicon.png" />
+      <script>
+        // Aplicar tema Y colores ANTES de que se renderice el contenido para evitar FOUC
+        (function() {
+          const savedTheme = localStorage.getItem('theme');
+          const html = document.documentElement;
+          
+          if (savedTheme === 'dark') {
+            // Aplicar clase dark
+            html.classList.add('dark');
+            // Aplicar color de texto INMEDIATAMENTE con estilo inline
+            html.style.color = '#FFFFFF';
+          } else {
+            // Modo claro
+            html.style.color = '#000000';
+          }
+        })();
+      </script>
     </head>
 
     <body>

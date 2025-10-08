@@ -179,13 +179,35 @@ const vehicleSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
-// Índices
-vehicleSchema.index({ brand: 1, model: 1 });
-vehicleSchema.index({ status: 1 });
-vehicleSchema.index({ category: 1 });
-vehicleSchema.index({ price: 1 });
-vehicleSchema.index({ year: 1 });
+// Índices simples
+vehicleSchema.index({ plate: 1 });
+vehicleSchema.index({ vin: 1 });
 vehicleSchema.index({ isDeleted: 1 });
+
+// Índices compuestos para queries comunes (OPTIMIZACIÓN)
+vehicleSchema.index({ status: 1, category: 1, brand: 1 }); // Filtros combinados
+vehicleSchema.index({ isDeleted: 1, status: 1 }); // Queries frecuentes
+vehicleSchema.index({ brand: 1, model: 1, year: 1 }); // Búsqueda específica
+vehicleSchema.index({ price: 1, status: 1 }); // Rango de precios disponibles
+vehicleSchema.index({ year: -1, status: 1 }); // Vehículos recientes
+vehicleSchema.index({ createdAt: -1 }); // Ordenamiento por fecha
+vehicleSchema.index({ currentOwner: 1, status: 1 }); // Historial de cliente
+
+// Índice de búsqueda de texto para búsquedas generales
+vehicleSchema.index({ 
+  brand: 'text', 
+  model: 'text', 
+  description: 'text',
+  plate: 'text'
+}, {
+  weights: {
+    brand: 10,
+    model: 10,
+    plate: 8,
+    description: 3
+  },
+  name: 'vehicle_text_search'
+});
 
 // Virtual para nombre completo del vehículo
 vehicleSchema.virtual('fullName').get(function() {

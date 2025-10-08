@@ -4,9 +4,14 @@ import logger from './logger.js';
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/gamma_service', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+      // Connection Pool Settings (OPTIMIZACIÓN)
+      maxPoolSize: 50, // Máximo de conexiones simultáneas
+      minPoolSize: 10, // Mínimo de conexiones mantenidas
+      socketTimeoutMS: 45000, // Timeout de socket
       serverSelectionTimeoutMS: 5000,
+      // Performance
+      maxIdleTimeMS: 30000, // Cerrar conexiones inactivas después de 30s
+      compressors: ['zlib'], // Comprimir datos de red
     });
     
     logger.info(`✅ MongoDB conectado: ${conn.connection.host}`);

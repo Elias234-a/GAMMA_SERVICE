@@ -28,14 +28,30 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     });
   };
 
-  // Apply theme to document root
+  // Apply theme AND text color to document root SYNCHRONOUSLY
   useEffect(() => {
     const root = document.documentElement;
+    
+    // Remove transitions temporarily for instant color change
+    root.style.setProperty('transition', 'none', 'important');
+    
     if (isDark) {
       root.classList.add('dark');
+      // Aplicar color de texto INMEDIATAMENTE
+      root.style.color = '#FFFFFF';
     } else {
       root.classList.remove('dark');
+      // Aplicar color de texto INMEDIATAMENTE
+      root.style.color = '#000000';
     }
+    
+    // Force reflow to ensure styles are applied immediately
+    void root.offsetHeight;
+    
+    // Re-enable transitions after a frame
+    requestAnimationFrame(() => {
+      root.style.removeProperty('transition');
+    });
   }, [isDark]);
 
   const value: ThemeContextType = {

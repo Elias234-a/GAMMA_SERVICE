@@ -228,12 +228,17 @@ const inventorySchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
-// Índices
+// Índices simples
 inventorySchema.index({ vehicle: 1 });
-inventorySchema.index({ status: 1 });
-inventorySchema.index({ location: 1 });
-inventorySchema.index({ quantity: 1 });
 inventorySchema.index({ isDeleted: 1 });
+
+// Índices compuestos para queries comunes (OPTIMIZACIÓN)
+inventorySchema.index({ status: 1, location: 1 }); // Filtros combinados
+inventorySchema.index({ isDeleted: 1, status: 1 }); // Queries frecuentes
+inventorySchema.index({ location: 1, quantity: 1 }); // Stock por ubicación
+inventorySchema.index({ createdAt: -1 }); // Ordenamiento por fecha
+inventorySchema.index({ condition: 1, status: 1 }); // Condición y estado
+inventorySchema.index({ 'stockLevels.reorderPoint': 1, quantity: 1 }); // Alertas de reorden
 
 // Virtual para verificar si necesita reorden
 inventorySchema.virtual('needsReorder').get(function() {

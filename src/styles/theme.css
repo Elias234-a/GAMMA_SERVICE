@@ -14,6 +14,10 @@
   color-scheme: light;
 }
 
+html:not(.dark) body {
+  color: #000000 !important;
+}
+
 .dark {
   /* Dark Theme - Texto Blanco */
   --text-primary: #FFFFFF;
@@ -27,6 +31,10 @@
   --border: #374151;
   --shadow: rgba(0, 0, 0, 0.3);
   color-scheme: dark;
+}
+
+html.dark body {
+  color: #FFFFFF !important;
 }
 
 /* Theme Classes */
@@ -377,7 +385,13 @@ html.dark .loader {
   border-top-color: #60a5fa;
 }
 
-/* Transiciones suaves */
+/* IMPORTANTE: Sin transiciones para colores de texto - cambio instantáneo */
 * {
-  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+  /* NO incluir 'color' en las transiciones para evitar delay */
+}
+
+/* Deshabilitar TODAS las transiciones durante cambios de tema */
+html[style*="transition: none"] * {
+  transition: none !important;
 }

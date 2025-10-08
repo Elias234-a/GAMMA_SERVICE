@@ -242,15 +242,20 @@ const saleSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
-// Índices
+// Índices simples
 saleSchema.index({ saleNumber: 1 });
-saleSchema.index({ client: 1, saleDate: -1 });
-saleSchema.index({ salesperson: 1, saleDate: -1 });
 saleSchema.index({ vehicle: 1 });
-saleSchema.index({ status: 1 });
-saleSchema.index({ paymentStatus: 1 });
-saleSchema.index({ saleDate: -1 });
 saleSchema.index({ isDeleted: 1 });
+
+// Índices compuestos para queries comunes (OPTIMIZACIÓN)
+saleSchema.index({ client: 1, saleDate: -1 }); // Historial del cliente
+saleSchema.index({ salesperson: 1, saleDate: -1 }); // Rendimiento vendedor
+saleSchema.index({ status: 1, paymentStatus: 1 }); // Filtros combinados
+saleSchema.index({ saleDate: -1, status: 1 }); // Ventas recientes
+saleSchema.index({ isDeleted: 1, status: 1 }); // Queries frecuentes
+saleSchema.index({ paymentMethod: 1, paymentStatus: 1 }); // Análisis de pagos
+saleSchema.index({ createdAt: -1 }); // Ordenamiento por fecha
+saleSchema.index({ deliveryStatus: 1, status: 1 }); // Seguimiento entregas
 
 // Generar número de venta antes de guardar
 saleSchema.pre('save', async function(next) {

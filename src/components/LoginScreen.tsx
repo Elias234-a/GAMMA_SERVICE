@@ -326,6 +326,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                 </div>
                 <select
                   id="role"
+                  name="role"
+                  autoComplete="off"
                   value={formData.role}
                   onChange={e => handleInputChange('role', e.target.value)}
                   className="appearance-none block w-full pl-10 pr-10 py-2 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -364,7 +366,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                     </div>
                     <input
                       id="name"
+                      name="name"
                       type="text"
+                      autoComplete="name"
                       value={formData.name}
                       onChange={e => handleInputChange('name', e.target.value)}
                       className="appearance-none block w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -391,7 +395,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                     </div>
                     <input
                       id="phone"
+                      name="phone"
                       type="tel"
+                      autoComplete="tel"
                       value={formData.phone}
                       onChange={e => handleInputChange('phone', e.target.value)}
                       className="appearance-none block w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -418,7 +424,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                     </div>
                     <input
                       id="address"
+                      name="address"
                       type="text"
+                      autoComplete="street-address"
                       value={formData.address}
                       onChange={e => handleInputChange('address', e.target.value)}
                       className="appearance-none block w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -449,7 +457,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                 </div>
                 <input
                   id="email"
+                  name="email"
                   type="email"
+                  autoComplete="email"
                   value={formData.email}
                   onChange={e => handleInputChange('email', e.target.value)}
                   className="appearance-none block w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -476,7 +486,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                 </div>
                 <input
                   id="password"
+                  name="password"
                   type={showPassword ? 'text' : 'password'}
+                  autoComplete={isLogin ? 'current-password' : 'new-password'}
                   value={formData.password}
                   onChange={e => handleInputChange('password', e.target.value)}
                   className="appearance-none block w-full pl-10 pr-10 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -512,7 +524,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, showAlert }) 
                   </div>
                   <input
                     id="confirmPassword"
+                    name="confirmPassword"
                     type={showConfirmPassword ? 'text' : 'password'}
+                    autoComplete="new-password"
                     value={formData.confirmPassword}
                     onChange={e => handleInputChange('confirmPassword', e.target.value)}
                     className="appearance-none block w-full pl-10 pr-10 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"

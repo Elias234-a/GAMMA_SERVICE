@@ -1015,3 +1015,7 @@
 2025-10-07 09:45:42:4542 [32minfo[39m: [32mGET /api/notifications - ::1[39m
 2025-10-07 09:46:12:4612 [32minfo[39m: [32mGET /api/notifications - ::1[39m
 2025-10-07 09:46:42:4642 [32minfo[39m: [32mGET /api/notifications - ::1[39m
+2025-10-07 19:33:05:335 [32minfo[39m: [32m🚀 Servidor corriendo en http://localhost:8001[39m
+2025-10-07 19:33:05:335 [32minfo[39m: [32m📚 Documentación de la API disponible en http://localhost:8001/api-docs[39m
+2025-10-07 19:33:05:335 [32minfo[39m: [32m✅ MongoDB conectado: localhost[39m
+2025-10-07 19:33:28:3328 [32minfo[39m: [32mGET /api/notifications - ::1[39m
