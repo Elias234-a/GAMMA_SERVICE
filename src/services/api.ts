@@ -12,6 +12,11 @@ const apiClient = axios.create({
   },
 });
 
+// Throttle para evitar múltiples eventos del mismo tipo
+let lastSessionExpiredEvent = 0;
+let lastNetworkErrorEvent = 0;
+const EVENT_THROTTLE_MS = 5000; // 5 segundos entre eventos del mismo tipo
+
 // Request interceptor - Add auth token to requests
 apiClient.interceptors.request.use(
   (config: any) => {
@@ -30,17 +35,49 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response: any) => response,
   (error: any) => {
-    // Solo limpiar y redirigir si es un 401 y NO es una petición de login
+    // Manejo de sesión expirada (401 Unauthorized)
     if (error.response?.status === 401 && !error.config?.url?.includes('/login')) {
-      console.warn('Sesión expirada o no autorizada');
-      // Solo limpiar si realmente está autenticado
       const hasToken = localStorage.getItem('authToken');
-      if (hasToken) {
+      const now = Date.now();
+      
+      // Solo limpiar si realmente está autenticado y no hemos disparado evento recientemente
+      if (hasToken && (now - lastSessionExpiredEvent) > EVENT_THROTTLE_MS) {
+        lastSessionExpiredEvent = now;
+        console.warn('Sesión expirada o no autorizada');
+        
+        // Limpiar datos de autenticación
         localStorage.removeItem('authToken');
         localStorage.removeItem('user');
-        window.location.href = '/';
+        
+        // Disparar evento personalizado SOLO UNA VEZ
+        window.dispatchEvent(new CustomEvent('session-expired', {
+          detail: { message: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.' }
+        }));
+        
+        // Redirigir después de un pequeño delay
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1000);
       }
     }
+    
+    // Manejo de errores de red (throttled para evitar spam)
+    if (!error.response && error.request) {
+      const now = Date.now();
+      
+      // Solo disparar evento si ha pasado suficiente tiempo desde el último
+      if ((now - lastNetworkErrorEvent) > EVENT_THROTTLE_MS) {
+        lastNetworkErrorEvent = now;
+        console.error('Error de red: No se pudo conectar con el servidor backend');
+        
+        window.dispatchEvent(new CustomEvent('network-error', {
+          detail: { 
+            message: 'No se pudo conectar con el servidor. Asegúrate de que el backend esté corriendo en el puerto 8001.' 
+          }
+        }));
+      }
+    }
+    
     return Promise.reject(error);
   }
 );

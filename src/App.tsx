@@ -1,4 +1,4 @@
-import { useState, useEffect, Suspense, lazy, useCallback } from 'react';
+import { useState, useEffect, Suspense, lazy, useCallback, startTransition, useRef } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { TopBar } from './components/TopBar';
 import { LoginScreen } from './components/LoginScreen';
@@ -180,25 +180,75 @@ function AppContent() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [sales, setSales] = useState<Sale[]>([]);
 
+  // Refs para timeouts de alertas (evitar memory leaks)
+  const alertTimers = useRef<Map<string, NodeJS.Timeout>>(new Map());
+
   // Memoized functions to prevent unnecessary re-renders
   const showAlert = useCallback((type: AlertType, title: string, message: string) => {
     const newAlert: Alert = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-${Math.random()}`, // ID único más robusto
       type,
       title,
       message
     };
-    setAlerts(prev => [...prev, newAlert]);
     
-    // Auto remove after 5 seconds
-    setTimeout(() => {
+    setAlerts(prev => {
+      // Evitar duplicados de la misma alerta
+      const isDuplicate = prev.some(
+        alert => alert.title === title && alert.message === message
+      );
+      if (isDuplicate) return prev;
+      
+      return [...prev, newAlert];
+    });
+    
+    // Auto remove after 5 seconds con cleanup
+    const timer = setTimeout(() => {
       setAlerts(prev => prev.filter(alert => alert.id !== newAlert.id));
+      alertTimers.current.delete(newAlert.id);
     }, 5000);
+    
+    alertTimers.current.set(newAlert.id, timer);
   }, []);
 
   const removeAlert = useCallback((id: string) => {
+    // Limpiar timer si existe
+    const timer = alertTimers.current.get(id);
+    if (timer) {
+      clearTimeout(timer);
+      alertTimers.current.delete(id);
+    }
     setAlerts(prev => prev.filter(alert => alert.id !== id));
   }, []);
+  
+  // Cleanup de todos los timers al desmontar
+  useEffect(() => {
+    return () => {
+      alertTimers.current.forEach(timer => clearTimeout(timer));
+      alertTimers.current.clear();
+    };
+  }, []);
+  
+  // Listen for session expired events from API interceptor
+  useEffect(() => {
+    const handleSessionExpired = (event: any) => {
+      setIsAuthenticated(false);
+      setCurrentModule('login');
+      showAlert('warning', 'Sesión expirada', event.detail?.message || 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+    };
+    
+    const handleNetworkError = (event: any) => {
+      showAlert('error', 'Error de conexión', event.detail?.message || 'No se pudo conectar con el servidor.');
+    };
+    
+    window.addEventListener('session-expired', handleSessionExpired);
+    window.addEventListener('network-error', handleNetworkError);
+    
+    return () => {
+      window.removeEventListener('session-expired', handleSessionExpired);
+      window.removeEventListener('network-error', handleNetworkError);
+    };
+  }, [showAlert]);
 
   const showConfirmDialog = useCallback((title: string, message: string, onConfirm: () => void) => {
     setConfirmDialog({
@@ -215,7 +265,10 @@ function AppContent() {
       setIsAuthenticated(true);
       setCurrentUserRole(role);
       setCurrentUserName(userName || 'Usuario');
-      setCurrentModule('dashboard');
+      // Usar startTransition para evitar bloqueos de UI al cargar módulos lazy
+      startTransition(() => {
+        setCurrentModule('dashboard');
+      });
       showAlert('success', 'Acceso exitoso', `Bienvenido a GAMMA Service (${getRoleName(role)})`);
     } else {
       showAlert('error', 'Error de acceso', 'Usuario, contraseña o rol incorrectos');
@@ -522,7 +575,10 @@ function AppContent() {
         <Sidebar 
           currentModule={currentModule} 
           onModuleChange={(module) => {
-            setCurrentModule(module);
+            // Usar startTransition para navegación suave entre módulos lazy
+            startTransition(() => {
+              setCurrentModule(module);
+            });
             // Cerrar automáticamente en móviles al seleccionar un módulo
             if (window.innerWidth < 1024) {
               setIsSidebarOpen(false);

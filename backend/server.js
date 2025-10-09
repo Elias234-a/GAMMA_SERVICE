@@ -11,6 +11,9 @@ import swaggerUi from 'swagger-ui-express';
 import { errorHandler } from './middleware/errorHandler.js';
 import { specs } from './config/swagger.js';
 import logger from './config/logger.js';
+import { requestLogger, errorLogger } from './middleware/requestLogger.js';
+import { initSentry, sentryMiddleware } from './config/sentry.js';
+import monitoringConfig from './config/monitoring.js';
 
 // Get directory name in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -44,8 +47,27 @@ import transitoRoutes from './routes/transito.js';
 // Import routes - Reports
 import reportRoutes from './routes/reports.js';
 
+// Import routes - Health & Monitoring
+import healthRoutes from './routes/health.js';
+
+// Import routes - Auth
+import authRoutes from './routes/auth.js';
+
+// Import routes - Payments
+import paymentsRoutes from './routes/payments.js';
+
 // Inicializar la aplicación Express
 const app = express();
+
+// Inicializar Sentry (debe ir antes de todo)
+initSentry(app);
+
+// Request handler de Sentry (debe ir antes de rutas)
+app.use(sentryMiddleware.requestHandler);
+app.use(sentryMiddleware.tracingHandler);
+
+// Status Monitor Dashboard
+app.use(monitoringConfig);
 
 // Configuración de rate limiting
 const limiter = rateLimit({
@@ -77,11 +99,8 @@ app.use(mongoSanitize());
 // Aplicar rate limiting a todas las rutas
 app.use(limiter);
 
-// Logger de solicitudes
-app.use((req, res, next) => {
-  logger.info(`${req.method} ${req.originalUrl} - ${req.ip}`);
-  next();
-});
+// Request logging middleware
+app.use(requestLogger);
 
 // Documentación de la API
 app.use('/api-docs', 
@@ -92,6 +111,12 @@ app.use('/api-docs',
     customSiteTitle: 'GAMMA Service ERP - API Documentation',
   })
 );
+
+// Health check routes (sin auth)
+app.use('/api/health', healthRoutes);
+
+// Auth routes (sin auth requerido)
+app.use('/api/auth', authRoutes);
 
 // Configuración de rutas - Core
 app.use('/api/users', userRoutes);
@@ -113,6 +138,9 @@ app.use('/api/plates', plateRoutes);
 
 // Reports Routes
 app.use('/api/reports', reportRoutes);
+
+// Payments Routes
+app.use('/api/payments', paymentsRoutes);
 
 // Legacy/External Routes
 app.use('/api/orders', orderRoutes);
@@ -151,6 +179,12 @@ app.all('*', (req, res, next) => {
   next(err);
 });
 
+// Error logging middleware
+app.use(errorLogger);
+
+// Sentry error handler (debe ir antes de errorHandler)
+app.use(sentryMiddleware.errorHandler);
+
 // Manejo de errores global
 app.use(errorHandler);
 
@@ -167,6 +201,8 @@ connectDB();
 const server = app.listen(PORT, () => {
   logger.info(`🚀 Servidor corriendo en http://localhost:${PORT}`);
   logger.info(`📚 Documentación de la API disponible en http://localhost:${PORT}/api-docs`);
+  logger.info(`📊 Status Monitor disponible en http://localhost:${PORT}/status`);
+  logger.info(`🏥 Health Check disponible en http://localhost:${PORT}/api/health`);
 });
 
 // Manejar errores no capturados
